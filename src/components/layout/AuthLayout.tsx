@@ -24,7 +24,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <h1 className="text-2xl font-bold mb-4">Please log in to continue</h1>
         <button
-          onClick={() => loginWithRedirect()}
+          onClick={() => loginWithRedirect({
+            authorizationParams: {
+              prompt: 'login'
+            }
+          })}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Log In

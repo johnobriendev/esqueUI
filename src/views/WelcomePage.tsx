@@ -19,7 +19,11 @@ const WelcomePage: React.FC = () => {
           <span className="ml-2 text-2xl font-semibold text-gray-900">Esque</span>
         </div>
         <button
-          onClick={() => loginWithRedirect()}
+          onClick={() => loginWithRedirect({
+            authorizationParams: {
+              prompt: 'login'
+            }
+          })}
           className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors"
         >
           Log in
@@ -39,7 +43,11 @@ const WelcomePage: React.FC = () => {
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button
-              onClick={() => loginWithRedirect()}
+              onClick={() => loginWithRedirect({
+                authorizationParams: {
+                  prompt: 'login'
+                }
+              })}
               className="px-8 py-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Get Started — It's Free
@@ -154,7 +162,11 @@ const WelcomePage: React.FC = () => {
             Join thousands of users who are already boosting their productivity with Esque.
           </p>
           <button
-            onClick={() => loginWithRedirect()}
+            onClick={() => loginWithRedirect({
+              authorizationParams: {
+                prompt: 'login'
+              }
+            })}
             className="px-8 py-4 bg-white text-blue-600 font-medium rounded-lg hover:bg-gray-50 shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
           >
             Get Started For Free

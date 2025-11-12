@@ -25,10 +25,24 @@ A powerful task management application built with React, Redux, TypeScript, and 
 
 ## Features
 
+### Project-Based Organization
+
+* Create and manage multiple projects
+* Organize tasks within dedicated project workspaces
+* Switch between projects seamlessly
+
+### Team Collaboration
+
+* **Invite Team Members** - Send email invitations to collaborate on projects
+* **Role-Based Access** - Assign roles (Admin, Editor, Viewer) with different permissions
+* **Team Management** - Add, remove, and manage team member permissions
+* **Accept/Decline Invitations** - Receive and manage project invitations
+* **Real-Time Collaboration** - Work together with your team on shared projects
+
 ### Multiple View Modes
 
-* **List View**: Table format with sorting and pagination
-* **Kanban View**: Drag-and-drop interface organized by priority
+* **List View** - Table format with sorting and pagination
+* **Kanban View** - Drag-and-drop interface organized by priority
 
 ### Rich Task Management
 
@@ -36,6 +50,7 @@ A powerful task management application built with React, Redux, TypeScript, and 
 * Set title, description, status, and priority
 * Add custom fields for extended information
 * View detailed task information
+* **Task Comments** - Add, edit, and delete comments on tasks for team discussions
 
 ### Advanced Filtering & Sorting
 
@@ -49,10 +64,11 @@ A powerful task management application built with React, Redux, TypeScript, and 
 * Bulk selection and actions
 * Responsive design for all screen sizes
 
-### Data Persistence
+### Powerful Undo/Redo System
 
-* Automatic local storage saving
-* Undo/redo functionality for all actions
+* Custom Command Pattern implementation
+* Undo/redo functionality for all actions (create, edit, delete, priority changes)
+* Full action history management
 
 ---
 
@@ -104,6 +120,25 @@ This project demonstrates several advanced architectural patterns and best pract
 
 Visit [esque.click](https://esque.click/) to start using the application. No installation required!
 
+### Getting Started
+
+1. **Sign Up/Login** - Create an account or log in using Auth0 authentication
+2. **Create a Project** - Start by creating your first project to organize your tasks
+3. **Add Tasks** - Begin adding tasks to your project
+
+### Collaborating with Teams
+
+**Inviting Team Members:**
+1. Navigate to your project settings or team management page
+2. Enter a team member's email address
+3. Assign them a role (Admin, Editor, or Viewer)
+4. Send the invitation
+
+**Managing Invitations:**
+- **Receiving Invitations** - Check your pending invitations in the dashboard
+- **Accept/Decline** - Review and respond to project invitations
+- **Team Management** - Update member roles or remove members as needed
+
 ### Creating Tasks
 
 1. Click the **"Create Task"** button in the header
@@ -119,6 +154,7 @@ Visit [esque.click](https://esque.click/) to start using the application. No ins
 
 - **Edit a Task** - Click the "Edit" button on a task card or in the detail view
 - **Delete a Task** - Click the "Delete" button on a task card or in the detail view
+- **Add Comments** - Click on a task to view details and add comments for team discussions
 - **Bulk Actions** - Select multiple tasks in list view to perform actions on them
 
 ### Using Views
