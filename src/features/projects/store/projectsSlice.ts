@@ -5,8 +5,10 @@ import projectService from '../services/projectService';
 // Initial state for the projects slice
 const initialState: ProjectsState = {
   items: [],
+  archivedItems: [],
   currentProject: null,
   isLoading: false,
+  isLoadingArchived: false,
   error: null
 };
 
@@ -66,6 +68,77 @@ export const deleteProject = createAsyncThunk(
       return projectId;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete project');
+    }
+  }
+);
+
+export const fetchArchivedProjects = createAsyncThunk(
+  'projects/fetchArchivedProjects',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await projectService.getArchivedProjects();
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch archived projects');
+    }
+  }
+);
+
+export const archiveProject = createAsyncThunk(
+  'projects/archiveProject',
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      await projectService.archiveProject(projectId);
+      return projectId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to archive project');
+    }
+  }
+);
+
+export const unarchiveProject = createAsyncThunk(
+  'projects/unarchiveProject',
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      const project = await projectService.unarchiveProject(projectId);
+      return project;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to unarchive project');
+    }
+  }
+);
+
+export const hideProject = createAsyncThunk(
+  'projects/hideProject',
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      await projectService.hideProject(projectId);
+      return projectId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to hide project');
+    }
+  }
+);
+
+export const unhideProject = createAsyncThunk(
+  'projects/unhideProject',
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      const project = await projectService.unhideProject(projectId);
+      return project;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to unhide project');
+    }
+  }
+);
+
+export const leaveProject = createAsyncThunk(
+  'projects/leaveProject',
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      await projectService.leaveProject(projectId);
+      return projectId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to leave project');
     }
   }
 );
@@ -191,6 +264,111 @@ const projectsSlice = createSlice({
       .addCase(deleteProject.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Fetch archived projects
+      .addCase(fetchArchivedProjects.pending, (state) => {
+        state.isLoadingArchived = true;
+        state.error = null;
+      })
+      .addCase(fetchArchivedProjects.fulfilled, (state, action) => {
+        state.isLoadingArchived = false;
+        state.archivedItems = action.payload;
+      })
+      .addCase(fetchArchivedProjects.rejected, (state, action) => {
+        state.isLoadingArchived = false;
+        state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Archive project
+      .addCase(archiveProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(archiveProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Remove from items array
+        state.items = state.items.filter(p => p.id !== action.payload);
+        // Clear current project if it was archived
+        if (state.currentProject && state.currentProject.id === action.payload) {
+          state.currentProject = null;
+        }
+      })
+      .addCase(archiveProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Unarchive project
+      .addCase(unarchiveProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(unarchiveProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Remove from archived
+        state.archivedItems = state.archivedItems.filter(p => p.id !== action.payload.id);
+        // Add to items
+        state.items.push(action.payload);
+      })
+      .addCase(unarchiveProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Hide project
+      .addCase(hideProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(hideProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Remove from items array
+        state.items = state.items.filter(p => p.id !== action.payload);
+        // Clear current project if it was hidden
+        if (state.currentProject && state.currentProject.id === action.payload) {
+          state.currentProject = null;
+        }
+      })
+      .addCase(hideProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Unhide project
+      .addCase(unhideProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(unhideProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Remove from archived
+        state.archivedItems = state.archivedItems.filter(p => p.id !== action.payload.id);
+        // Add to items
+        state.items.push(action.payload);
+      })
+      .addCase(unhideProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string || 'An error occurred';
+      })
+
+      // Leave project
+      .addCase(leaveProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(leaveProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        // Remove from items array
+        state.items = state.items.filter(p => p.id !== action.payload);
+        // Clear current project if it was the one left
+        if (state.currentProject && state.currentProject.id === action.payload) {
+          state.currentProject = null;
+        }
+      })
+      .addCase(leaveProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string || 'An error occurred';
       });
   }
 });
@@ -201,6 +379,9 @@ export default projectsSlice.reducer;
 
 // Selectors
 export const selectAllProjects = (state: { projects: ProjectsState }) => state.projects.items;
+export const selectArchivedProjects = (state: { projects: ProjectsState }) => state.projects.archivedItems;
+export const selectArchivedCount = (state: { projects: ProjectsState }) => state.projects.archivedItems.length;
 export const selectCurrentProject = (state: { projects: ProjectsState }) => state.projects.currentProject;
 export const selectProjectsLoading = (state: { projects: ProjectsState }) => state.projects.isLoading;
+export const selectArchivedLoading = (state: { projects: ProjectsState }) => state.projects.isLoadingArchived;
 export const selectProjectsError = (state: { projects: ProjectsState }) => state.projects.error;

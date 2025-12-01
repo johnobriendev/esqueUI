@@ -48,6 +48,7 @@ const initialState: UiState = {
   isDeleteCommentModalOpen: false,
   deletingCommentId: null,
   isUrgentTasksModalOpen: false,
+  isArchivedProjectsModalOpen: false,
 };
 
 // Create the slice with reducers
@@ -193,6 +194,14 @@ export const uiSlice = createSlice({
       state.isUrgentTasksModalOpen = false;
     },
 
+    // Archived projects modal
+    openArchivedProjectsModal: (state) => {
+      state.isArchivedProjectsModalOpen = true;
+    },
+    closeArchivedProjectsModal: (state) => {
+      state.isArchivedProjectsModalOpen = false;
+    },
+
   }
 });
 
@@ -221,6 +230,8 @@ export const {
   closeDeleteCommentModal,
   openUrgentTasksModal,
   closeUrgentTasksModal,
+  openArchivedProjectsModal,
+  closeArchivedProjectsModal,
 } = uiSlice.actions;
 
 // Export the reducer
@@ -244,3 +255,4 @@ export const selectSelectedTaskIds = (state: { ui: UiState }) => state.ui.select
 export const selectIsTeamModalOpen = (state: { ui: UiState }) => state.ui.isTeamModalOpen;
 export const selectIsInvitationsPanelOpen = (state: { ui: UiState }) => state.ui.isInvitationsPanelOpen;
 export const selectIsUrgentTasksModalOpen = (state: { ui: UiState }) => state.ui.isUrgentTasksModalOpen;
+export const selectIsArchivedProjectsModalOpen = (state: { ui: UiState }) => state.ui.isArchivedProjectsModalOpen;

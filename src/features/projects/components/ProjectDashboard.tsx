@@ -4,12 +4,16 @@ import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import {
   fetchProjects,
   selectAllProjects,
+  selectArchivedCount,
   setCurrentProject,
   selectProjectsLoading,
   selectProjectsError,
   createProject,
   updateProject,
   deleteProject,
+  archiveProject,
+  hideProject,
+  leaveProject,
 } from '../store/projectsSlice';
 import { setCurrentProjectId, openUrgentTasksModal } from '../../ui/store/uiSlice';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -19,7 +23,9 @@ import DashboardHeader from '../../../components/layout/DashboardHeader';
 import { useAppAuth } from '../../../auth/AuthProvider';
 import { getProjectPermissions } from '../../../lib/permissions';
 import ProjectDeleteConfirmModal from '../../../components/modals/ProjectDeleteConfirmModal';
+import ProjectArchiveConfirmModal from '../../../components/modals/ProjectArchiveConfirmModal';
 import UrgentTasksModal from '../../tasks/components/UrgentTasksModal';
+import ArchivedProjectsModal from './ArchivedProjectsModal';
 
 
 
@@ -28,6 +34,7 @@ const ProjectDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const projects = useAppSelector(selectAllProjects);
+  const archivedCount = useAppSelector(selectArchivedCount);
   const isLoading = useAppSelector(selectProjectsLoading);
   const error = useAppSelector(selectProjectsError);
   const { isAuthenticated } = useAuth0();
@@ -43,6 +50,9 @@ const ProjectDashboard: React.FC = () => {
   const [permissionError, setPermissionError] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [projectToArchive, setProjectToArchive] = useState<Project | null>(null);
+  const [archiveAction, setArchiveAction] = useState<'archive' | 'unarchive'>('archive');
 
   // Fetch projects after auth is ready
   useEffect(() => {
@@ -181,6 +191,39 @@ const ProjectDashboard: React.FC = () => {
     dispatch(fetchProjects());
   };
 
+  const handleArchiveProject = (project: Project) => {
+    setProjectToArchive(project);
+    setArchiveAction('archive');
+    setShowArchiveModal(true);
+  };
+
+  const confirmArchiveProject = async (project: Project) => {
+    await dispatch(archiveProject(project.id)).unwrap();
+  };
+
+  const handleCloseArchiveModal = () => {
+    setShowArchiveModal(false);
+    setProjectToArchive(null);
+  };
+
+  const handleHideProject = (project: Project) => {
+    dispatch(hideProject(project.id))
+      .unwrap()
+      .catch((error) => {
+        setPermissionError('Failed to hide project.');
+      });
+  };
+
+  const handleLeaveProject = (project: Project) => {
+    if (window.confirm(`Are you sure you want to leave "${project.name}"? You will need to be re-invited to access it again.`)) {
+      dispatch(leaveProject(project.id))
+        .unwrap()
+        .catch((error) => {
+          setPermissionError('Failed to leave project.');
+        });
+    }
+  };
+
   // Show loading while app is initializing (before API calls can be made)
   if (!isAppReady) {
     return (
@@ -256,6 +299,7 @@ const ProjectDashboard: React.FC = () => {
             onCreateProject: handleOpenCreateForm,
             onOpenUrgentTasks: () => dispatch(openUrgentTasksModal())
           }}
+          archivedCount={archivedCount}
         />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           {/* Permission Error Banner */}
@@ -417,21 +461,61 @@ const ProjectDashboard: React.FC = () => {
                           </button>
                         )}
 
-                        {permissions.canDeleteProject && (
-                          <button
-                            onClick={() => handleDeleteProject(project)}
-                            className="text-sm text-gray-600 hover:text-red-600 transition-colors"
-                          >
-                            <span className="flex items-center">
-                              <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              Delete
-                            </span>
-                          </button>
+                        {permissions.isOwner && (
+                          <>
+                            <button
+                              onClick={() => handleArchiveProject(project)}
+                              className="text-sm text-gray-600 hover:text-yellow-600 transition-colors"
+                            >
+                              <span className="flex items-center">
+                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                                Archive
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProject(project)}
+                              className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                            >
+                              <span className="flex items-center">
+                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                              </span>
+                            </button>
+                          </>
                         )}
 
-                        {!permissions.canWrite && !permissions.canDeleteProject && (
+                        {!permissions.isOwner && (
+                          <>
+                            <button
+                              onClick={() => handleHideProject(project)}
+                              className="text-sm text-gray-600 hover:text-yellow-600 transition-colors"
+                            >
+                              <span className="flex items-center">
+                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                                Hide
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => handleLeaveProject(project)}
+                              className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                            >
+                              <span className="flex items-center">
+                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Leave
+                              </span>
+                            </button>
+                          </>
+                        )}
+
+                        {!permissions.canWrite && permissions.isViewer && (
                           <span className="text-xs text-gray-500 italic">Read-only access</span>
                         )}
                       </div>
@@ -460,6 +544,18 @@ const ProjectDashboard: React.FC = () => {
 
       {/* Urgent Tasks Modal */}
       <UrgentTasksModal />
+
+      {/* Archived Projects Modal */}
+      <ArchivedProjectsModal />
+
+      {/* Archive/Unarchive Confirmation Modal */}
+      <ProjectArchiveConfirmModal
+        isOpen={showArchiveModal}
+        project={projectToArchive}
+        action={archiveAction}
+        onClose={handleCloseArchiveModal}
+        onConfirm={confirmArchiveProject}
+      />
     </>
   );
 };

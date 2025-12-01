@@ -21,6 +21,9 @@ export interface Project {
   // Collaboration fields from backend
   userRole: UserRole; // Current user's role in this project
   canWrite: boolean; // Computed permission for quick checks
+  // Archive fields from backend
+  isArchived: boolean; // Owner archived status
+  isUserArchived: boolean; // User's hide status
 }
 
 // Task interface with collaboration fields
@@ -150,8 +153,10 @@ export interface TasksState {
 // ProjectsState for managing projects
 export interface ProjectsState {
   items: Project[];
+  archivedItems: Project[];
   currentProject: Project | null;
   isLoading: boolean;
+  isLoadingArchived: boolean;
   error: string | null;
 }
 
@@ -215,6 +220,9 @@ export interface UiState {
 
   // Urgent tasks modal
   isUrgentTasksModalOpen: boolean;
+
+  // Archived projects modal
+  isArchivedProjectsModalOpen: boolean;
 }
 
 export interface CommandHistoryState {

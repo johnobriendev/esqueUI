@@ -1,5 +1,5 @@
 // src/components/dashboard/DashboardHeader.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clearProjects } from '../../features/projects/store/projectsSlice';
@@ -14,6 +14,8 @@ import {
 } from '../../features/ui/store/uiSlice';
 import InvitationsPanel from '../../features/collaboration/components/InvitationsPanel';
 import { useAppAuth } from '../../auth/AuthProvider';
+import ProfileDropdown from './ProfileDropdown';
+import { openArchivedProjectsModal } from '../../features/ui/store/uiSlice';
 
 interface DashboardActions {
   onCreateProject: () => void;
@@ -22,17 +24,15 @@ interface DashboardActions {
 
 interface DashboardHeaderProps {
   dashboardActions?: DashboardActions;
+  archivedCount?: number;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions, archivedCount = 0 }) => {
   const { user, logout, isAuthenticated } = useAuth0();
   const dispatch = useAppDispatch();
   const pendingInvitations = useAppSelector(selectPendingInvitations);
   const isInvitationsPanelOpen = useAppSelector(selectIsInvitationsPanelOpen);
   const { isAppReady } = useAppAuth();
-  
-  //  State for mobile menu toggle
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && isAppReady) {
@@ -50,15 +50,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
     dispatch(openInvitationsPanel());
   };
 
-  //  Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   return (
     <>
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               {/* Make logo responsive - smaller on mobile */}
@@ -73,7 +68,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                     <>
                       <button
                         onClick={dashboardActions.onOpenUrgentTasks}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
+                        className="px-4 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
                       >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -82,7 +77,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                       </button>
                       <button
                         onClick={dashboardActions.onCreateProject}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
+                        className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
                       >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -105,23 +100,12 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                       </span>
                     )}
                   </button>
-                  {/* Show email only on larger screens */}
-                  <div className="hidden lg:block text-sm text-gray-700 mr-2">
-                    {user.email}
-                  </div>
-                  {user.picture && (
-                    <img
-                      src={user.picture}
-                      alt="Profile"
-                      className="h-8 w-8 rounded-full border border-gray-200"
-                    />
-                  )}
-                  <button
-                    onClick={handleLogout}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-                  >
-                    Log Out
-                  </button>
+                  <ProfileDropdown
+                    user={user}
+                    archivedCount={archivedCount}
+                    onOpenArchived={() => dispatch(openArchivedProjectsModal())}
+                    onLogout={handleLogout}
+                  />
                 </div>
 
                 {/*  Mobile menu button - visible only on mobile */}
@@ -130,7 +114,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                     <>
                       <button
                         onClick={dashboardActions.onOpenUrgentTasks}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
+                        className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
                       >
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -139,7 +123,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                       </button>
                       <button
                         onClick={dashboardActions.onCreateProject}
-                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
+                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow flex items-center text-sm"
                       >
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -163,52 +147,18 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions }) =
                     )}
                   </button>
 
-                  {/* Profile picture */}
-                  {user.picture && (
-                    <img
-                      src={user.picture}
-                      alt="Profile"
-                      className="h-8 w-8 rounded-full border border-gray-200"
-                    />
-                  )}
-
-                  {/* Hamburger menu button */}
-                  <button
-                    onClick={toggleMobileMenu}
-                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                        d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-                    </svg>
-                  </button>
+                  {/* Profile dropdown */}
+                  <ProfileDropdown
+                    user={user}
+                    archivedCount={archivedCount}
+                    onOpenArchived={() => dispatch(openArchivedProjectsModal())}
+                    onLogout={handleLogout}
+                  />
                 </div>
               </>
             )}
           </div>
 
-          {/*  Mobile dropdown menu */}
-          {isAuthenticated && user && isMobileMenuOpen && (
-            <div className="md:hidden mt-4 py-2 border-t border-gray-200">
-              <div className="flex flex-col space-y-2">
-                {/* User email */}
-                <div className="px-3 py-2 text-sm text-gray-700 border-b border-gray-100">
-                  {user.email}
-                </div>
-                
-                {/* Logout button */}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Log Out
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </header>
       <InvitationsPanel isOpen={isInvitationsPanelOpen} />
