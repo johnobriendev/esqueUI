@@ -263,17 +263,17 @@ const KanbanView: React.FC = () => {
     if (kanbanGroupBy === 'priority') {
       const priority = columnId as TaskPriority;
       switch (priority) {
-        case 'urgent': return 'bg-red-100 border-red-500';
-        case 'high': return 'bg-orange-100 border-orange-500';
-        case 'medium': return 'bg-yellow-100 border-yellow-500';
-        case 'low': return 'bg-green-100 border-green-500';
+        case 'urgent': return 'border-red-400';
+        case 'high': return 'border-orange-400';
+        case 'medium': return 'border-yellow-400';
+        case 'low': return 'border-emerald-400';
       }
     } else {
       const status = columnId as TaskStatus;
       switch (status) {
-        case 'not started': return 'bg-gray-100 border-gray-500';
-        case 'in progress': return 'bg-blue-100 border-blue-500';
-        case 'completed': return 'bg-green-100 border-green-500';
+        case 'not started': return 'border-slate-500';
+        case 'in progress': return 'border-blue-400';
+        case 'completed': return 'border-emerald-400';
       }
     }
   };
@@ -288,9 +288,9 @@ const KanbanView: React.FC = () => {
   // Get status badge class
   const getStatusBadgeClass = (status: TaskStatus): string => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in progress': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed': return 'bg-emerald-500 text-emerald-950';
+      case 'in progress': return 'bg-blue-500 text-blue-950';
+      default: return 'bg-slate-600 text-slate-200';
     }
   };
 
@@ -309,8 +309,8 @@ const KanbanView: React.FC = () => {
     return (
       <div className="h-full flex justify-center items-center">
         <div className="text-center p-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">No Project Selected</h2>
-          <p className="text-gray-600">Please select a project from the dashboard to view its tasks.</p>
+          <h2 className="text-xl font-semibold text-blue-50 mb-4">No Project Selected</h2>
+          <p className="text-slate-300">Please select a project from the dashboard to view its tasks.</p>
         </div>
       </div>
     );
@@ -335,10 +335,10 @@ const KanbanView: React.FC = () => {
                 key={columnId}
                 className={`flex-shrink-0 w-72 rounded-lg border-t-4 h-full ${getColumnColorClass(columnId)}`}
               >
-                <div className="bg-white rounded-b-lg shadow h-full flex flex-col">
+                <div className="bg-slate-800 rounded-b-lg shadow h-full flex flex-col">
                   {/* Column header */}
-                  <div className="p-3 border-b bg-gray-50 flex-shrink-0">
-                    <h3 className="font-semibold text-gray-800 text-sm">
+                  <div className="p-3 border-b border-slate-700 bg-slate-800 flex-shrink-0">
+                    <h3 className="font-semibold text-blue-50 text-sm">
                       {getColumnName(columnId)} ({columnTasks.length})
                     </h3>
                   </div>
@@ -349,13 +349,13 @@ const KanbanView: React.FC = () => {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`flex-1 p-2 overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-gray-50'
+                        className={`flex-1 p-2 overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-900/30' : 'bg-slate-800'
                           }`}
                         style={{ minHeight: '200px' }}
                       >
                         {columnTasks.length === 0 ? (
                           <div className="flex items-center justify-center h-32">
-                            <p className="text-gray-400 text-sm text-center">
+                            <p className="text-slate-500 text-sm text-center">
                               No tasks
                             </p>
                           </div>
@@ -375,10 +375,10 @@ const KanbanView: React.FC = () => {
                                     className={`${snapshot.isDragging ? 'opacity-70 rotate-3 scale-105' : ''
                                       } transition-all duration-200`}
                                   >
-                                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow p-3">
+                                    <div className="bg-slate-700 rounded-lg shadow-sm border border-slate-600 hover:shadow-md transition-shadow p-3">
                                       <div className="flex justify-between items-start mb-2">
                                         <h4
-                                          className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 line-clamp-2 flex-1 text-sm"
+                                          className="font-medium text-blue-50 cursor-pointer hover:text-blue-400 line-clamp-2 flex-1 text-sm"
                                           onClick={() => dispatch(openTaskDetail(task.id))}
                                         >
                                           {task.title}
@@ -386,7 +386,7 @@ const KanbanView: React.FC = () => {
                                       </div>
 
                                       {task.description && (
-                                        <p className="mt-2 text-xs text-gray-600 line-clamp-2">
+                                        <p className="mt-2 text-xs text-slate-300 line-clamp-2">
                                           {task.description}
                                         </p>
                                       )}
@@ -400,13 +400,13 @@ const KanbanView: React.FC = () => {
                                           <div className="flex space-x-2">
                                             <button
                                               onClick={() => handleEditTask(task.id)}
-                                              className="text-indigo-600 hover:text-indigo-900 text-xs"
+                                              className="text-blue-400 hover:text-blue-300 text-xs"
                                             >
                                               Edit
                                             </button>
                                             <button
                                               onClick={() => handleDeleteTask(task.id)}
-                                              className="text-red-600 hover:text-red-900 text-xs"
+                                              className="text-red-400 hover:text-red-300 text-xs"
                                             >
                                               Delete
                                             </button>
@@ -416,9 +416,9 @@ const KanbanView: React.FC = () => {
 
                                       {/* Custom fields (if any) */}
                                       {Object.keys(task.customFields).length > 0 && (
-                                        <div className="mt-2 pt-2 border-t border-gray-200">
-                                          <p className="text-xs text-gray-500 font-medium mb-1">Custom fields:</p>
-                                          <div className="text-xs text-gray-600 space-y-1">
+                                        <div className="mt-2 pt-2 border-t border-slate-600">
+                                          <p className="text-xs text-slate-400 font-medium mb-1">Custom fields:</p>
+                                          <div className="text-xs text-slate-300 space-y-1">
                                             {Object.entries(task.customFields).map(([key, value]) => (
                                               <div key={key} className="flex justify-between">
                                                 <span className="font-medium">{key}:</span>
@@ -441,31 +441,31 @@ const KanbanView: React.FC = () => {
                   </Droppable>
 
                   {/* Add Task Button - Fixed at bottom */}
-                  <div className="px-2 py-1.5 border-t bg-gray-50 flex-shrink-0">
+                  <div className="px-2 py-1.5 border-t border-slate-700 bg-slate-800 flex-shrink-0">
                     {activeInputColumn === columnId ? (
                       <div
                         ref={(el) => createTaskRefs.current[columnId] = el}
-                        className="bg-white rounded-lg p-2"
+                        className="bg-slate-700 rounded-lg p-2"
                       >
                         <textarea
                           value={newTaskInputs[columnId]}
                           onChange={(e) => handleInputChange(columnId, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(e, columnId)}
                           placeholder="Enter task title..."
-                          className="w-full p-2 text-sm border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-2 text-sm border border-slate-600 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-800 text-blue-50 placeholder-slate-500"
                           rows={2}
                           autoFocus
                         />
                         <div className="flex justify-between mt-2">
                           <button
                             onClick={() => handleCreateTask(columnId)}
-                            className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
                           >
                             Add Task
                           </button>
                           <button
                             onClick={handleCancelTask}
-                            className="px-3 py-1 text-gray-600 text-sm rounded hover:bg-gray-100 transition-colors"
+                            className="px-3 py-1 text-slate-300 text-sm rounded hover:bg-slate-700 transition-colors"
                           >
                             Cancel
                           </button>
@@ -475,7 +475,7 @@ const KanbanView: React.FC = () => {
                       <WriteGuard>
                         <button
                           onClick={() => handleShowInput(columnId)}
-                          className="w-full py-1.5 px-2 text-blue-600 hover:bg-blue-50 rounded text-sm flex items-center justify-center border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors"
+                          className="w-full py-1.5 px-2 text-blue-400 hover:bg-slate-700 rounded text-sm flex items-center justify-center border-2 border-dashed border-slate-600 hover:border-blue-500 transition-colors"
                         >
                           <span className="text-base mr-1">+</span> Add task
                         </button>

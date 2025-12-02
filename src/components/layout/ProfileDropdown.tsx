@@ -46,20 +46,20 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
       {/* Profile button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
       >
         {getInitial()}
       </button>
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-50">
           {/* User info section */}
-          <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 rounded-t-lg">
-            <p className="text-sm font-semibold text-gray-900 truncate">
+          <div className="px-4 py-3 bg-slate-900 border-b border-slate-700 rounded-t-lg">
+            <p className="text-sm font-semibold text-blue-50 truncate">
               {user.name || 'User'}
             </p>
-            <p className="text-xs text-gray-600 truncate">{user.email}</p>
+            <p className="text-xs text-slate-400 truncate">{user.email}</p>
           </div>
 
           {/* Menu options */}
@@ -69,7 +69,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 onOpenArchived();
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+              className="w-full px-4 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 flex items-center justify-between"
             >
               <span className="flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 View Archived Projects
               </span>
               {archivedCount > 0 && (
-                <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">
+                <span className="ml-2 bg-blue-500 text-blue-950 text-xs font-medium px-2 py-0.5 rounded-full">
                   {archivedCount}
                 </span>
               )}
@@ -89,7 +89,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 onLogout();
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center border-t border-gray-100"
+              className="w-full px-4 py-2 text-left text-sm text-slate-300 hover:bg-slate-700 flex items-center border-t border-slate-700"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

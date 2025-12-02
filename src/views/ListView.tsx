@@ -178,11 +178,11 @@ const ListView: React.FC = () => {
   const getStatusBadgeClass = (status: TaskStatus) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500 text-emerald-950';
       case 'in progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500 text-blue-950';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-600 text-slate-200';
     }
   };
 
@@ -190,13 +190,13 @@ const ListView: React.FC = () => {
   const getPriorityBadgeClass = (priority: TaskPriority) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500 text-red-950';
       case 'high':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-500 text-orange-950';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500 text-yellow-950';
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500 text-emerald-950';
     }
   };
 
@@ -213,18 +213,18 @@ const ListView: React.FC = () => {
   // Show a message if no project is selected
   if (!currentProject) {
     return (
-      <div className="bg-white shadow rounded-lg p-8 text-center">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">No Project Selected</h2>
-        <p className="text-gray-600">Please select a project from the dashboard to view its tasks.</p>
+      <div className="bg-slate-800 shadow rounded-lg p-8 text-center">
+        <h2 className="text-xl font-semibold text-blue-50 mb-4">No Project Selected</h2>
+        <p className="text-slate-300">Please select a project from the dashboard to view its tasks.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="bg-slate-800 shadow rounded-lg overflow-hidden">
       {/* 🆕 NEW: Permission Error Banner */}
       {permissionError && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+        <div className="bg-red-900/50 border-l-4 border-red-400 p-4 mb-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -232,12 +232,12 @@ const ListView: React.FC = () => {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-red-700">{permissionError}</p>
+              <p className="text-sm text-red-200">{permissionError}</p>
             </div>
             <div className="ml-auto pl-3">
               <button
                 onClick={() => setPermissionError(null)}
-                className="text-red-400 hover:text-red-600"
+                className="text-red-400 hover:text-red-300"
               >
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -249,48 +249,48 @@ const ListView: React.FC = () => {
       )}
 
       {/* 🆕 NEW: User Role Indicator */}
-      <div className="bg-gray-50 px-4 py-2 border-b">
+      <div className="bg-slate-900 px-4 py-2 border-b border-slate-700">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-slate-300">
             Your role: <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              permissions.userRole === 'owner' ? 'bg-red-100 text-red-800' :
-              permissions.userRole === 'editor' ? 'bg-blue-100 text-blue-800' :
-              'bg-gray-100 text-gray-800'
+              permissions.userRole === 'owner' ? 'bg-indigo-500 text-indigo-950' :
+              permissions.userRole === 'editor' ? 'bg-blue-500 text-blue-950' :
+              'bg-slate-600 text-slate-200'
             }`}>
               {permissions.userRole}
             </span>
           </span>
           {!permissions.canWrite && (
-            <span className="text-xs text-gray-500 italic">
+            <span className="text-xs text-slate-400 italic">
               Read-only access
             </span>
           )}
         </div>
       </div>
 
-      
+
       <WriteGuard>
         {selectedTaskIds.size > 0 && (
-          <div className="bg-blue-50 px-4 py-2 flex items-center justify-between border-b">
-            <span className="text-sm text-blue-700 font-medium">
+          <div className="bg-blue-900/30 px-4 py-2 flex items-center justify-between border-b border-slate-700">
+            <span className="text-sm text-blue-50 font-medium">
               {selectedTaskIds.size} {selectedTaskIds.size === 1 ? 'task' : 'tasks'} selected
             </span>
             <div className="flex space-x-2">
               <button
-                onClick={() => handleBulkEdit('status')} 
-                className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                onClick={() => handleBulkEdit('status')}
+                className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
               >
                 Change Status
               </button>
               <button
-                onClick={() => handleBulkEdit('priority')} 
-                className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                onClick={() => handleBulkEdit('priority')}
+                className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
               >
                 Change Priority
               </button>
               <button
                 onClick={handleBulkDelete}
-                className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+                className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
               >
                 Delete Selected
               </button>
@@ -301,79 +301,79 @@ const ListView: React.FC = () => {
 
       {/* Task table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-slate-700">
+          <thead className="bg-slate-900">
             <tr>
-              
+
               <WriteGuard>
                 <th className="px-3 py-3 text-left">
                   <input
                     type="checkbox"
                     checked={paginatedTasks.length > 0 && selectedTaskIds.size === paginatedTasks.length}
                     onChange={toggleSelectAll}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-slate-600 text-blue-500 focus:ring-blue-500 bg-slate-800"
                   />
                 </th>
               </WriteGuard>
               <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 hover:text-black uppercase tracking-wider cursor-pointer"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-400 hover:text-blue-50 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleSort('title')}
               >
                 Title {getSortIndicator('title')}
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 hover:text-black uppercase tracking-wider cursor-pointer"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-400 hover:text-blue-50 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleSort('status')}
               >
                 Status {getSortIndicator('status')}
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 hover:text-black uppercase tracking-wider cursor-pointer"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-400 hover:text-blue-50 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleSort('priority')}
               >
                 Priority {getSortIndicator('priority')}
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 hover:text-black uppercase tracking-wider cursor-pointer"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-400 hover:text-blue-50 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleSort('updatedAt')}
               >
                 Updated {getSortIndicator('updatedAt')}
               </th>
-              
+
               <WriteGuard>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
               </WriteGuard>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-slate-800 divide-y divide-slate-700">
             {paginatedTasks.map(task => (
-              <tr key={task.id} className="hover:bg-gray-50">
-                
+              <tr key={task.id} className="hover:bg-slate-700">
+
                 <WriteGuard>
                   <td className="px-3 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={selectedTaskIds.has(task.id)}
                       onChange={() => toggleTaskSelection(task.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-slate-600 text-blue-500 focus:ring-blue-500 bg-slate-700"
                     />
                   </td>
                 </WriteGuard>
                 <td className="px-6 py-4">
                   <div
-                    className="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                    className="text-sm font-medium text-blue-50 cursor-pointer hover:text-blue-400"
                     onClick={() => dispatch(openTaskDetail(task.id))}
                   >
                     {task.title}
                   </div>
                   {task.description && (
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{task.description}</div>
+                    <div className="text-sm text-slate-300 truncate max-w-xs">{task.description}</div>
                   )}
                   {/* Show custom fields if any */}
                   {Object.keys(task.customFields).length > 0 && (
-                    <div className="mt-1 text-xs text-gray-500">
+                    <div className="mt-1 text-xs text-slate-400">
                       {Object.entries(task.customFields).slice(0, 2).map(([key, value], index) => (
                         <span key={key} className="mr-2">
                           <span className="font-medium">{key}:</span> {String(value)}
@@ -381,7 +381,7 @@ const ListView: React.FC = () => {
                         </span>
                       ))}
                       {Object.keys(task.customFields).length > 2 && (
-                        <span className="text-gray-400">+{Object.keys(task.customFields).length - 2} more</span>
+                        <span className="text-slate-500">+{Object.keys(task.customFields).length - 2} more</span>
                       )}
                     </div>
                   )}
@@ -402,7 +402,7 @@ const ListView: React.FC = () => {
                     {task.priority}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
                   {formatDate(task.updatedAt)}
                 </td>
                 {/* 🔄 MODIFIED: Only show actions for users with write permissions */}
@@ -410,13 +410,13 @@ const ListView: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => handleEditTask(task)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      className="text-blue-400 hover:text-blue-300 mr-4"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteTask(task.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-400 hover:text-red-300"
                     >
                       Delete
                     </button>
@@ -428,7 +428,7 @@ const ListView: React.FC = () => {
             {paginatedTasks.length === 0 && (
               <tr>
                 {/* 🔄 MODIFIED: Adjust colspan based on user permissions */}
-                <td colSpan={permissions.canWrite ? 6 : 4} className="px-6 py-10 text-center text-gray-500">
+                <td colSpan={permissions.canWrite ? 6 : 4} className="px-6 py-10 text-center text-slate-400">
                   No tasks found. {permissions.canWrite ? 'Create a new task to get started.' : 'No tasks to display.'}
                 </td>
               </tr>
@@ -437,30 +437,30 @@ const ListView: React.FC = () => {
         </table>
       </div>
 
-      {/* Pagination - No changes needed here */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="px-4 py-3 flex items-center justify-between border-t border-slate-700 sm:px-6 bg-slate-900">
           <div className="flex-1 flex justify-between sm:hidden">
             {/* Mobile pagination */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === 1
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              className={`relative inline-flex items-center px-4 py-2 border border-slate-600 text-sm font-medium rounded-md ${currentPage === 1
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                 }`}
             >
               Previous
             </button>
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-slate-300">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === totalPages
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              className={`ml-3 relative inline-flex items-center px-4 py-2 border border-slate-600 text-sm font-medium rounded-md ${currentPage === totalPages
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                 }`}
             >
               Next
@@ -470,7 +470,7 @@ const ListView: React.FC = () => {
           {/* Desktop pagination */}
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-slate-300">
                 Showing <span className="font-medium">{(currentPage - 1) * tasksPerPage + 1}</span> to{' '}
                 <span className="font-medium">
                   {Math.min(currentPage * tasksPerPage, filteredAndSortedTasks.length)}
@@ -483,9 +483,9 @@ const ListView: React.FC = () => {
                 <button
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 text-sm font-medium ${currentPage === 1
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-600 text-sm font-medium ${currentPage === 1
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                     }`}
                 >
                   First
@@ -493,9 +493,9 @@ const ListView: React.FC = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium ${currentPage === 1
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  className={`relative inline-flex items-center px-2 py-2 border border-slate-600 text-sm font-medium ${currentPage === 1
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                     }`}
                 >
                   Prev
@@ -522,8 +522,8 @@ const ListView: React.FC = () => {
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                            ? 'z-10 bg-blue-500 border-blue-500 text-white'
+                            : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
                           }`}
                       >
                         {pageNum}
@@ -535,9 +535,9 @@ const ListView: React.FC = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium ${currentPage === totalPages
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  className={`relative inline-flex items-center px-2 py-2 border border-slate-600 text-sm font-medium ${currentPage === totalPages
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                     }`}
                 >
                   Next
@@ -545,9 +545,9 @@ const ListView: React.FC = () => {
                 <button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 text-sm font-medium ${currentPage === totalPages
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-600 text-sm font-medium ${currentPage === totalPages
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                     }`}
                 >
                   Last

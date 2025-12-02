@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+/* Deep Ocean Theme - CSS Variables */
+:root {
+  /* Backgrounds */
+  --color-bg: #0f172a;           /* slate-900 - main background */
+  --color-bg-elevated: #172554;  /* blue-950 - elevated surfaces */
+  --color-surface: #1e293b;      /* slate-800 - cards, panels */
+  --color-surface-hover: #1e3a8a; /* blue-900 - hover states */
+
+  /* Text */
+  --color-text-primary: #eff6ff;   /* blue-50 - primary text */
+  --color-text-secondary: #cbd5e1; /* slate-300 - secondary text */
+  --color-text-tertiary: #64748b;  /* slate-500 - tertiary text */
+
+  /* Primary Action Colors */
+  --color-primary: #3b82f6;      /* blue-500 - primary buttons */
+  --color-primary-hover: #2563eb; /* blue-600 - button hover */
+
+  /* Borders */
+  --color-border: #1e40af;       /* blue-800 - default borders */
+  --color-border-subtle: #334155; /* slate-700 - subtle borders */
+
+  /* Accent */
+  --color-accent: #fbbf24;       /* amber-400 - highlights, warm contrast */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -7,6 +32,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 code {

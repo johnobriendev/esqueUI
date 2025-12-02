@@ -174,7 +174,7 @@ const TaskModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0  bg-black/10 backdrop-blur-xs flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={(e) => {
         // Only close if the click is on the backdrop, not on the modal itself
         if (e.target === e.currentTarget) {
@@ -182,13 +182,13 @@ const TaskModal: React.FC = () => {
         }
       }}
     >
-      <div className="bg-white border rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4 text-blue-50">
           {isEditing ? 'Edit Task' : 'Create New Task'}
         </h2>
 
         {error && (
-          <div className="mb-4 p-2 bg-red-50 text-red-700 rounded border border-red-200">
+          <div className="mb-4 p-2 bg-red-900/30 text-red-300 rounded border border-red-700">
             {error}
           </div>
         )}
@@ -196,27 +196,27 @@ const TaskModal: React.FC = () => {
         <form onSubmit={handleSubmit}>
           {/* Task Title */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-slate-300 mb-1">
               Title *
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
           {/* Task Description */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-slate-300 mb-1">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={3}
             />
           </div>
@@ -224,13 +224,13 @@ const TaskModal: React.FC = () => {
           {/* Status and Priority */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-1">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as TaskStatus)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="not started">Not Started</option>
                 <option value="in progress">In Progress</option>
@@ -239,13 +239,13 @@ const TaskModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-1">
                 Priority
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -256,13 +256,13 @@ const TaskModal: React.FC = () => {
           </div>
 
           {/* Custom Fields Collapsible Section */}
-          <div className="mb-4 border rounded-md overflow-hidden">
+          <div className="mb-4 border border-slate-700 rounded-md overflow-hidden">
             <button
               type="button"
               onClick={toggleCustomFields}
-              className="w-full px-4 py-2 bg-gray-50 text-left flex justify-between items-center focus:outline-none"
+              className="w-full px-4 py-2 bg-slate-900 text-left flex justify-between items-center focus:outline-none text-slate-300"
             >
-              <span className="font-medium text-gray-700">
+              <span className="font-medium">
                 Custom Fields {Object.keys(customFields).length > 0 && `(${Object.keys(customFields).length})`}
               </span>
               <svg
@@ -277,20 +277,20 @@ const TaskModal: React.FC = () => {
 
             {/* Collapsible content */}
             {showCustomFields && (
-              <div className="p-4 border-t">
+              <div className="p-4 border-t border-slate-700">
                 {/* List existing custom fields */}
                 {Object.entries(customFields).length > 0 && (
-                  <div className="mb-4 bg-gray-50 rounded-md p-3">
+                  <div className="mb-4 bg-slate-900 rounded-md p-3">
                     {Object.entries(customFields).map(([name, value]) => (
-                      <div key={name} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div key={name} className="flex items-center justify-between py-2 border-b border-slate-700 last:border-b-0">
                         <div className="flex flex-col mr-2 overflow-hidden">
-                          <span className="font-medium text-sm text-gray-800">{name}</span>
-                          <span className="text-gray-600 truncate">{value}</span>
+                          <span className="font-medium text-sm text-slate-300">{name}</span>
+                          <span className="text-slate-400 truncate">{value}</span>
                         </div>
                         <button
                           type="button"
                           onClick={() => handleRemoveCustomField(name)}
-                          className="text-red-600 hover:text-red-800 text-sm px-2 py-1 flex-shrink-0"
+                          className="text-red-500 hover:text-red-600 text-sm px-2 py-1 flex-shrink-0"
                         >
                           Delete
                         </button>
@@ -303,23 +303,23 @@ const TaskModal: React.FC = () => {
                 <div className="mt-3">
                   <div className="flex flex-col space-y-2">
                     <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Field Name</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Field Name</label>
                       <input
                         type="text"
                         placeholder="e.g., Due Date, Assigned To, URL"
                         value={newFieldName}
                         onChange={(e) => setNewFieldName(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Field Value</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">Field Value</label>
                       <input
                         type="text"
                         placeholder="e.g., 2023-12-31, John Doe, https://example.com"
                         value={newFieldValue}
                         onChange={(e) => setNewFieldValue(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -328,8 +328,8 @@ const TaskModal: React.FC = () => {
                     onClick={handleAddCustomField}
                     disabled={!newFieldName.trim() || !newFieldValue.trim()}
                     className={`mt-3 w-full px-4 py-2 rounded-md transition-colors ${!newFieldName.trim() || !newFieldValue.trim()
-                      ? 'bg-blue-300 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-blue-500/50 cursor-not-allowed'
+                      : 'bg-blue-500 hover:bg-blue-600 text-white'
                       }`}
                   >
                     Add Field
@@ -344,7 +344,7 @@ const TaskModal: React.FC = () => {
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 border rounded-md hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 bg-slate-700 text-slate-300 border border-slate-700 rounded-md hover:bg-slate-600 transition-colors"
             >
               Cancel
             </button>
@@ -352,8 +352,8 @@ const TaskModal: React.FC = () => {
               type="submit"
               disabled={isSubmitting || !title.trim()}
               className={`px-4 py-2 rounded-md transition-colors ${isSubmitting || !title.trim()
-                ? 'bg-blue-300 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                ? 'bg-blue-500/50 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 text-white'
                 }`}
             >
               {isSubmitting ? 'Saving...' : isEditing ? 'Update' : 'Create'}

@@ -119,7 +119,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   };
 
   return (
-    <header className="bg-white shadow relative flex-shrink-0">
+    <header className="bg-blue-950 shadow-lg border-b border-blue-900 relative flex-shrink-0">
       <div className="px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between h-10 gap-2">
           {/* Left section - Back button and title - PROTECTED SPACE */}
@@ -127,13 +127,13 @@ const Header: React.FC<HeaderProps> = (props) => {
             {showBackButton && (
               <button
                 onClick={() => window.history.back()}
-                className="flex-shrink-0 text-gray-600 hover:text-gray-900 text-sm whitespace-nowrap"
+                className="flex-shrink-0 text-slate-300 hover:text-blue-50 text-sm whitespace-nowrap"
               >
                 ← Back
               </button>
             )}
 
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 truncate min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-blue-50 truncate min-w-0">
               {projectName}
             </h1>
           </div>
@@ -155,7 +155,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 placeholder="Search tasks..."
                 value={filterConfig.searchTerm}
                 onChange={handleSearchChange}
-                className="w-40 xl:w-48 h-8 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-40 xl:w-48 h-8 px-3 text-sm bg-slate-900 text-slate-300 placeholder-slate-500 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -164,18 +164,18 @@ const Header: React.FC<HeaderProps> = (props) => {
               <select
                 value={filterConfig.status}
                 onChange={handleStatusFilterChange}
-                className="h-8 px-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+                className="h-8 px-2 text-sm bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">Status</option>
                 <option value="not started">Not Started</option>
                 <option value="in progress">In Progress</option>
                 <option value="completed">Completed</option>
               </select>
-              
+
               <select
                 value={filterConfig.priority}
                 onChange={handlePriorityFilterChange}
-                className="h-8 px-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
+                className="h-8 px-2 text-sm bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="all">Priority</option>
                 <option value="low">Low</option>
@@ -189,7 +189,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             <div className="lg:hidden">
               <button
                 onClick={toggleSearch}
-                className="h-8 w-8 flex items-center justify-center text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100"
+                className="h-8 w-8 flex items-center justify-center text-slate-300 hover:text-blue-50 rounded-md hover:bg-blue-900"
               >
                 🔍
               </button>
@@ -197,12 +197,12 @@ const Header: React.FC<HeaderProps> = (props) => {
 
             {/* View Mode Toggle - Tablet and up */}
             <div className="hidden md:flex items-center gap-2">
-              <div className="flex bg-gray-100 rounded-md p-1">
+              <div className="flex bg-slate-800 rounded-md p-1">
                 <button
                   onClick={() => handleViewModeChange('list')}
                   className={`px-2 py-1 text-xs rounded transition-colors ${viewMode === 'list'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'text-slate-300 hover:text-blue-50'
                     }`}
                 >
                   List
@@ -210,8 +210,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <button
                   onClick={() => handleViewModeChange('kanban')}
                   className={`px-2 py-1 text-xs rounded transition-colors ${viewMode === 'kanban'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'text-slate-300 hover:text-blue-50'
                     }`}
                 >
                   Board
@@ -220,12 +220,12 @@ const Header: React.FC<HeaderProps> = (props) => {
 
               {/* Kanban Group By Toggle - Only show when in kanban view */}
               {viewMode === 'kanban' && (
-                <div className="flex bg-gray-100 rounded-md p-1">
+                <div className="flex bg-slate-800 rounded-md p-1">
                   <button
                     onClick={() => handleKanbanGroupByChange('priority')}
                     className={`px-2 py-1 text-xs rounded transition-colors ${kanbanGroupBy === 'priority'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
+                        ? 'bg-blue-500 text-white shadow-sm'
+                        : 'text-slate-300 hover:text-blue-50'
                       }`}
                     title="Group by Priority"
                   >
@@ -234,8 +234,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                   <button
                     onClick={() => handleKanbanGroupByChange('status')}
                     className={`px-2 py-1 text-xs rounded transition-colors ${kanbanGroupBy === 'status'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
+                        ? 'bg-blue-500 text-white shadow-sm'
+                        : 'text-slate-300 hover:text-blue-50'
                       }`}
                     title="Group by Status"
                   >
@@ -250,7 +250,7 @@ const Header: React.FC<HeaderProps> = (props) => {
               <button
                 ref={overflowMenuButtonRef}
                 onClick={toggleMobileMenu}
-                className="h-8 w-8 flex items-center justify-center text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100"
+                className="h-8 w-8 flex items-center justify-center text-slate-300 hover:text-blue-50 rounded-md hover:bg-blue-900"
                 title="More options"
               >
                 ⋯
@@ -262,7 +262,7 @@ const Header: React.FC<HeaderProps> = (props) => {
               <button
                 ref={mobileMenuButtonRef}
                 onClick={toggleMobileMenu}
-                className="h-8 w-8 flex items-center justify-center text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100"
+                className="h-8 w-8 flex items-center justify-center text-slate-300 hover:text-blue-50 rounded-md hover:bg-blue-900"
               >
                 ☰
               </button>
@@ -274,7 +274,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <div className="relative group">
                   <button
                     disabled
-                    className="h-8 px-2 sm:px-3 bg-gray-300 text-gray-500 text-sm rounded-md cursor-not-allowed"
+                    className="h-8 px-2 sm:px-3 bg-slate-700 text-slate-500 text-sm rounded-md cursor-not-allowed"
                   >
                     <span className="hidden sm:inline">+ Task</span>
                     <span className="sm:hidden">+</span>
@@ -285,7 +285,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             >
               <button
                 onClick={handleCreateTask}
-                className="h-8 px-2 sm:px-3 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                className="h-8 px-2 sm:px-3 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
               >
                 <span className="hidden sm:inline">+ Task</span>
                 <span className="sm:hidden">+</span>
@@ -298,7 +298,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <div className="hidden xl:block">
                   <button
                     onClick={handleOpenTeam}
-                    className="h-8 px-3 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                    className="h-8 px-3 bg-slate-700 text-white text-sm rounded-md hover:bg-slate-600 transition-colors"
                   >
                     Team
                   </button>
@@ -311,32 +311,32 @@ const Header: React.FC<HeaderProps> = (props) => {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center space-x-1 h-8 px-1 sm:px-2 rounded-md hover:bg-gray-100 transition-colors"
+                  className="flex items-center space-x-1 h-8 px-1 sm:px-2 rounded-md hover:bg-blue-900 transition-colors"
                 >
                   {user.picture && (
                     <img
                       src={user.picture}
                       alt="Profile"
-                      className="h-6 w-6 rounded-full border border-gray-200"
+                      className="h-6 w-6 rounded-full border border-slate-600"
                     />
                   )}
-                  <span className="hidden lg:inline text-sm text-gray-700 max-w-20 truncate">
+                  <span className="hidden lg:inline text-sm text-slate-300 max-w-20 truncate">
                     {user.name}
                   </span>
-                  <span className="text-gray-400 text-xs">▼</span>
+                  <span className="text-slate-400 text-xs">▼</span>
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                  <div className="absolute top-full right-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-md shadow-lg z-50">
                     <div className="py-2">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <div className="text-sm font-medium text-gray-900 truncate">{user.name}</div>
-                        <div className="text-xs text-gray-500">{user.email}</div>
+                      <div className="px-4 py-2 border-b border-slate-700">
+                        <div className="text-sm font-medium text-blue-50 truncate">{user.name}</div>
+                        <div className="text-xs text-slate-400">{user.email}</div>
                         {currentProject && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Role: <span className={`font-medium ${permissions.userRole === 'owner' ? 'text-red-600' :
-                                permissions.userRole === 'editor' ? 'text-blue-600' :
-                                  'text-gray-600'
+                          <div className="text-xs text-slate-400 mt-1">
+                            Role: <span className={`font-medium ${permissions.userRole === 'owner' ? 'text-red-400' :
+                                permissions.userRole === 'editor' ? 'text-blue-400' :
+                                  'text-slate-400'
                               }`}>
                               {permissions.userRole}
                             </span>
@@ -348,7 +348,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                           handleLogout();
                           setIsUserMenuOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
                       >
                         Logout
                       </button>
@@ -369,12 +369,12 @@ const Header: React.FC<HeaderProps> = (props) => {
                 placeholder="Search tasks..."
                 value={filterConfig.searchTerm}
                 onChange={handleSearchChange}
-                className="flex-1 h-8 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 h-8 px-3 text-sm bg-slate-900 text-slate-300 placeholder-slate-500 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                 autoFocus
               />
               <button
                 onClick={toggleSearch}
-                className="ml-2 text-gray-500 hover:text-gray-700"
+                className="ml-2 text-slate-400 hover:text-slate-200"
               >
                 ✕
               </button>
@@ -385,21 +385,21 @@ const Header: React.FC<HeaderProps> = (props) => {
         {/* Mobile dropdown menu */}
         {isMobileMenuOpen && (
           <div
-            className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
+            className="absolute top-full left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-lg z-50"
             ref={mobileMenuRef}
           >
             <div className="px-4 py-3 space-y-3">
               {/* View toggle for mobile */}
               <div className="md:hidden">
-                <div className="flex bg-gray-100 rounded-md p-1">
+                <div className="flex bg-slate-900 rounded-md p-1">
                   <button
                     onClick={() => {
                       handleViewModeChange('list');
                       setIsMobileMenuOpen(false);
                     }}
                     className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${viewMode === 'list'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
+                        ? 'bg-blue-500 text-white shadow-sm'
+                        : 'text-slate-300 hover:text-blue-50'
                       }`}
                   >
                     List View
@@ -410,8 +410,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                       setIsMobileMenuOpen(false);
                     }}
                     className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${viewMode === 'kanban'
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
+                        ? 'bg-blue-500 text-white shadow-sm'
+                        : 'text-slate-300 hover:text-blue-50'
                       }`}
                   >
                     Board View
@@ -421,16 +421,16 @@ const Header: React.FC<HeaderProps> = (props) => {
                 {/* Kanban Group By Toggle - Only show when in kanban view */}
                 {viewMode === 'kanban' && (
                   <div className="mt-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Group By</label>
-                    <div className="flex bg-gray-100 rounded-md p-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">Group By</label>
+                    <div className="flex bg-slate-900 rounded-md p-1">
                       <button
                         onClick={() => {
                           handleKanbanGroupByChange('priority');
                           setIsMobileMenuOpen(false);
                         }}
                         className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${kanbanGroupBy === 'priority'
-                            ? 'bg-white text-gray-800 shadow-sm'
-                            : 'text-gray-600 hover:text-gray-800'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'text-slate-300 hover:text-blue-50'
                           }`}
                       >
                         Priority
@@ -441,8 +441,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                           setIsMobileMenuOpen(false);
                         }}
                         className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${kanbanGroupBy === 'status'
-                            ? 'bg-white text-gray-800 shadow-sm'
-                            : 'text-gray-600 hover:text-gray-800'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'text-slate-300 hover:text-blue-50'
                           }`}
                       >
                         Status
@@ -455,7 +455,7 @@ const Header: React.FC<HeaderProps> = (props) => {
               {/* History Controls for mobile/tablet */}
               <WriteGuard>
                 <div className="xl:hidden">
-                  <div className="text-xs font-medium text-gray-700 mb-2">History</div>
+                  <div className="text-xs font-medium text-slate-300 mb-2">History</div>
                   <HistoryControls />
                 </div>
               </WriteGuard>
@@ -463,11 +463,11 @@ const Header: React.FC<HeaderProps> = (props) => {
               {/* Filters */}
               <div className="space-y-2">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">Status</label>
                   <select
                     value={filterConfig.status}
                     onChange={handleStatusFilterChange}
-                    className="w-full h-8 px-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full h-8 px-2 text-sm bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="all">All Status</option>
                     <option value="not started">Not Started</option>
@@ -477,11 +477,11 @@ const Header: React.FC<HeaderProps> = (props) => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Priority</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">Priority</label>
                   <select
                     value={filterConfig.priority}
                     onChange={handlePriorityFilterChange}
-                    className="w-full h-8 px-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full h-8 px-2 text-sm bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="all">All Priorities</option>
                     <option value="low">Low</option>
@@ -494,14 +494,14 @@ const Header: React.FC<HeaderProps> = (props) => {
 
               {/* Team Management - Available on all screens smaller than XL */}
               {currentProject && (
-                <div className="xl:hidden pt-2 border-t border-gray-200">
+                <div className="xl:hidden pt-2 border-t border-slate-700">
                   <InviteGuard showFallback={true}>
                     <button
                       onClick={() => {
                         handleOpenTeam();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full px-3 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
+                      className="w-full px-3 py-2 bg-slate-700 text-white text-sm rounded-md hover:bg-slate-600 transition-colors"
                     >
                       Team Management
                     </button>
@@ -511,7 +511,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
               {/* Read-only indicator */}
               {currentProject && !permissions.canWrite && (
-                <div className="text-xs text-gray-500 italic text-center pt-2 border-t border-gray-200">
+                <div className="text-xs text-slate-400 italic text-center pt-2 border-t border-slate-700">
                   Read-only access
                 </div>
               )}

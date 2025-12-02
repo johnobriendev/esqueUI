@@ -46,38 +46,38 @@ const ProjectArchiveConfirmModal: React.FC<ProjectArchiveConfirmModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={(e) => e.target === e.currentTarget && !isProcessing && onClose()}
     >
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-md">
+      <div className="bg-slate-800 rounded-lg shadow-xl border border-slate-700 w-full max-w-md">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="px-6 py-4 border-b border-slate-700">
+          <h2 className="text-xl font-semibold text-blue-50">{title}</h2>
         </div>
 
         {/* Content */}
         <div className="px-6 py-4">
-          <p className="text-gray-700 mb-4">{message}</p>
-          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-            <p className="text-sm font-semibold text-gray-900">{project.name}</p>
+          <p className="text-slate-300 mb-4">{message}</p>
+          <div className="bg-slate-900 rounded-lg p-3 border border-slate-700">
+            <p className="text-sm font-semibold text-blue-50">{project.name}</p>
             {project.description && (
-              <p className="text-sm text-gray-600 mt-1">{project.description}</p>
+              <p className="text-sm text-slate-400 mt-1">{project.description}</p>
             )}
           </div>
 
           {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="mt-4 p-3 bg-red-900/50 border border-red-700 rounded-lg">
+              <p className="text-sm text-red-200">{error}</p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+        <div className="px-6 py-4 border-t border-slate-700 flex justify-end space-x-3">
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-sm text-slate-300 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -86,8 +86,8 @@ const ProjectArchiveConfirmModal: React.FC<ProjectArchiveConfirmModalProps> = ({
             disabled={isProcessing}
             className={`px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 ${
               confirmColor === 'yellow'
-                ? 'bg-yellow-600 hover:bg-yellow-700'
-                : 'bg-blue-600 hover:bg-blue-700'
+                ? 'bg-yellow-500 hover:bg-yellow-600'
+                : 'bg-blue-500 hover:bg-blue-600'
             }`}
           >
             {isProcessing ? 'Processing...' : confirmText}

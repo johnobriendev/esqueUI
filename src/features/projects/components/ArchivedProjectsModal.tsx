@@ -58,16 +58,16 @@ const ArchivedProjectsModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-2xl max-h-[80vh] flex flex-col">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Archived Projects</h2>
+        <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-blue-50">Archived Projects</h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-slate-400 hover:text-slate-300 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -83,10 +83,10 @@ const ArchivedProjectsModal: React.FC = () => {
             </div>
           ) : archivedProjects.length === 0 ? (
             <div className="text-center py-12">
-              <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
               </svg>
-              <p className="text-gray-500">No archived projects</p>
+              <p className="text-slate-400">No archived projects</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -96,30 +96,30 @@ const ArchivedProjectsModal: React.FC = () => {
                 return (
                   <div
                     key={project.id}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+                    className="p-4 border border-slate-700 rounded-lg hover:border-slate-600 transition-colors bg-slate-900"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-gray-900">{project.name}</h3>
+                          <h3 className="font-semibold text-blue-50">{project.name}</h3>
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            permissions.userRole === 'owner' ? 'bg-red-100 text-red-800' :
-                            permissions.userRole === 'editor' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
+                            permissions.userRole === 'owner' ? 'bg-red-500 text-gray-950' :
+                            permissions.userRole === 'editor' ? 'bg-blue-500 text-gray-950' :
+                            'bg-slate-500 text-gray-950'
                           }`}>
                             {permissions.userRole}
                           </span>
                         </div>
                         {project.description && (
-                          <p className="text-sm text-gray-600 mb-2">{project.description}</p>
+                          <p className="text-sm text-slate-300 mb-2">{project.description}</p>
                         )}
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-400">
                           Archived: {new Date(project.updatedAt).toLocaleDateString()}
                         </p>
                       </div>
                       <button
                         onClick={() => handleRestore(project)}
-                        className="ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700"
+                        className="ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-blue-500 text-white hover:bg-blue-600"
                       >
                         {permissions.isOwner ? 'Unarchive' : 'Unhide'}
                       </button>
@@ -132,10 +132,10 @@ const ArchivedProjectsModal: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
+        <div className="px-6 py-4 border-t border-slate-700 flex justify-end">
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 transition-colors"
+            className="px-4 py-2 text-sm text-slate-300 hover:text-slate-200 transition-colors"
           >
             Close
           </button>

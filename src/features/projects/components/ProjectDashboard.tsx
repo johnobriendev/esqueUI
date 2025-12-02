@@ -24,6 +24,7 @@ import { useAppAuth } from '../../../auth/AuthProvider';
 import { getProjectPermissions } from '../../../lib/permissions';
 import ProjectDeleteConfirmModal from '../../../components/modals/ProjectDeleteConfirmModal';
 import ProjectArchiveConfirmModal from '../../../components/modals/ProjectArchiveConfirmModal';
+import ProjectFormModal from '../../../components/modals/ProjectFormModal';
 import UrgentTasksModal from '../../tasks/components/UrgentTasksModal';
 import ArchivedProjectsModal from './ArchivedProjectsModal';
 
@@ -227,7 +228,7 @@ const ProjectDashboard: React.FC = () => {
   // Show loading while app is initializing (before API calls can be made)
   if (!isAppReady) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
@@ -236,7 +237,7 @@ const ProjectDashboard: React.FC = () => {
                 <div className="h-16 w-16 rounded-full border-t-2 border-b-2 border-blue-500 animate-spin mx-auto"></div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 h-16 w-16 rounded-full border-l-2 border-r-2 border-blue-300 animate-pulse"></div>
               </div>
-              <p className="text-gray-600">Initializing application...</p>
+              <p className="text-slate-300">Initializing application...</p>
             </div>
           </div>
         </div>
@@ -247,7 +248,7 @@ const ProjectDashboard: React.FC = () => {
   // Loading state - only show if we don't have any projects and we're loading
   if (isLoading && projects.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
@@ -256,7 +257,7 @@ const ProjectDashboard: React.FC = () => {
                 <div className="h-16 w-16 rounded-full border-t-2 border-b-2 border-blue-500 animate-spin mx-auto"></div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 h-16 w-16 rounded-full border-l-2 border-r-2 border-blue-300 animate-pulse"></div>
               </div>
-              <p className="text-gray-600">Loading your projects...</p>
+              <p className="text-slate-300">Loading your projects...</p>
             </div>
           </div>
         </div>
@@ -267,20 +268,20 @@ const ProjectDashboard: React.FC = () => {
   //  Error state with retry functionality
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900">
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center py-12 px-6 bg-white rounded-xl shadow-sm border border-red-100">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-6">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <div className="text-center py-12 px-6 bg-slate-800 rounded-xl shadow-sm border border-red-900">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-900/30 mb-6">
+              <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Projects</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <h2 className="text-xl font-semibold text-blue-50 mb-2">Error Loading Projects</h2>
+            <p className="text-slate-300 mb-6">{error}</p>
             <button
               onClick={handleRetry}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow"
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow"
               disabled={isLoading}
             >
               {isLoading ? 'Retrying...' : 'Try Again'}
@@ -293,7 +294,7 @@ const ProjectDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-sky-50">
+      <div className="min-h-screen bg-slate-900">
         <DashboardHeader
           dashboardActions={{
             onCreateProject: handleOpenCreateForm,
@@ -304,7 +305,7 @@ const ProjectDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           {/* Permission Error Banner */}
           {permissionError && (
-            <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+            <div className="mb-6 bg-red-900/20 border-l-4 border-red-500 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -312,12 +313,12 @@ const ProjectDashboard: React.FC = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{permissionError}</p>
+                  <p className="text-sm text-red-300">{permissionError}</p>
                 </div>
                 <div className="ml-auto pl-3">
                   <button
                     onClick={() => setPermissionError(null)}
-                    className="text-red-400 hover:text-red-600"
+                    className="text-red-400 hover:text-red-300"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -328,83 +329,25 @@ const ProjectDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Project Form with modern styling */}
-          {(isCreating || isEditing) && (
-            <div className="mb-8 p-6 border rounded-xl bg-white shadow-sm">
-              <h2 className="text-xl font-semibold mb-6 text-gray-900">
-                {isCreating ? 'Create New Project' : 'Edit Project'}
-              </h2>
-              <div className="space-y-5">
-                <div>
-                  <label htmlFor="project-name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Project Name*
-                  </label>
-                  <input
-                    id="project-name"
-                    type="text"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                    placeholder="Enter project name"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label htmlFor="project-description" className="block text-sm font-medium text-gray-700 mb-1">
-                    Description (optional)
-                  </label>
-                  <textarea
-                    id="project-description"
-                    value={projectDescription}
-                    onChange={(e) => setProjectDescription(e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                    placeholder="Enter project description"
-                    rows={3}
-                  />
-                </div>
-                <div className="flex justify-end space-x-4 pt-4">
-                  <button
-                    onClick={handleCloseForm}
-                    className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={isCreating ? handleCreateProject : handleUpdateProject}
-                    disabled={!projectName.trim()}
-                    className={`px-5 py-2.5 rounded-lg text-white shadow-sm ${projectName.trim()
-                      ? 'bg-blue-600 hover:bg-blue-700 hover:shadow'
-                      : 'bg-blue-300 cursor-not-allowed'
-                      }`}
-                  >
-                    {isCreating ? 'Create Project' : 'Update Project'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {projects.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-6">
-                <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div className="text-center py-16 bg-slate-800 rounded-xl shadow-sm border border-slate-700">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-950 mb-6">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h2 className="text-xl font-medium text-gray-800 mb-2">No projects yet</h2>
-              <p className="text-gray-500 mb-8">Create your first project to get started</p>
-              {!isCreating && (
-                <button
-                  onClick={handleOpenCreateForm}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow"
-                >
-                  Create Your First Project
-                </button>
-              )}
+              <h2 className="text-xl font-medium text-blue-50 mb-2">No projects yet</h2>
+              <p className="text-slate-300 mb-8">Create your first project to get started</p>
+              <button
+                onClick={handleOpenCreateForm}
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow"
+              >
+                Create Your First Project
+              </button>
             </div>
           ) : (
-            // Project grid with modern card design
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            // Project grid - 4 columns for smaller cards
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {projects.map((project) => {
                 // Get permissions for each project
                 const permissions = getProjectPermissions(project);
@@ -412,45 +355,37 @@ const ProjectDashboard: React.FC = () => {
                 return (
                   <div
                     key={project.id}
-                    className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all border border-gray-100 flex flex-col"
+                    className="rounded-xl overflow-hidden bg-slate-800 shadow-sm hover:shadow-md transition-all border border-slate-700 hover:border-slate-600 flex flex-col"
                   >
-                    {/* Card content with consistent height and better spacing */}
-                    <div className="p-6 flex-grow">
-                      <div className="flex items-start justify-between mb-2">
-                        <h2 className="text-xl font-semibold text-gray-800 line-clamp-1 flex-1">{project.name}</h2>
+                    {/* Card content - smaller, no description */}
+                    <div className="p-4 flex-grow">
+                      <div className="flex items-start justify-between mb-3">
+                        <h2 className="text-lg font-semibold text-blue-50 line-clamp-1 flex-1">{project.name}</h2>
 
-                        <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${permissions.userRole === 'owner' ? 'bg-red-100 text-red-800' :
-                          permissions.userRole === 'editor' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
+                        <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${permissions.userRole === 'owner' ? 'bg-indigo-500 text-indigo-950' :
+                          permissions.userRole === 'editor' ? 'bg-blue-500 text-blue-950' :
+                            'bg-slate-600 text-slate-200'
                           }`}>
                           {permissions.userRole}
                         </span>
                       </div>
-                      {/* Content area with fixed height and overflow handling */}
-                      <div className="h-20">
-                        {project.description ? (
-                          <p className="text-gray-600 line-clamp-3">{project.description}</p>
-                        ) : (
-                          <p className="text-gray-400 italic">No description provided</p>
-                        )}
-                      </div>
-                      <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
+                      <div className="flex justify-between items-center text-xs text-slate-400">
                         <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="w-4 h-4 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          Created: {new Date(project.createdAt).toLocaleDateString()}
+                          {new Date(project.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
 
                     {/* Card footer */}
-                    <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center">
+                    <div className="px-4 py-3 bg-slate-900 border-t border-slate-700 flex justify-between items-center">
                       <div className="space-x-3">
                         {permissions.canWrite && (
                           <button
                             onClick={() => handleOpenEditForm(project)}
-                            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                            className="text-sm text-slate-400 hover:text-blue-400 transition-colors"
                           >
                             <span className="flex items-center">
                               <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -465,7 +400,7 @@ const ProjectDashboard: React.FC = () => {
                           <>
                             <button
                               onClick={() => handleArchiveProject(project)}
-                              className="text-sm text-gray-600 hover:text-yellow-600 transition-colors"
+                              className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,7 +411,7 @@ const ProjectDashboard: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteProject(project)}
-                              className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                              className="text-sm text-slate-400 hover:text-red-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -492,7 +427,7 @@ const ProjectDashboard: React.FC = () => {
                           <>
                             <button
                               onClick={() => handleHideProject(project)}
-                              className="text-sm text-gray-600 hover:text-yellow-600 transition-colors"
+                              className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -503,7 +438,7 @@ const ProjectDashboard: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleLeaveProject(project)}
-                              className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                              className="text-sm text-slate-400 hover:text-red-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -516,12 +451,12 @@ const ProjectDashboard: React.FC = () => {
                         )}
 
                         {!permissions.canWrite && permissions.isViewer && (
-                          <span className="text-xs text-gray-500 italic">Read-only access</span>
+                          <span className="text-xs text-slate-500 italic">Read-only</span>
                         )}
                       </div>
                       <button
                         onClick={() => handleSelectProject(project)}
-                        className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md"
                       >
                         Open
                       </button>
@@ -533,6 +468,19 @@ const ProjectDashboard: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Project Form Modal */}
+      <ProjectFormModal
+        isOpen={isCreating || isEditing}
+        isEditing={isEditing}
+        editingProject={editingProject}
+        projectName={projectName}
+        projectDescription={projectDescription}
+        onProjectNameChange={setProjectName}
+        onProjectDescriptionChange={setProjectDescription}
+        onClose={handleCloseForm}
+        onSubmit={isCreating ? handleCreateProject : handleUpdateProject}
+      />
 
       {/* Project Delete Confirmation Modal */}
       <ProjectDeleteConfirmModal
