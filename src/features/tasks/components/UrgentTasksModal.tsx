@@ -50,7 +50,9 @@ const UrgentTasksModal: React.FC = () => {
       updatedAt: task.updatedAt,
       userId: '', // Will be populated from backend
       userRole: 'owner', // Placeholder, will be set properly after navigation
-      canWrite: true
+      canWrite: true,
+      isArchived: false,
+      isUserArchived:false,
     }));
     dispatch(setCurrentProjectId(task.projectId));
 

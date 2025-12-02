@@ -70,6 +70,8 @@ export const handlers = [
       userId: 'mock-user-id',
       userRole: 'owner',
       canWrite: true,
+      isArchived: false,        
+      isUserArchived: false,    
     };
     return HttpResponse.json(newProject, { status: 201 });
   }),
@@ -85,6 +87,8 @@ export const handlers = [
       userId: 'mock-user-id',
       userRole: 'owner',
       canWrite: true,
+      isArchived: false,        
+      isUserArchived: false,    
     };
     return HttpResponse.json(updatedProject);
   }),
