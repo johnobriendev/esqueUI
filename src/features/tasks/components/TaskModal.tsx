@@ -7,8 +7,8 @@ import { selectCurrentProject } from '../../../features/projects/store/projectsS
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 import { executeCommand } from '../../commands/store/commandSlice';
-import { createTaskCommand, updateTaskCommand } from '../../commands/taskCommands';
-import { getProjectPermissions } from '../../../lib/permissions';
+import { createTaskCommand, updateTaskCommand } from '../../commands/commands/taskCommands';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const TaskModal: React.FC = () => {
   const dispatch = useAppDispatch();

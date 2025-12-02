@@ -9,9 +9,9 @@ import {
   selectArchivedLoading,
 } from '../store/projectsSlice';
 import { selectIsArchivedProjectsModalOpen, closeArchivedProjectsModal } from '../../ui/store/uiSlice';
-import { getProjectPermissions } from '../../../lib/permissions';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 import { Project } from '../../../types';
-import ProjectArchiveConfirmModal from '../../../components/modals/ProjectArchiveConfirmModal';
+import ProjectArchiveConfirmModal from './ProjectArchiveConfirmModal';
 
 const ArchivedProjectsModal: React.FC = () => {
   const dispatch = useAppDispatch();

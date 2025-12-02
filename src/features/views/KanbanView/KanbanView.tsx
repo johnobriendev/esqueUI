@@ -1,15 +1,15 @@
 // src/views/KanbanView.tsx - Fixed Container and Scrolling
 import React, { useState, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { openTaskModal, openTaskDetail, openDeleteConfirm, selectKanbanGroupBy } from '../features/ui/store/uiSlice';
-import { selectTasksByPriority, selectTasksByStatus } from '../features/tasks/store/tasksSlice';
-import { selectCurrentProject } from '../features/projects/store/projectsSlice';
-import { TaskPriority, TaskStatus, Task } from '../types';
-import { executeCommand } from '../features/commands/store/commandSlice';
-import { createTaskCommand, updateTaskPriorityCommand, updateTaskStatusCommand, reorderTasksCommand, reorderTasksByStatusCommand } from '../features/commands/taskCommands';
-import { WriteGuard } from '../components/common/PermissionGuard';
-import { getProjectPermissions } from '../lib/permissions';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { openTaskModal, openTaskDetail, openDeleteConfirm, selectKanbanGroupBy } from '../../ui/store/uiSlice';
+import { selectTasksByPriority, selectTasksByStatus } from '../../tasks/store/tasksSlice';
+import { selectCurrentProject } from '../../projects/store/projectsSlice';
+import { TaskPriority, TaskStatus, Task } from '../../../types';
+import { executeCommand } from '../../commands/store/commandSlice';
+import { createTaskCommand, updateTaskPriorityCommand, updateTaskStatusCommand, reorderTasksCommand, reorderTasksByStatusCommand } from '../../commands/commands/taskCommands';
+import { WriteGuard } from '../../../shared/components/PermissionGuard';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const KanbanView: React.FC = () => {
   const dispatch = useAppDispatch();

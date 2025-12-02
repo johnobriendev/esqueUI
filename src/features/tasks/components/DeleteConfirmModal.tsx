@@ -1,10 +1,10 @@
 // src/components/modals/DeleteConfirmModal.tsx
 import React, { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { closeDeleteConfirm } from '../../features/ui/store/uiSlice';
-import { selectCurrentProject } from '../../features/projects/store/projectsSlice';
-import { executeCommand } from '../../features/commands/store/commandSlice';
-import { deleteTaskCommand, bulkDeleteTasksCommand } from '../../features/commands/taskCommands';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { closeDeleteConfirm } from '../../ui/store/uiSlice';
+import { selectCurrentProject } from '../../projects/store/projectsSlice';
+import { executeCommand } from '../../commands/store/commandSlice';
+import { deleteTaskCommand, bulkDeleteTasksCommand } from '../../commands/commands/taskCommands';
 
 
 const DeleteConfirmModal: React.FC = () => {

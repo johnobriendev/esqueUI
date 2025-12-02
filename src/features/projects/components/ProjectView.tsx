@@ -6,11 +6,11 @@ import { fetchProject, selectCurrentProject, setCurrentProject, selectAllProject
 import { fetchTasks } from '../../tasks/store/tasksSlice';
 import { closeTaskDetail, setCurrentProjectId } from '../../ui/store/uiSlice';
 import { clearHistory } from '../../commands/store/commandSlice'; // Import command system
-import Header from '../../../components/layout/Header';
-import ListView from '../../../views/ListView';
-import KanbanView from '../../../views/KanbanView';
-import TaskDetailView from '../../tasks/components/TaskDetailVIew';
-import { useAppAuth } from '../../../auth/AuthProvider';
+import Header from '../../../shared/components/layout/Header';
+import ListView from '../../views/ListView/ListView';
+import KanbanView from '../../views/KanbanView/KanbanView';
+import TaskDetailView from '../../tasks/components/TaskDetailView';
+import { useAppAuth } from '../../auth/components/AuthProvider';
 import TeamModal from '../../collaboration/components/TeamModal';
 
 const ProjectView: React.FC = () => {

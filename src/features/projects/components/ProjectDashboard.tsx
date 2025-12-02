@@ -19,12 +19,12 @@ import { setCurrentProjectId, openUrgentTasksModal } from '../../ui/store/uiSlic
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { Project } from '../../../types';
-import DashboardHeader from '../../../components/layout/DashboardHeader';
-import { useAppAuth } from '../../../auth/AuthProvider';
-import { getProjectPermissions } from '../../../lib/permissions';
-import ProjectDeleteConfirmModal from '../../../components/modals/ProjectDeleteConfirmModal';
-import ProjectArchiveConfirmModal from '../../../components/modals/ProjectArchiveConfirmModal';
-import ProjectFormModal from '../../../components/modals/ProjectFormModal';
+import DashboardHeader from '../../../shared/components/layout/DashboardHeader';
+import { useAppAuth } from '../../auth/components/AuthProvider';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
+import ProjectDeleteConfirmModal from './ProjectDeleteConfirmModal';
+import ProjectArchiveConfirmModal from './ProjectArchiveConfirmModal';
+import ProjectFormModal from './ProjectFormModal';
 import UrgentTasksModal from '../../tasks/components/UrgentTasksModal';
 import ArchivedProjectsModal from './ArchivedProjectsModal';
 

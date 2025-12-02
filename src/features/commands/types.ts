@@ -1,7 +1,7 @@
 //src/features/commands/types/commandTypes.ts
 
 
-import type { AppDispatch, RootState } from '../../../app/store';
+import type { AppDispatch, RootState } from '../../app/store';
 
 // Base command interface - every undoable operation implements this
 export interface UndoableCommand {

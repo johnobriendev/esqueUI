@@ -3,8 +3,8 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openDeleteConfirm, openTaskModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
-import { WriteGuard } from '../../../components/common/PermissionGuard';
-import { getProjectPermissions } from '../../../lib/permissions';
+import { WriteGuard } from '../../../shared/components/PermissionGuard';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 import CommentsSection from '../../comments/components/CommentsSection';
 
 interface TaskDetailViewProps {

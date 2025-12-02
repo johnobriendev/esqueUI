@@ -22,7 +22,7 @@ import {
   selectIsTeamModalOpen
 } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
-import { getProjectPermissions } from '../../../lib/permissions';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 import { UserRole, ProjectMember } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 

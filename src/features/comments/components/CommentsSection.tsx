@@ -21,7 +21,7 @@ import {
 import { openDeleteCommentModal } from '../../ui/store/uiSlice';
 import CommentItem from './CommentItem';
 import CommentForm from './CommentForm';
-import LoadingSpinner from '../../../components/ui/LoadingSpinner';
+import LoadingSpinner from '../../../shared/components/ui/LoadingSpinner';
 import DeleteCommentModal from './DeleteCommentModal';
 
 interface CommentsSectionProps {

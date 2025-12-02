@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ListView from '../ListView';
-import { renderWithProviders, createMockTasks, createMockProject, RootState } from '../../test/utils/testUtils';
+import ListView from './ListView';
+import { renderWithProviders, createMockTasks, createMockProject, RootState } from '../../../test/utils/testUtils';
 
 vi.mock('../../app/hooks', async () => {
   const actual = await vi.importActual('../../app/hooks');

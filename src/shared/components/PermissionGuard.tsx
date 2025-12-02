@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
 import { selectCurrentProject } from '../../features/projects/store/projectsSlice';
-import { canPerformAction } from '../../lib/permissions';
+import { canPerformAction } from '../lib/permissions';
 
 interface PermissionGuardProps {
   children: React.ReactNode;

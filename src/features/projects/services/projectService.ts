@@ -1,5 +1,5 @@
 //src/features/project/services/projectService.ts
-import api from '../../../lib/api';
+import api from '../../../shared/lib/api';
 import { Project } from '../../../types';
 
 // Types for API requests

@@ -1,6 +1,6 @@
 // src/components/modals/ProjectFormModal.tsx
 import React from 'react';
-import { Project } from '../../types';
+import { Project } from '../../../types';
 
 interface ProjectFormModalProps {
   isOpen: boolean;

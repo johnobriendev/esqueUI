@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { closeBulkEdit } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { executeCommand } from '../../../features/commands/store/commandSlice';
-import { bulkUpdateTasksCommand } from '../../../features/commands/taskCommands';
+import { bulkUpdateTasksCommand } from '../../commands/commands/taskCommands';
 import { TaskStatus, TaskPriority } from '../../../types';
 
 const BulkEditModal: React.FC = () => {

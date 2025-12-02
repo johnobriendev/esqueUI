@@ -2,8 +2,8 @@
 // src/auth/AuthProvider.tsx
 import React, { useEffect, createContext, useContext, useState } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
-import { setupAuthInterceptor } from '../lib/api';
-//import { debugToken } from '../lib/utils';
+import { setupAuthInterceptor } from '../../../shared/lib/api';
+//import { debugToken } from '../shared/utils/welcomeTasks';
 
 // ADDITION: Create context for app ready state
 interface AuthContextType {

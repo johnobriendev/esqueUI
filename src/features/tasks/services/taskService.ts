@@ -1,6 +1,6 @@
 //src/services/taskService.ts
 
-import api from '../../../lib/api';
+import api from '../../../shared/lib/api';
 import { Task, TaskStatus, TaskPriority, UrgentTaskWithProject } from '../../../types';
 
 // Types for API requests

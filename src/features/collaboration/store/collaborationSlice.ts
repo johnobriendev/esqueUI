@@ -2,7 +2,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ProjectMember, CollaborationState, Invitation, UserRole } from '../../../types';
-import api from '../../../lib/api';
+import api from '../../../shared/lib/api';
 
 // Super simple initial state - just team members
 const initialState: CollaborationState = {

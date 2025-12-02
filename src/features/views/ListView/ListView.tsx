@@ -1,12 +1,12 @@
 // src/views/ListView.tsx
 import React, { useState, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { openTaskModal, setSortConfig, openTaskDetail, openDeleteConfirm, openBulkEdit, selectIsDeleteConfirmOpen } from '../features/ui/store/uiSlice';
-import { selectCurrentProject } from '../features/projects/store/projectsSlice';
-import { selectSortedFilteredTasks } from '../features/tasks/store/tasksSlice';
-import { Task, SortField, SortDirection, TaskStatus, TaskPriority } from '../types';
-import { WriteGuard } from '../components/common/PermissionGuard';
-import { getProjectPermissions } from '../lib/permissions';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { openTaskModal, setSortConfig, openTaskDetail, openDeleteConfirm, openBulkEdit, selectIsDeleteConfirmOpen } from '../../ui/store/uiSlice';
+import { selectCurrentProject } from '../../projects/store/projectsSlice';
+import { selectSortedFilteredTasks } from '../../tasks/store/tasksSlice';
+import { Task, SortField, SortDirection, TaskStatus, TaskPriority } from '../../../types';
+import { WriteGuard } from '../../../shared/components/PermissionGuard';
+import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const ListView: React.FC = () => {
   const dispatch = useAppDispatch();

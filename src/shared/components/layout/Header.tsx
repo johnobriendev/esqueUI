@@ -1,7 +1,7 @@
 //src/components/layout/Header.tsx 
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import {
   setViewMode,
   setKanbanGroupBy,
@@ -9,13 +9,13 @@ import {
   setSearchTerm,
   setFilterStatus,
   setFilterPriority
-} from '../../features/ui/store/uiSlice';
-import { ViewMode, KanbanGroupBy, TaskStatus, TaskPriority } from '../../types';
-import HistoryControls from '../../features/ui/components/HistoryControls';
+} from '../../../features/ui/store/uiSlice';
+import { ViewMode, KanbanGroupBy, TaskStatus, TaskPriority } from '../../../types';
+import HistoryControls from '../../../features/ui/components/HistoryControls';
 import { useAuth0 } from '@auth0/auth0-react';
-import { openTeamModal } from '../../features/ui/store/uiSlice';
-import { WriteGuard, InviteGuard } from '../common/PermissionGuard';
-import { selectCurrentProject } from '../../features/projects/store/projectsSlice';
+import { openTeamModal } from '../../../features/ui/store/uiSlice';
+import { WriteGuard, InviteGuard } from '../PermissionGuard';
+import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { getProjectPermissions } from '../../lib/permissions';
 
 interface HeaderProps {

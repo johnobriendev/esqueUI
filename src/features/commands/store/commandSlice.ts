@@ -1,7 +1,7 @@
 //src/features/commands/store/commandSlice.ts
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { UndoableCommand, CommandHistoryState } from '../types/commandTypes';
+import { UndoableCommand, CommandHistoryState } from '../types';
 import type { RootState, AppDispatch } from '../../../app/store'; // Import the correct types
 
 // Initial state for command history

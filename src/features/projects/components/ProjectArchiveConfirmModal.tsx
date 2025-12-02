@@ -1,6 +1,6 @@
 // src/components/modals/ProjectArchiveConfirmModal.tsx
 import React, { useState } from 'react';
-import { Project } from '../../types';
+import { Project } from '../../../types';
 
 interface ProjectArchiveConfirmModalProps {
   isOpen: boolean;

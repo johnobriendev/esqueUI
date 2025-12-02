@@ -1,5 +1,5 @@
 // src/features/commands/taskCommands.ts
-import { UndoableCommand } from './types/commandTypes';
+import { UndoableCommand } from '../types';
 import {
   createTaskAsync,
   updateTaskAsync,
@@ -16,9 +16,9 @@ import {
   optimisticReorderTasksByStatus,
   revertOptimisticUpdate,
   revertOptimisticReorder
-} from '../tasks/store/tasksSlice'; import { Task, TaskStatus, TaskPriority } from '../../types';
-import { AppDispatch } from '../../app/store';
-import { showConflictResolution } from '../tasks/hooks/useConflictResolution';
+} from '../../tasks/store/tasksSlice'; import { Task, TaskStatus, TaskPriority } from '../../../types';
+import { AppDispatch } from '../../../app/store';
+import { showConflictResolution } from '../../tasks/hooks/useConflictResolution';
 
 
 // Data interfaces for command parameters

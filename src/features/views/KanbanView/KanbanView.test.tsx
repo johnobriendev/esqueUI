@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import KanbanView from '../KanbanView';
-import { renderWithProviders, createMockTask, createMockProject, RootState } from '../../test/utils/testUtils';
+import KanbanView from './KanbanView';
+import { renderWithProviders, createMockTask, createMockProject, RootState } from '../../../test/utils/testUtils';
 
 // Mock @hello-pangea/dnd to avoid DragDropContext issues in tests
 vi.mock('@hello-pangea/dnd', () => ({

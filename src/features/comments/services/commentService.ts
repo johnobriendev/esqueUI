@@ -1,6 +1,6 @@
 //src/features/comments/services/commentService.ts
 
-import api from '../../../lib/api';
+import api from '../../../shared/lib/api';
 import { Comment } from '../../../types';
 
 // Types for API requests

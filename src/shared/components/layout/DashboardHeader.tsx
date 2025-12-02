@@ -1,21 +1,21 @@
 // src/components/dashboard/DashboardHeader.tsx
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { clearProjects } from '../../features/projects/store/projectsSlice';
-import { clearPersistedState } from '../../app/store';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { clearProjects } from '../../../features/projects/store/projectsSlice';
+import { clearPersistedState } from '../../../app/store';
 import {
   selectPendingInvitations,
   fetchPendingInvitations
-} from '../../features/collaboration/store/collaborationSlice';
+} from '../../../features/collaboration/store/collaborationSlice';
 import {
   openInvitationsPanel,
   selectIsInvitationsPanelOpen,
-} from '../../features/ui/store/uiSlice';
-import InvitationsPanel from '../../features/collaboration/components/InvitationsPanel';
-import { useAppAuth } from '../../auth/AuthProvider';
+} from '../../../features/ui/store/uiSlice';
+import InvitationsPanel from '../../../features/collaboration/components/InvitationsPanel';
+import { useAppAuth } from '../../../features/auth/components/AuthProvider';
 import ProfileDropdown from './ProfileDropdown';
-import { openArchivedProjectsModal } from '../../features/ui/store/uiSlice';
+import { openArchivedProjectsModal } from '../../../features/ui/store/uiSlice';
 
 interface DashboardActions {
   onCreateProject: () => void;

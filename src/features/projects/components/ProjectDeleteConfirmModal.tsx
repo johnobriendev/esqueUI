@@ -1,6 +1,6 @@
 // src/components/modals/ProjectDeleteConfirmModal.tsx
 import React, { useState } from 'react';
-import { Project } from '../../types';
+import { Project } from '../../../types';
 
 interface ProjectDeleteConfirmModalProps {
   isOpen: boolean;
