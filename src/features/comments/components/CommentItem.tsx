@@ -45,7 +45,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   if (isEditing) {
     return (
-      <div className="border rounded-md p-4 bg-gray-50">
+      <div className="border border-slate-700 rounded-md p-4 bg-slate-800">
         <CommentForm
           initialContent={comment.content}
           onSubmit={handleEditSubmit}
@@ -58,21 +58,21 @@ const CommentItem: React.FC<CommentItemProps> = ({
   }
 
   return (
-    <div className="border rounded-md p-4 bg-white hover:bg-gray-50 transition-colors">
+    <div className="border border-slate-700 rounded-md p-4 bg-slate-800 hover:bg-slate-750 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-blue-50">
               {comment.user.name || comment.user.email}
             </span>
             {isOwnComment && (
-              <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
+              <span className="text-xs px-2 py-0.5 bg-blue-900 text-blue-200 rounded-full">
                 You
               </span>
             )}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">
+          <div className="text-xs text-slate-400 mt-0.5">
             {formatDate(comment.createdAt)}
             {isEdited && <span className="ml-2 italic">(edited)</span>}
           </div>
@@ -102,7 +102,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       </div>
 
       {/* Content */}
-      <div className="text-gray-800 whitespace-pre-wrap break-words">{comment.content}</div>
+      <div className="text-slate-300 whitespace-pre-wrap break-words">{comment.content}</div>
     </div>
   );
 };

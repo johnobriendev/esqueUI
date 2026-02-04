@@ -66,11 +66,11 @@ const CommentForm: React.FC<CommentFormProps> = ({
             : 'You need editor or owner access to comment'
         }
         disabled={!permissions.canWrite}
-        className={`w-full px-3 py-2 border rounded-md resize-none focus:outline-none focus:ring-2 ${
+        className={`w-full px-3 py-2 border rounded-md resize-none focus:outline-none focus:ring-2 bg-slate-900 text-slate-200 placeholder-slate-500 ${
           isOverLimit
-            ? 'border-red-300 focus:ring-red-500'
-            : 'border-gray-300 focus:ring-blue-500'
-        } ${!permissions.canWrite ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+            ? 'border-red-500 focus:ring-red-500'
+            : 'border-slate-700 focus:ring-blue-500'
+        } ${!permissions.canWrite ? 'bg-slate-800 cursor-not-allowed' : ''}`}
         rows={3}
         aria-label="Comment content"
       />
@@ -79,7 +79,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
       <div className="flex items-center justify-between text-sm">
         <span
           className={`${
-            isOverLimit ? 'text-red-600 font-medium' : 'text-gray-500'
+            isOverLimit ? 'text-red-400 font-medium' : 'text-slate-400'
           }`}
         >
           {charCount}/{maxChars}
@@ -90,7 +90,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
             <button
               type="button"
               onClick={handleCancel}
-              className="px-3 py-1 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-3 py-1 text-slate-300 border border-slate-600 rounded-md hover:bg-slate-700 transition-colors"
             >
               Cancel
             </button>
@@ -111,14 +111,14 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
       {/* Error message */}
       {error && (
-        <div className="text-sm text-red-600 mt-1" role="alert">
+        <div className="text-sm text-red-400 mt-1" role="alert">
           {error}
         </div>
       )}
 
       {/* Permission warning */}
       {!permissions.canWrite && (
-        <div className="text-sm text-gray-600 italic mt-1">
+        <div className="text-sm text-slate-500 italic mt-1">
           You need editor or owner access to comment
         </div>
       )}
