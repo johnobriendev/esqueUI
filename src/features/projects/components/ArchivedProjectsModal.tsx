@@ -12,6 +12,7 @@ import { selectIsArchivedProjectsModalOpen, closeArchivedProjectsModal } from '.
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 import { Project } from '../../../types';
 import ProjectArchiveConfirmModal from './ProjectArchiveConfirmModal';
+import Modal from '../../../shared/components/ui/Modal';
 
 const ArchivedProjectsModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -54,29 +55,23 @@ const ArchivedProjectsModal: React.FC = () => {
     setProjectToRestore(null);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={(e) => e.target === e.currentTarget && handleClose()}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-blue-50">Archived Projects</h2>
-          <button
-            onClick={handleClose}
-            className="text-slate-400 hover:text-slate-300 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+    <Modal isOpen={isOpen} onClose={handleClose} size="2xl">
+      {/* Header */}
+      <div className="-mx-6 -mt-6 px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-blue-50">Archived Projects</h2>
+        <button
+          onClick={handleClose}
+          className="text-slate-400 hover:text-slate-300 transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+      {/* Content */}
+      <div className="py-6">
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
               <div className="h-8 w-8 rounded-full border-t-2 border-b-2 border-blue-500 animate-spin"></div>
@@ -129,17 +124,16 @@ const ArchivedProjectsModal: React.FC = () => {
               })}
             </div>
           )}
-        </div>
+      </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-700 flex justify-end">
-          <button
-            onClick={handleClose}
-            className="px-4 py-2 text-sm text-slate-300 hover:text-slate-200 transition-colors"
-          >
-            Close
-          </button>
-        </div>
+      {/* Footer */}
+      <div className="-mx-6 -mb-6 px-6 py-4 border-t border-slate-700 flex justify-end">
+        <button
+          onClick={handleClose}
+          className="px-4 py-2 text-sm text-slate-300 hover:text-slate-200 transition-colors"
+        >
+          Close
+        </button>
       </div>
 
       {/* Unarchive Confirmation Modal */}
@@ -152,7 +146,7 @@ const ArchivedProjectsModal: React.FC = () => {
           onConfirm={confirmRestore}
         />
       )}
-    </div>
+    </Modal>
   );
 };
 

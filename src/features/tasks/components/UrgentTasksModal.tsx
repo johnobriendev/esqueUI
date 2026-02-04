@@ -17,6 +17,7 @@ import {
 } from '../../ui/store/uiSlice';
 import { setCurrentProject } from '../../projects/store/projectsSlice';
 import { UrgentTaskWithProject } from '../../../types';
+import Modal from '../../../shared/components/ui/Modal';
 
 const UrgentTasksModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -33,9 +34,6 @@ const UrgentTasksModal: React.FC = () => {
       dispatch(fetchUrgentTasks());
     }
   }, [isOpen, dispatch]);
-
-  // Don't render if not open
-  if (!isOpen) return null;
 
   const handleTaskClick = async (task: UrgentTaskWithProject) => {
     // Close the urgent tasks modal
@@ -67,10 +65,8 @@ const UrgentTasksModal: React.FC = () => {
     navigate(`/projects/${task.projectId}`);
   };
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      dispatch(closeUrgentTasksModal());
-    }
+  const handleClose = () => {
+    dispatch(closeUrgentTasksModal());
   };
 
   const getStatusColor = (status: string) => {
@@ -87,36 +83,32 @@ const UrgentTasksModal: React.FC = () => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 w-full max-w-2xl max-h-[80vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-blue-50">
-            Urgent Tasks
-          </h2>
-          <button
-            onClick={() => dispatch(closeUrgentTasksModal())}
-            className="text-slate-400 hover:text-slate-300 transition-colors"
-            aria-label="Close modal"
+    <Modal isOpen={isOpen} onClose={handleClose} size="2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-blue-50">
+          Urgent Tasks
+        </h2>
+        <button
+          onClick={handleClose}
+          className="text-slate-400 hover:text-slate-300 transition-colors"
+          aria-label="Close modal"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
@@ -197,14 +189,13 @@ const UrgentTasksModal: React.FC = () => {
           )}
         </div>
 
-        {/* Footer with count */}
-        {!isLoading && !error && urgentTasks.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400 text-center">
-            Showing {urgentTasks.length} urgent {urgentTasks.length === 1 ? 'task' : 'tasks'}
-          </div>
-        )}
-      </div>
-    </div>
+      {/* Footer with count */}
+      {!isLoading && !error && urgentTasks.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400 text-center">
+          Showing {urgentTasks.length} urgent {urgentTasks.length === 1 ? 'task' : 'tasks'}
+        </div>
+      )}
+    </Modal>
   );
 };
 

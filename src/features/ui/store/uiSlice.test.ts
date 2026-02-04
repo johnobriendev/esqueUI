@@ -59,6 +59,7 @@ describe('uiSlice', () => {
     isDeleteCommentModalOpen: false,
     deletingCommentId: null,
     isUrgentTasksModalOpen: false,
+    isArchivedProjectsModalOpen: false,
   };
 
   describe('initial state', () => {

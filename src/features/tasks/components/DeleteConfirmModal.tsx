@@ -5,6 +5,7 @@ import { closeDeleteConfirm } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { executeCommand } from '../../commands/store/commandSlice';
 import { deleteTaskCommand, bulkDeleteTasksCommand } from '../../commands/commands/taskCommands';
+import Modal from '../../../shared/components/ui/Modal';
 
 
 const DeleteConfirmModal: React.FC = () => {
@@ -17,18 +18,10 @@ const DeleteConfirmModal: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Determine if we're deleting multiple tasks
   const isMultiDelete = deletingTaskIds.length > 0;
 
-  // Close the modal
   const handleClose = () => {
     dispatch(closeDeleteConfirm());
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isDeleting) {
-      handleClose();
-    }
   };
 
   // Confirm deletion
@@ -77,52 +70,42 @@ const DeleteConfirmModal: React.FC = () => {
     }
   };
 
-  // If modal is closed, don't render anything
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4 text-blue-50">Confirm Deletion</h2>
+    <Modal isOpen={isOpen} onClose={handleClose} size="md" disabled={isDeleting}>
+      <h2 className="text-xl font-bold mb-4 text-blue-50">Confirm Deletion</h2>
 
-        {error && (
-          <div className="mb-4 p-2 bg-red-900/50 text-red-200 rounded border border-red-700">
-            {error}
-          </div>
-        )}
-
-        <p className="mb-6 text-slate-300">
-          {isMultiDelete
-            ? `Are you sure you want to delete ${deletingTaskIds.length} ${deletingTaskIds.length === 1 ? 'task' : 'tasks'}?`
-            : 'Are you sure you want to delete this task?'
-          }
-          <br />
-          {/* <span className="text-red-600 font-medium">This action cannot be undone.</span> */}
-        </p>
-
-        <div className="flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="px-4 py-2 border border-slate-700 bg-slate-700 text-slate-300 rounded-md hover:bg-slate-600 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirmDelete}
-            disabled={isDeleting}
-            className={`px-4 py-2 rounded-md text-white ${isDeleting ? 'bg-red-500/60 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
-              }`}
-          >
-            {isDeleting ? 'Deleting...' : 'Delete'}
-          </button>
+      {error && (
+        <div className="mb-4 p-2 bg-red-900/50 text-red-200 rounded border border-red-700">
+          {error}
         </div>
+      )}
+
+      <p className="mb-6 text-slate-300">
+        {isMultiDelete
+          ? `Are you sure you want to delete ${deletingTaskIds.length} ${deletingTaskIds.length === 1 ? 'task' : 'tasks'}?`
+          : 'Are you sure you want to delete this task?'
+        }
+      </p>
+
+      <div className="flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={handleClose}
+          className="px-4 py-2 border border-slate-700 bg-slate-700 text-slate-300 rounded-md hover:bg-slate-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={handleConfirmDelete}
+          disabled={isDeleting}
+          className={`px-4 py-2 rounded-md text-white ${isDeleting ? 'bg-red-500/60 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
+            }`}
+        >
+          {isDeleting ? 'Deleting...' : 'Delete'}
+        </button>
       </div>
-    </div>
+    </Modal>
   );
 };
 

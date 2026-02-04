@@ -6,6 +6,7 @@ import { selectCurrentProject } from '../../../features/projects/store/projectsS
 import { executeCommand } from '../../../features/commands/store/commandSlice';
 import { bulkUpdateTasksCommand } from '../../commands/commands/taskCommands';
 import { TaskStatus, TaskPriority } from '../../../types';
+import Modal from '../../../shared/components/ui/Modal';
 
 const BulkEditModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,15 +20,8 @@ const BulkEditModal: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Close the modal
   const handleClose = () => {
     dispatch(closeBulkEdit());
-  };
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isSubmitting) {
-      handleClose();
-    }
   };
 
   // Submit the bulk edit
@@ -74,18 +68,13 @@ const BulkEditModal: React.FC = () => {
     }
   };
 
-  // If modal is closed, don't render anything
-  if (!isOpen || !editType) return null;
+  if (!editType) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4 text-blue-50">
-          Bulk Edit: Change {editType === 'status' ? 'Status' : 'Priority'}
-        </h2>
+    <Modal isOpen={isOpen} onClose={handleClose} size="md" disabled={isSubmitting}>
+      <h2 className="text-xl font-bold mb-4 text-blue-50">
+        Bulk Edit: Change {editType === 'status' ? 'Status' : 'Priority'}
+      </h2>
 
         {error && (
           <div className="mb-4 p-2 bg-red-900/50 text-red-200 rounded border border-red-700">
@@ -149,8 +138,7 @@ const BulkEditModal: React.FC = () => {
             This will update {selectedTaskIds.length} {selectedTaskIds.length === 1 ? 'task' : 'tasks'}.
           </p>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

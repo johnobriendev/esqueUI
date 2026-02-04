@@ -1,6 +1,7 @@
 // src/components/modals/ProjectDeleteConfirmModal.tsx
 import React, { useState } from 'react';
 import { Project } from '../../../types';
+import Modal from '../../../shared/components/ui/Modal';
 
 interface ProjectDeleteConfirmModalProps {
   isOpen: boolean;
@@ -17,13 +18,6 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Handle backdrop click
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isDeleting) {
-      onClose();
-    }
-  };
 
   // Confirm deletion
   const handleConfirmDelete = async () => {
@@ -50,16 +44,11 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
     }
   }, [isOpen]);
 
-  // If modal is closed, don't render anything
-  if (!isOpen || !project) return null;
+  if (!project) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-        <div className="mb-4">
+    <Modal isOpen={isOpen} onClose={onClose} size="md" disabled={isDeleting}>
+      <div className="mb-4">
           <div className="flex items-center mb-4">
             <div className="flex-shrink-0">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-900/50">
@@ -132,9 +121,8 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
               'Delete Project'
             )}
           </button>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

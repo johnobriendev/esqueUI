@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeTaskModal } from '../../ui/store/uiSlice';
-import { createTaskAsync, updateTaskAsync } from '../../../features/tasks/store/tasksSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 import { executeCommand } from '../../commands/store/commandSlice';
 import { createTaskCommand, updateTaskCommand } from '../../commands/commands/taskCommands';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
+import Modal from '../../../shared/components/ui/Modal';
 
 const TaskModal: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -169,20 +169,8 @@ const TaskModal: React.FC = () => {
     setShowCustomFields(!showCustomFields);
   };
 
-  // If modal is closed, don't render anything
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={(e) => {
-        // Only close if the click is on the backdrop, not on the modal itself
-        if (e.target === e.currentTarget) {
-          dispatch(closeTaskModal());
-        }
-      }}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
         <h2 className="text-xl font-bold mb-4 text-blue-50">
           {isEditing ? 'Edit Task' : 'Create New Task'}
         </h2>
@@ -360,8 +348,7 @@ const TaskModal: React.FC = () => {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

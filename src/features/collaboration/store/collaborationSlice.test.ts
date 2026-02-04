@@ -13,11 +13,18 @@ import collaborationReducer, {
   acceptInvitation,
   declineInvitation,
 } from './collaborationSlice';
-import api from '../../../lib/api';
+import api from '../../../shared/lib/api';
 import { ProjectMember, Invitation, UserRole } from '../../../types';
 
 // Mock the API module
-vi.mock('../../../lib/api');
+vi.mock('../../../shared/lib/api', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
 describe('collaborationSlice', () => {
   let store: ReturnType<typeof configureStore>;

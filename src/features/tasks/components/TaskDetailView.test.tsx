@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TaskDetailView from '../TaskDetailVIew';
-import { renderWithProviders, createMockTask, createMockProject, RootState } from '../../../../test/utils/testUtils';
+import TaskDetailView from './TaskDetailView';
+import { renderWithProviders, createMockTask, createMockProject, RootState } from '../../../test/utils/testUtils';
 
 // Mock CommentsSection to avoid needing to set up all its dependencies
-vi.mock('../../../comments/components/CommentsSection', () => ({
+vi.mock('../../comments/components/CommentsSection', () => ({
   default: () => <div data-testid="comments-section">Comments</div>,
 }));
 

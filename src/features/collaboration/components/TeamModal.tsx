@@ -1,7 +1,8 @@
-//src/features/collaboration/components/TeamModal.tsx 
+//src/features/collaboration/components/TeamModal.tsx
 
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import Modal from '../../../shared/components/ui/Modal';
 import {
   fetchProjectMembers,
   selectProjectMembers,
@@ -85,13 +86,6 @@ const TeamModal: React.FC = () => {
     dispatch(closeTeamModal());
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
-
-
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentProject || !email.trim()) return;
@@ -169,16 +163,10 @@ const TeamModal: React.FC = () => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+    <Modal isOpen={isOpen} onClose={handleClose} size="md">
+      {/* Header */}
+      <div className="-mx-6 -mt-6 px-6 py-4 border-b border-slate-700 flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold text-blue-50">Team Members</h2>
             <div className="flex items-center space-x-2 text-sm text-slate-400">
@@ -351,57 +339,52 @@ const TeamModal: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
 
       {/* Role Change Modal */}
-      {showRoleModal && editingMember && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-60">
-          <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-w-sm w-full mx-4">
-            <div className="px-6 py-4 border-b border-slate-700">
-              <h3 className="text-lg font-semibold text-blue-50">Change Role</h3>
-              <p className="text-sm text-slate-400 mt-1">
-                Changing role for {editingMember.email}
-              </p>
+      <Modal isOpen={showRoleModal && !!editingMember} onClose={() => setShowRoleModal(false)} size="sm" disabled={isUpdatingRole}>
+        {editingMember && (
+          <>
+            <h3 className="text-lg font-semibold text-blue-50">Change Role</h3>
+            <p className="text-sm text-slate-400 mt-1 mb-4">
+              Changing role for {editingMember.email}
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                New Role
+              </label>
+              <select
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value as UserRole)}
+                className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isUpdatingRole}
+              >
+                <option value="viewer">Viewer (read-only)</option>
+                <option value="editor">Editor (can edit tasks)</option>
+                {permissions.userRole === 'owner' && (
+                  <option value="owner">Owner (full access)</option>
+                )}
+              </select>
             </div>
-            <div className="p-6">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  New Role
-                </label>
-                <select
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value as UserRole)}
-                  className="w-full px-3 py-2 bg-slate-900 text-slate-300 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isUpdatingRole}
-                >
-                  <option value="viewer">Viewer (read-only)</option>
-                  <option value="editor">Editor (can edit tasks)</option>
-                  {permissions.userRole === 'owner' && (
-                    <option value="owner">Owner (full access)</option>
-                  )}
-                </select>
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowRoleModal(false)}
-                  disabled={isUpdatingRole}
-                  className="px-4 py-2 text-slate-300 bg-slate-700 border border-slate-700 rounded-md hover:bg-slate-600 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleUpdateRole}
-                  disabled={isUpdatingRole || newRole === editingMember.role}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isUpdatingRole ? 'Updating...' : 'Update Role'}
-                </button>
-              </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowRoleModal(false)}
+                disabled={isUpdatingRole}
+                className="px-4 py-2 text-slate-300 bg-slate-700 border border-slate-700 rounded-md hover:bg-slate-600 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateRole}
+                disabled={isUpdatingRole || newRole === editingMember.role}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUpdatingRole ? 'Updating...' : 'Update Role'}
+              </button>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </>
+        )}
+      </Modal>
+    </Modal>
   );
 };
 

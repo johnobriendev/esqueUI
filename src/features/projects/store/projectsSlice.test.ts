@@ -34,8 +34,10 @@ describe('projectsSlice', () => {
 
       expect(state).toEqual({
         items: [],
+        archivedItems: [],
         currentProject: null,
         isLoading: false,
+        isLoadingArchived: false,
         error: null,
       });
     });

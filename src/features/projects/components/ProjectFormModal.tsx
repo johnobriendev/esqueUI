@@ -1,6 +1,7 @@
 // src/components/modals/ProjectFormModal.tsx
 import React from 'react';
 import { Project } from '../../../types';
+import Modal from '../../../shared/components/ui/Modal';
 
 interface ProjectFormModalProps {
   isOpen: boolean;
@@ -25,13 +26,6 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   onClose,
   onSubmit
 }) => {
-  // Handle backdrop click
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   // Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,18 +34,11 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     }
   };
 
-  // If modal is closed, don't render
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-w-lg w-full mx-4 p-6">
-        <h2 className="text-xl font-semibold mb-6 text-blue-50">
-          {isEditing ? 'Edit Project' : 'Create New Project'}
-        </h2>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <h2 className="text-xl font-semibold mb-6 text-blue-50">
+        {isEditing ? 'Edit Project' : 'Create New Project'}
+      </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-5">
@@ -104,8 +91,7 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
             </div>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 
