@@ -347,7 +347,7 @@ const ProjectDashboard: React.FC = () => {
             </div>
           ) : (
             // Project grid - 4 columns for smaller cards
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
               {projects.map((project) => {
                 // Get permissions for each project
                 const permissions = getProjectPermissions(project);
