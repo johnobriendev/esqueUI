@@ -697,6 +697,8 @@ export const selectFilteredTasks = createSelector(
 );
 
 // Memoized selector for sorted and filtered tasks
+const priorityRank: Record<TaskPriority, number> = { low: 0, medium: 1, high: 2, urgent: 3 };
+
 export const selectSortedFilteredTasks = createSelector(
   [selectFilteredTasks, selectSortConfig],
   (tasks, sortConfig) => {
@@ -706,6 +708,10 @@ export const selectSortedFilteredTasks = createSelector(
     return [...tasks].sort((a, b) => {
       if (field === 'createdAt' || field === 'updatedAt') {
         return multiplier * (new Date(a[field]).getTime() - new Date(b[field]).getTime());
+      }
+
+      if (field === 'priority') {
+        return multiplier * (priorityRank[a.priority as TaskPriority] - priorityRank[b.priority as TaskPriority]);
       }
 
       if (typeof a[field] === 'string' && typeof b[field] === 'string') {
