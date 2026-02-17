@@ -1,6 +1,7 @@
 //src/features/ui/store/uiSlice.ts
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { REHYDRATE } from 'redux-persist';
 import {
   ViewMode,
   KanbanGroupBy,
@@ -49,6 +50,8 @@ const initialState: UiState = {
   deletingCommentId: null,
   isUrgentTasksModalOpen: false,
   isArchivedProjectsModalOpen: false,
+  backgroundConfig: { type: 'random', value: '', cachedImageUrl: null, photographerName: '', photographerUrl: '' },
+  isBackgroundPickerOpen: false,
 };
 
 // Create the slice with reducers
@@ -202,7 +205,35 @@ export const uiSlice = createSlice({
       state.isArchivedProjectsModalOpen = false;
     },
 
-  }
+    // Background customization
+    setBackgroundConfig: (state, action: PayloadAction<UiState['backgroundConfig']>) => {
+      state.backgroundConfig = action.payload;
+    },
+    setCachedImageUrl: (state, action: PayloadAction<string | null>) => {
+      state.backgroundConfig.cachedImageUrl = action.payload;
+    },
+    openBackgroundPicker: (state) => {
+      state.isBackgroundPickerOpen = true;
+    },
+    closeBackgroundPicker: (state) => {
+      state.isBackgroundPickerOpen = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(REHYDRATE, (state, action: any) => {
+      const incoming = action.payload;
+      if (incoming?.backgroundConfig) {
+        const isImage = incoming.backgroundConfig.type === 'image';
+        state.backgroundConfig = {
+          ...incoming.backgroundConfig,
+          // fresh photo each session for random; keep URL + attribution for user-picked image
+          cachedImageUrl: isImage ? incoming.backgroundConfig.cachedImageUrl : null,
+          photographerName: isImage ? incoming.backgroundConfig.photographerName : '',
+          photographerUrl: isImage ? incoming.backgroundConfig.photographerUrl : '',
+        };
+      }
+    });
+  },
 });
 
 // Export the actions
@@ -232,6 +263,10 @@ export const {
   closeUrgentTasksModal,
   openArchivedProjectsModal,
   closeArchivedProjectsModal,
+  setBackgroundConfig,
+  setCachedImageUrl,
+  openBackgroundPicker,
+  closeBackgroundPicker,
 } = uiSlice.actions;
 
 // Export the reducer
@@ -256,3 +291,5 @@ export const selectIsTeamModalOpen = (state: { ui: UiState }) => state.ui.isTeam
 export const selectIsInvitationsPanelOpen = (state: { ui: UiState }) => state.ui.isInvitationsPanelOpen;
 export const selectIsUrgentTasksModalOpen = (state: { ui: UiState }) => state.ui.isUrgentTasksModalOpen;
 export const selectIsArchivedProjectsModalOpen = (state: { ui: UiState }) => state.ui.isArchivedProjectsModalOpen;
+export const selectBackgroundConfig = (state: { ui: UiState }) => state.ui.backgroundConfig;
+export const selectIsBackgroundPickerOpen = (state: { ui: UiState }) => state.ui.isBackgroundPickerOpen;

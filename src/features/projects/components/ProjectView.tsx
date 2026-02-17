@@ -4,14 +4,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { fetchProject, selectCurrentProject, setCurrentProject, selectAllProjects } from '../store/projectsSlice';
 import { fetchTasks } from '../../tasks/store/tasksSlice';
-import { closeTaskDetail, setCurrentProjectId } from '../../ui/store/uiSlice';
-import { clearHistory } from '../../commands/store/commandSlice'; // Import command system
+import { closeTaskDetail, setCurrentProjectId, selectBackgroundConfig, setBackgroundConfig } from '../../ui/store/uiSlice';
+import { clearHistory } from '../../commands/store/commandSlice';
 import Header from '../../../shared/components/layout/Header';
 import ListView from '../../views/ListView/ListView';
 import KanbanView from '../../views/KanbanView/KanbanView';
 import TaskDetailView from '../../tasks/components/TaskDetailView';
 import { useAppAuth } from '../../auth/components/AuthProvider';
 import TeamModal from '../../collaboration/components/TeamModal';
+import BackgroundPicker from '../../ui/components/BackgroundPicker';
+import { fetchRandomNaturePhoto, triggerDownload } from '../../ui/services/unsplashService';
 
 const ProjectView: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -27,11 +29,29 @@ const ProjectView: React.FC = () => {
   const isTaskDetailOpen = useAppSelector(state => state.ui.isTaskDetailOpen);
   const viewingTaskId = useAppSelector(state => state.ui.viewingTaskId);
   const tasks = useAppSelector(state => state.tasks.items);
+  const backgroundConfig = useAppSelector(selectBackgroundConfig);
 
   // Find the task being viewed, if any
   const taskBeingViewed = viewingTaskId
     ? tasks.find(task => task.id === viewingTaskId)
     : null;
+
+  // Fetch random Unsplash photo once per session
+  useEffect(() => {
+    if (backgroundConfig.type === 'random' && !backgroundConfig.cachedImageUrl) {
+      fetchRandomNaturePhoto().then((photo) => {
+        if (photo) {
+          triggerDownload(photo.downloadLocation);
+          dispatch(setBackgroundConfig({
+            ...backgroundConfig,
+            cachedImageUrl: photo.regular,
+            photographerName: photo.photographerName,
+            photographerUrl: photo.photographerUrl,
+          }));
+        }
+      });
+    }
+  }, [backgroundConfig.type, backgroundConfig.cachedImageUrl, dispatch]);
 
   useEffect(() => {
     let isMounted = true;
@@ -144,9 +164,24 @@ const ProjectView: React.FC = () => {
     );
   }
 
+  const hasImage = (backgroundConfig.type === 'random' || backgroundConfig.type === 'image') && !!backgroundConfig.cachedImageUrl;
+  const rootStyle: React.CSSProperties = hasImage
+    ? {
+        backgroundImage: `url(${backgroundConfig.cachedImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : backgroundConfig.type === 'color'
+      ? { backgroundColor: backgroundConfig.value }
+      : {};
+
   return (
-    <div className="min-h-screen bg-slate-900">
-      <div className='flex flex-col h-screen'>
+    <div
+      className={`min-h-screen ${!hasImage && backgroundConfig.type !== 'color' ? 'bg-slate-900' : ''}`}
+      style={rootStyle}
+    >
+      {hasImage && <div className="absolute inset-0 bg-slate-900/60" />}
+      <div className='relative z-10 flex flex-col h-screen'>
         <Header
           showBackButton={true}
           projectName={currentProject.name}
@@ -165,7 +200,20 @@ const ProjectView: React.FC = () => {
         />
       )}
 
+      {hasImage && backgroundConfig.photographerName && (
+        <div className="absolute bottom-2 right-3 z-20 text-[10px] text-white/50">
+          Photo by{' '}
+          <a href={`${backgroundConfig.photographerUrl}?utm_source=notionesque&utm_medium=referral`} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+            {backgroundConfig.photographerName}
+          </a>
+          {' '}on{' '}
+          <a href="https://unsplash.com/?utm_source=notionesque&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
+            Unsplash
+          </a>
+        </div>
+      )}
       <TeamModal />
+      <BackgroundPicker />
     </div>
   );
 };

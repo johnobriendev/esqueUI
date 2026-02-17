@@ -38,4 +38,14 @@ export interface UiState {
 
   // Archived projects modal
   isArchivedProjectsModalOpen: boolean;
+
+  // Background customization
+  backgroundConfig: {
+    type: 'random' | 'image' | 'color';
+    value: string;
+    cachedImageUrl: string | null;
+    photographerName: string;
+    photographerUrl: string;
+  };
+  isBackgroundPickerOpen: boolean;
 }

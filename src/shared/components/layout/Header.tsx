@@ -13,7 +13,7 @@ import {
 import { ViewMode, KanbanGroupBy, TaskStatus, TaskPriority } from '../../../types';
 import HistoryControls from '../../../features/ui/components/HistoryControls';
 import { useAuth0 } from '@auth0/auth0-react';
-import { openTeamModal } from '../../../features/ui/store/uiSlice';
+import { openTeamModal, openBackgroundPicker } from '../../../features/ui/store/uiSlice';
 import { WriteGuard, InviteGuard } from '../PermissionGuard';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { getProjectPermissions } from '../../lib/permissions';
@@ -343,6 +343,17 @@ const Header: React.FC<HeaderProps> = (props) => {
                           </div>
                         )}
                       </div>
+                      {showBackButton && (
+                        <button
+                          onClick={() => {
+                            dispatch(openBackgroundPicker());
+                            setIsUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+                        >
+                          Background
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           handleLogout();

@@ -19,7 +19,7 @@ const uiPersistConfig: PersistConfig<any> = {
     'viewMode',           // kanban vs list view preference
     'theme',              // if you have theme preferences
     'sidebarCollapsed',   // UI state preferences
-   
+    'backgroundConfig',   // Background customization preference
   ],
 };
 
