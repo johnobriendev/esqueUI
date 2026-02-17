@@ -1,18 +1,15 @@
 // src/auth/AuthProvider.tsx
-// src/auth/AuthProvider.tsx
 import React, { useEffect, createContext, useContext, useState } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import { setupAuthInterceptor } from '../../../shared/lib/api';
-//import { debugToken } from '../shared/utils/welcomeTasks';
 
-// ADDITION: Create context for app ready state
+//  Create context for app ready state
 interface AuthContextType {
   isAppReady: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({ isAppReady: false });
 
-// ADDITION: Export hook to use the app ready state
 export const useAppAuth = () => useContext(AuthContext);
 
 interface AuthProviderProps {
@@ -57,8 +54,6 @@ const AuthSetup: React.FC<AuthProviderProps> = ({ children }) => {
     const setupAuth = async () => {
       if (isAuthenticated && !isLoading) {
         try {
-      
-          
           const getToken = async () => {
             try {
               return await getAccessTokenSilently();
@@ -70,26 +65,18 @@ const AuthSetup: React.FC<AuthProviderProps> = ({ children }) => {
 
           const getUserInfo = () => user;
 
-          
-          //debugToken(getToken);
-
           setupAuthInterceptor(getToken, getUserInfo);
-          
-          // ADDITION: Small delay to ensure interceptor is fully set up
-          
-          setTimeout(() => {
-            setIsAppReady(true);
-          }, 50); 
-          
+          setIsAppReady(true);
+
         } catch (error) {
           console.error('Error setting up auth:', error);
           setIsAppReady(true); // Still set ready to avoid infinite loading
         }
       } else if (!isLoading && !isAuthenticated) {
-        // ADDITION: Not authenticated but auth is done loading
+        //  Not authenticated but auth is done loading
         setIsAppReady(true);
       } else {
-        // ADDITION: Reset when auth state changes
+        //  Reset when auth state changes
         setIsAppReady(false);
       }
     };

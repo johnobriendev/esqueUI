@@ -1,5 +1,4 @@
-// src/lib/api.ts
-
+// src/shared/lib/api.ts
 import axios, { AxiosError } from 'axios';
 import { User } from '@auth0/auth0-react';
 
@@ -14,12 +13,18 @@ const api = axios.create({
 
 // Add auth token interceptor function
 // This will be called from AuthProvider when the user is authenticated
+let requestInterceptorId: number | null = null;
+
 export const setupAuthInterceptor = (
   getToken: () => Promise<string | undefined>,
   getUserInfo?: () => User | undefined
 ) => {
-  // Add a request interceptor
-  api.interceptors.request.use(async (config) => {
+  // Eject previous interceptor to prevent stacking
+  if (requestInterceptorId !== null) {
+    api.interceptors.request.eject(requestInterceptorId);
+  }
+
+  requestInterceptorId = api.interceptors.request.use(async (config) => {
     // Get the token asynchronously
     const token = await getToken();
     
