@@ -329,13 +329,13 @@ const KanbanView: React.FC = () => {
           }}
         >
 
-          <div className="flex h-full gap-3 px-2 justify-center min-w-full" style={{ minWidth: 'max-content' }}>
+          <div className="flex h-full gap-3 px-2 pb-2 justify-center items-start min-w-full" style={{ minWidth: 'max-content' }}>
             {Object.entries(taskGroups).map(([columnId, columnTasks]) => (
               <div
                 key={columnId}
-                className={`flex-shrink-0 w-72 rounded-lg border-t-4 h-full ${getColumnColorClass(columnId)}`}
+                className={`flex-shrink-0 w-72 rounded-lg border-t-4 max-h-full ${getColumnColorClass(columnId)}`}
               >
-                <div className="bg-slate-800 rounded-b-lg shadow h-full flex flex-col">
+                <div className="bg-slate-800 rounded-b-lg shadow flex flex-col">
                   {/* Column header */}
                   <div className="p-3 border-b border-slate-700 bg-slate-800 flex-shrink-0">
                     <h3 className="font-semibold text-blue-50 text-sm">
@@ -351,7 +351,7 @@ const KanbanView: React.FC = () => {
                         {...provided.droppableProps}
                         className={`flex-1 p-2 overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-900/30' : 'bg-slate-800'
                           }`}
-                        style={{ minHeight: '200px' }}
+                        style={{ minHeight: '80px' }}
                       >
                         {columnTasks.length === 0 ? (
                           <div className="flex items-center justify-center h-32">

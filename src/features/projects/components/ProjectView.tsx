@@ -146,13 +146,13 @@ const ProjectView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900">
-      <div className='flex flex-col md:h-screen'>
+      <div className='flex flex-col h-screen'>
         <Header
           showBackButton={true}
           projectName={currentProject.name}
         />
 
-        <main className='flex-1 md:overflow-y-auto'>
+        <main className={`flex-1 ${viewMode === 'kanban' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           <div className={`h-full mx-auto max-w-none px-2 ${viewMode === 'list' ? 'py-4' : 'pt-4'}`}>
             {viewMode === 'list' ? <ListView /> : <KanbanView />}
           </div>
