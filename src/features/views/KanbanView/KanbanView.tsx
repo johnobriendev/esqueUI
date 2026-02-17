@@ -333,9 +333,9 @@ const KanbanView: React.FC = () => {
             {Object.entries(taskGroups).map(([columnId, columnTasks]) => (
               <div
                 key={columnId}
-                className={`flex-shrink-0 w-72 rounded-lg border-t-4 max-h-full ${getColumnColorClass(columnId)}`}
+                className={`flex-shrink-0 w-72 rounded-lg border-t-4 max-h-full flex flex-col overflow-hidden ${getColumnColorClass(columnId)}`}
               >
-                <div className="bg-slate-800 rounded-b-lg shadow flex flex-col">
+                <div className="bg-slate-800 rounded-b-lg shadow flex flex-col flex-1 min-h-0">
                   {/* Column header */}
                   <div className="p-3 border-b border-slate-700 bg-slate-800 flex-shrink-0">
                     <h3 className="font-semibold text-blue-50 text-sm">
@@ -349,7 +349,7 @@ const KanbanView: React.FC = () => {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`flex-1 p-2 overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-900/30' : 'bg-slate-800'
+                        className={`flex-1 min-h-0 p-2 overflow-y-auto ${snapshot.isDraggingOver ? 'bg-blue-900/30' : 'bg-slate-800'
                           }`}
                         style={{ minHeight: '80px' }}
                       >
