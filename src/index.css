@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
+/* Dashboard Palette Variables */
+[data-palette="1"] {
+  --dash-bg: #213555;
+  --dash-surface: #3E5879;
+  --dash-surface-alt: #213555;
+  --dash-border: #3E5879;
+  --dash-text: #F5EFE7;
+  --dash-text-muted: #D8C4B6;
+  --dash-accent: #D8C4B6;
+  --dash-accent-text: #213555;
+  --dash-btn2: #F5EFE7;
+  --dash-btn2-text: #213555;
+}
+
+[data-palette="2"] {
+  --dash-bg: #8294C4;
+  --dash-surface: #ACB1D6;
+  --dash-surface-alt: #8294C4;
+  --dash-border: #ACB1D6;
+  --dash-text: #FFEAD2;
+  --dash-text-muted: #DBDFEA;
+  --dash-accent: #FFEAD2;
+  --dash-accent-text: #8294C4;
+  --dash-btn2: #DBDFEA;
+  --dash-btn2-text: #8294C4;
+}
+
+@layer utilities {
+  .dash-bg { background-color: var(--dash-bg); }
+  .dash-surface { background-color: var(--dash-surface); }
+  .dash-surface-alt { background-color: var(--dash-surface-alt); }
+  .dash-border { border-color: var(--dash-border); }
+  .dash-text { color: var(--dash-text); }
+  .dash-text-muted { color: var(--dash-text-muted); }
+  .dash-accent { background-color: var(--dash-accent); color: var(--dash-accent-text); }
+  .dash-accent:hover { filter: brightness(0.9); }
+  .dash-btn2 { background-color: var(--dash-btn2); color: var(--dash-btn2-text); }
+  .dash-btn2:hover { filter: brightness(0.9); }
+}
+
 /* Deep Ocean Theme - CSS Variables */
 :root {
   /* Backgrounds */

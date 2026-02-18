@@ -27,6 +27,8 @@ import ProjectArchiveConfirmModal from './ProjectArchiveConfirmModal';
 import ProjectFormModal from './ProjectFormModal';
 import UrgentTasksModal from '../../tasks/components/UrgentTasksModal';
 import ArchivedProjectsModal from './ArchivedProjectsModal';
+import { useDashboardPalette } from '../../ui/hooks/useDashboardPalette';
+import PalettePickerModal from '../../ui/components/PalettePickerModal';
 
 
 
@@ -40,7 +42,7 @@ const ProjectDashboard: React.FC = () => {
   const error = useAppSelector(selectProjectsError);
   const { isAuthenticated } = useAuth0();
   const { isAppReady } = useAppAuth();
-
+  const [palette, setPalette] = useDashboardPalette();
 
   // State for project form
   const [isCreating, setIsCreating] = useState(false);
@@ -54,11 +56,11 @@ const ProjectDashboard: React.FC = () => {
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [projectToArchive, setProjectToArchive] = useState<Project | null>(null);
   const [archiveAction, setArchiveAction] = useState<'archive' | 'unarchive'>('archive');
+  const [showPaletteModal, setShowPaletteModal] = useState(false);
 
   // Fetch projects after auth is ready
   useEffect(() => {
     if (isAuthenticated && isAppReady) {
-      //console.log('App is ready, fetching projects');
       dispatch(fetchProjects());
 
     }
@@ -228,7 +230,7 @@ const ProjectDashboard: React.FC = () => {
   // Show loading while app is initializing (before API calls can be made)
   if (!isAppReady) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen dash-bg" data-palette={palette}>
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
@@ -237,7 +239,7 @@ const ProjectDashboard: React.FC = () => {
                 <div className="h-16 w-16 rounded-full border-t-2 border-b-2 border-blue-500 animate-spin mx-auto"></div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 h-16 w-16 rounded-full border-l-2 border-r-2 border-blue-300 animate-pulse"></div>
               </div>
-              <p className="text-slate-300">Initializing application...</p>
+              <p className="dash-text-muted">Initializing application...</p>
             </div>
           </div>
         </div>
@@ -248,7 +250,7 @@ const ProjectDashboard: React.FC = () => {
   // Loading state - only show if we don't have any projects and we're loading
   if (isLoading && projects.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen dash-bg" data-palette={palette}>
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
@@ -257,7 +259,7 @@ const ProjectDashboard: React.FC = () => {
                 <div className="h-16 w-16 rounded-full border-t-2 border-b-2 border-blue-500 animate-spin mx-auto"></div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 h-16 w-16 rounded-full border-l-2 border-r-2 border-blue-300 animate-pulse"></div>
               </div>
-              <p className="text-slate-300">Loading your projects...</p>
+              <p className="dash-text-muted">Loading your projects...</p>
             </div>
           </div>
         </div>
@@ -268,20 +270,20 @@ const ProjectDashboard: React.FC = () => {
   //  Error state with retry functionality
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen dash-bg" data-palette={palette}>
         <DashboardHeader />
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center py-12 px-6 bg-slate-800 rounded-xl shadow-sm border border-red-900">
+          <div className="text-center py-12 px-6 dash-surface rounded-xl shadow-sm border border-red-900">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-900/30 mb-6">
               <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-blue-50 mb-2">Error Loading Projects</h2>
-            <p className="text-slate-300 mb-6">{error}</p>
+            <h2 className="text-xl font-semibold dash-text mb-2">Error Loading Projects</h2>
+            <p className="dash-text-muted mb-6">{error}</p>
             <button
               onClick={handleRetry}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow"
+              className="px-6 py-3 dash-accent rounded-lg transition-colors shadow-sm hover:shadow"
               disabled={isLoading}
             >
               {isLoading ? 'Retrying...' : 'Try Again'}
@@ -294,11 +296,12 @@ const ProjectDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen dash-bg" data-palette={palette}>
         <DashboardHeader
           dashboardActions={{
             onCreateProject: handleOpenCreateForm,
-            onOpenUrgentTasks: () => dispatch(openUrgentTasksModal())
+            onOpenUrgentTasks: () => dispatch(openUrgentTasksModal()),
+            onOpenPalette: () => setShowPaletteModal(true),
           }}
           archivedCount={archivedCount}
         />
@@ -330,17 +333,17 @@ const ProjectDashboard: React.FC = () => {
           )}
 
           {projects.length === 0 ? (
-            <div className="text-center py-16 bg-slate-800 rounded-xl shadow-sm border border-slate-700">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-950 mb-6">
-                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div className="text-center py-16 dash-surface rounded-xl shadow-sm border dash-border">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full dash-surface-alt mb-6">
+                <svg className="w-8 h-8 dash-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h2 className="text-xl font-medium text-blue-50 mb-2">No projects yet</h2>
-              <p className="text-slate-300 mb-8">Create your first project to get started</p>
+              <h2 className="text-xl font-medium dash-text mb-2">No projects yet</h2>
+              <p className="dash-text-muted mb-8">Create your first project to get started</p>
               <button
                 onClick={handleOpenCreateForm}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow"
+                className="px-6 py-3 dash-accent rounded-lg transition-colors shadow-sm hover:shadow"
               >
                 Create Your First Project
               </button>
@@ -355,23 +358,29 @@ const ProjectDashboard: React.FC = () => {
                 return (
                   <div
                     key={project.id}
-                    className="rounded-xl overflow-hidden bg-slate-800 shadow-sm hover:shadow-md transition-all border border-slate-700 hover:border-slate-600 flex flex-col"
+                    className="rounded-xl overflow-hidden dash-surface shadow-lg hover:shadow-xl transition-all border dash-border flex flex-col"
                   >
                     {/* Card content - smaller, no description */}
                     <div className="p-4 flex-grow">
                       <div className="flex items-start justify-between mb-3">
-                        <h2 className="text-lg font-semibold text-blue-50 line-clamp-1 flex-1">{project.name}</h2>
+                        <h2 className="text-lg font-semibold dash-text line-clamp-1 flex-1">{project.name}</h2>
 
-                        <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${permissions.userRole === 'owner' ? 'bg-indigo-500 text-indigo-950' :
-                          permissions.userRole === 'editor' ? 'bg-blue-500 text-blue-950' :
-                            'bg-slate-600 text-slate-200'
-                          }`}>
+                        <span
+                          className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium flex-shrink-0"
+                          style={
+                            permissions.userRole === 'owner'
+                              ? { backgroundColor: 'var(--dash-text)', color: 'var(--dash-bg)' }
+                              : permissions.userRole === 'editor'
+                              ? { backgroundColor: 'var(--dash-text-muted)', color: 'var(--dash-bg)' }
+                              : { backgroundColor: 'var(--dash-surface-alt)', color: 'var(--dash-text-muted)' }
+                          }
+                        >
                           {permissions.userRole}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-xs text-slate-400">
+                      <div className="flex justify-between items-center text-xs dash-text-muted">
                         <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="w-4 h-4 mr-1 dash-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                           {new Date(project.createdAt).toLocaleDateString()}
@@ -380,12 +389,12 @@ const ProjectDashboard: React.FC = () => {
                     </div>
 
                     {/* Card footer */}
-                    <div className="px-4 py-3 bg-slate-900 border-t border-slate-700 flex justify-between items-center">
+                    <div className="px-4 py-3 dash-surface-alt border-t dash-border flex justify-between items-center">
                       <div className="space-x-3">
                         {permissions.canWrite && (
                           <button
                             onClick={() => handleOpenEditForm(project)}
-                            className="text-sm text-slate-400 hover:text-blue-400 transition-colors"
+                            className="text-sm dash-text-muted hover:text-blue-400 transition-colors"
                           >
                             <span className="flex items-center">
                               <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -400,7 +409,7 @@ const ProjectDashboard: React.FC = () => {
                           <>
                             <button
                               onClick={() => handleArchiveProject(project)}
-                              className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
+                              className="text-sm dash-text-muted hover:text-amber-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,7 +420,7 @@ const ProjectDashboard: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteProject(project)}
-                              className="text-sm text-slate-400 hover:text-red-400 transition-colors"
+                              className="text-sm dash-text-muted hover:text-red-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -427,7 +436,7 @@ const ProjectDashboard: React.FC = () => {
                           <>
                             <button
                               onClick={() => handleHideProject(project)}
-                              className="text-sm text-slate-400 hover:text-amber-400 transition-colors"
+                              className="text-sm dash-text-muted hover:text-amber-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -438,7 +447,7 @@ const ProjectDashboard: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleLeaveProject(project)}
-                              className="text-sm text-slate-400 hover:text-red-400 transition-colors"
+                              className="text-sm dash-text-muted hover:text-red-400 transition-colors"
                             >
                               <span className="flex items-center">
                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -451,12 +460,12 @@ const ProjectDashboard: React.FC = () => {
                         )}
 
                         {!permissions.canWrite && permissions.isViewer && (
-                          <span className="text-xs text-slate-500 italic">Read-only</span>
+                          <span className="text-xs dash-text-muted italic">Read-only</span>
                         )}
                       </div>
                       <button
                         onClick={() => handleSelectProject(project)}
-                        className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md"
+                        className="px-4 py-2 dash-accent text-sm rounded-lg transition-colors shadow-sm hover:shadow-md"
                       >
                         Open
                       </button>
@@ -503,6 +512,14 @@ const ProjectDashboard: React.FC = () => {
         action={archiveAction}
         onClose={handleCloseArchiveModal}
         onConfirm={confirmArchiveProject}
+      />
+
+      {/* Palette Picker Modal */}
+      <PalettePickerModal
+        isOpen={showPaletteModal}
+        currentPalette={palette}
+        onSelect={setPalette}
+        onClose={() => setShowPaletteModal(false)}
       />
     </>
   );
