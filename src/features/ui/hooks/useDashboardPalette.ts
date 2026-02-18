@@ -8,7 +8,7 @@ export function useDashboardPalette(): [DashboardPalette, (p: DashboardPalette) 
   const [palette, setPalette] = useState<DashboardPalette>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     const n = Number(stored);
-    return (n === 1 || n === 2 || n === 3 || n === 4 || n === 5 ? n : 1) as DashboardPalette;
+    return (n === 1 || n === 2 || n === 3 || n === 4 || n === 5 ? n : 3) as DashboardPalette;
   });
 
   const updatePalette = (p: DashboardPalette) => {
