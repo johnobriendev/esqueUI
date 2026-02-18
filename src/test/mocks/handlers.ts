@@ -67,11 +67,12 @@ export const handlers = [
       description: body.description || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
       userId: 'mock-user-id',
       userRole: 'owner',
       canWrite: true,
-      isArchived: false,        
-      isUserArchived: false,    
+      isArchived: false,
+      isUserArchived: false,
     };
     return HttpResponse.json(newProject, { status: 201 });
   }),
@@ -84,11 +85,12 @@ export const handlers = [
       description: body.description || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
       userId: 'mock-user-id',
       userRole: 'owner',
       canWrite: true,
-      isArchived: false,        
-      isUserArchived: false,    
+      isArchived: false,
+      isUserArchived: false,
     };
     return HttpResponse.json(updatedProject);
   }),

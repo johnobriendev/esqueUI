@@ -46,6 +46,7 @@ const UrgentTasksModal: React.FC = () => {
       description: task.project.description,
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
+      lastActivityAt: task.updatedAt,
       userId: '', // Will be populated from backend
       userRole: 'owner', // Placeholder, will be set properly after navigation
       canWrite: true,
