@@ -49,11 +49,16 @@ const BackgroundPicker: React.FC = () => {
     config.type === 'image' && config.cachedImageUrl === url;
 
   return (
-    <Modal isOpen={isOpen} onClose={() => dispatch(closeBackgroundPicker())} size="sm">
+    <Modal isOpen={isOpen} onClose={() => dispatch(closeBackgroundPicker())} size="lg">
       <h2 className="text-lg font-semibold text-blue-50 mb-4">Background</h2>
 
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs text-slate-400">Photos</p>
+        <p className="text-xs text-slate-400">
+          Photos by{' '}
+          <a href="https://unsplash.com/?utm_source=notionesque&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-300">
+            Unsplash
+          </a>
+        </p>
         <button
           onClick={loadPhotos}
           disabled={loading}
@@ -63,27 +68,36 @@ const BackgroundPicker: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mb-2">
+      <div className="grid grid-cols-3 gap-x-2 gap-y-3 mb-2">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="aspect-video rounded-md bg-slate-700 animate-pulse" />
             ))
           : photos.map((photo) => (
-              <button
-                key={photo.id}
-                onClick={() => handleSelectPhoto(photo)}
-                className={`aspect-video rounded-md overflow-hidden border-2 transition-colors ${
-                  isPhotoSelected(photo.regular)
-                    ? 'border-blue-500'
-                    : 'border-transparent hover:border-slate-400'
-                }`}
-              >
-                <img
-                  src={photo.small}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </button>
+              <div key={photo.id} className="flex flex-col">
+                <button
+                  onClick={() => handleSelectPhoto(photo)}
+                  className={`aspect-video rounded-md overflow-hidden border-2 transition-colors ${
+                    isPhotoSelected(photo.regular)
+                      ? 'border-blue-500'
+                      : 'border-transparent hover:border-slate-400'
+                  }`}
+                >
+                  <img
+                    src={photo.small}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+                <a
+                  href={`${photo.photographerUrl}?utm_source=notionesque&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[9px] text-slate-500 hover:text-slate-300 truncate mt-0.5 px-0.5"
+                >
+                  {photo.photographerName}
+                </a>
+              </div>
             ))}
       </div>
 

@@ -149,79 +149,60 @@ const HistoryControls: React.FC = () => {
 
   return (
     <>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1">
         {/* Undo Button */}
         <button
           onClick={handleUndoClick}
           disabled={!canUndo || isExecuting}
-          className={`p-2 rounded-md transition-all duration-200 ${
+          className={`p-1 rounded transition-all duration-200 ${
             canUndo && !isExecuting
-              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-md' 
+              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               : 'bg-gray-50 text-gray-400 cursor-not-allowed'
           } ${isExecuting ? 'opacity-50' : ''}`}
           title={getUndoTooltip()}
         >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-5 w-5" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <path d="M3 10h10a8 8 0 0 1 8 8v2M3 10l6 6M3 10l6-6"/>
           </svg>
         </button>
-        
+
         {/* Redo Button */}
         <button
           onClick={handleRedoClick}
           disabled={!canRedo || isExecuting}
-          className={`p-2 rounded-md transition-all duration-200 ${
+          className={`p-1 rounded transition-all duration-200 ${
             canRedo && !isExecuting
-              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:shadow-md' 
+              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               : 'bg-gray-50 text-gray-400 cursor-not-allowed'
           } ${isExecuting ? 'opacity-50' : ''}`}
           title={getRedoTooltip()}
         >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-5 w-5" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <path d="M21 10H11a8 8 0 0 0-8 8v2M21 10l-6 6M21 10l-6-6"/>
           </svg>
         </button>
-        
-        {/* Status Display */}
-        <div className="flex items-center space-x-3 ml-4">
-          <span className="text-xs text-gray-500">
-            Undo: {undoStackLength} | Redo: {redoStackLength}
-          </span>
-          
-          {/* Loading indicator when executing commands */}
-          {isExecuting && (
-            <div className="flex items-center space-x-1">
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-              <span className="text-xs text-blue-600">Processing...</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Debug info in development */}
-        {import.meta.env?.DEV && (
-          <div className="text-xs text-gray-400 ml-4">
-            {lastUndoCommand && (
-              <div>Last: {lastUndoCommand.type}</div>
-            )}
-          </div>
+
+        {/* Loading indicator when executing commands */}
+        {isExecuting && (
+          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 ml-1"></div>
         )}
       </div>
 

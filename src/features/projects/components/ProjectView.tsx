@@ -187,8 +187,8 @@ const ProjectView: React.FC = () => {
           projectName={currentProject.name}
         />
 
-        <main className={`flex-1 ${viewMode === 'kanban' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-          <div className={`h-full mx-auto max-w-none px-2 ${viewMode === 'list' ? 'py-4' : 'pt-4'}`}>
+        <main className="flex-1 overflow-hidden">
+          <div className={`h-full mx-auto max-w-none px-2 ${viewMode === 'list' ? 'py-2 flex flex-col' : 'pt-4'}`}>
             {viewMode === 'list' ? <ListView /> : <KanbanView />}
           </div>
         </main>
@@ -200,18 +200,6 @@ const ProjectView: React.FC = () => {
         />
       )}
 
-      {hasImage && backgroundConfig.photographerName && (
-        <div className="absolute bottom-2 right-3 z-20 text-[10px] text-white/50">
-          Photo by{' '}
-          <a href={`${backgroundConfig.photographerUrl}?utm_source=notionesque&utm_medium=referral`} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
-            {backgroundConfig.photographerName}
-          </a>
-          {' '}on{' '}
-          <a href="https://unsplash.com/?utm_source=notionesque&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70">
-            Unsplash
-          </a>
-        </div>
-      )}
       <TeamModal />
       <BackgroundPicker />
     </div>

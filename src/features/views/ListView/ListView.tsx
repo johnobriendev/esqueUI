@@ -221,7 +221,7 @@ const ListView: React.FC = () => {
   }
 
   return (
-    <div className="bg-slate-800 shadow rounded-lg overflow-hidden">
+    <div className="bg-slate-800 shadow rounded-lg overflow-hidden flex flex-col min-h-0 flex-1">
       {/* 🆕 NEW: Permission Error Banner */}
       {permissionError && (
         <div className="bg-red-900/50 border-l-4 border-red-400 p-4 mb-4">
@@ -247,26 +247,6 @@ const ListView: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* 🆕 NEW: User Role Indicator */}
-      <div className="bg-slate-900 px-4 py-2 border-b border-slate-700">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-300">
-            Your role: <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              permissions.userRole === 'owner' ? 'bg-indigo-500 text-indigo-950' :
-              permissions.userRole === 'editor' ? 'bg-blue-500 text-blue-950' :
-              'bg-slate-600 text-slate-200'
-            }`}>
-              {permissions.userRole}
-            </span>
-          </span>
-          {!permissions.canWrite && (
-            <span className="text-xs text-slate-400 italic">
-              Read-only access
-            </span>
-          )}
-        </div>
-      </div>
 
 
       <WriteGuard>
@@ -300,8 +280,8 @@ const ListView: React.FC = () => {
       </WriteGuard>
 
       {/* Task table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-700">
+      <div className="overflow-x-auto flex-1 min-h-0">
+        <table className="min-w-full h-full divide-y divide-slate-700">
           <thead className="bg-slate-900">
             <tr>
 
@@ -352,7 +332,7 @@ const ListView: React.FC = () => {
               <tr key={task.id} className="hover:bg-slate-700">
 
                 <WriteGuard>
-                  <td className="px-3 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={selectedTaskIds.has(task.id)}
@@ -361,7 +341,7 @@ const ListView: React.FC = () => {
                     />
                   </td>
                 </WriteGuard>
-                <td className="px-6 py-4">
+                <td className="px-6 py-2">
                   <div
                     className="text-sm font-medium text-blue-50 cursor-pointer hover:text-blue-400"
                     onClick={() => dispatch(openTaskDetail(task.id))}
@@ -392,22 +372,22 @@ const ListView: React.FC = () => {
                     </div>
                   )} */}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-2 whitespace-nowrap">
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(task.status)}`}>
                     {task.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-2 whitespace-nowrap">
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getPriorityBadgeClass(task.priority)}`}>
                     {task.priority}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
+                <td className="px-6 py-2 whitespace-nowrap text-sm text-slate-300">
                   {formatDate(task.updatedAt)}
                 </td>
                 {/* 🔄 MODIFIED: Only show actions for users with write permissions */}
                 <WriteGuard>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => handleEditTask(task)}
                       className="text-blue-400 hover:text-blue-300 mr-4"

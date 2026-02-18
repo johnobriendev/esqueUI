@@ -120,8 +120,8 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   return (
     <header className="bg-blue-950 shadow-lg border-b border-blue-900 relative flex-shrink-0">
-      <div className="px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-between h-10 gap-2">
+      <div className="px-4 sm:px-6 lg:px-8 py-1.5">
+        <div className="flex items-center justify-between h-8 gap-2">
           {/* Left section - Back button and title - PROTECTED SPACE */}
           <div className="flex items-center space-x-3 min-w-0 flex-1 max-w-[50%]">
             {showBackButton && (
