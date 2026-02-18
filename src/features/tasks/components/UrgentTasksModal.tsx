@@ -24,7 +24,8 @@ const UrgentTasksModal: React.FC = () => {
   const navigate = useNavigate();
 
   const isOpen = useAppSelector(selectIsUrgentTasksModalOpen);
-  const urgentTasks = useAppSelector(selectUrgentTasks);
+  const allUrgentTasks = useAppSelector(selectUrgentTasks);
+  const urgentTasks = allUrgentTasks.filter((t: UrgentTaskWithProject) => t.status !== 'completed');
   const isLoading = useAppSelector(selectUrgentTasksLoading);
   const error = useAppSelector(selectUrgentTasksError);
 
