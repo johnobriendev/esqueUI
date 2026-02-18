@@ -281,7 +281,7 @@ const ListView: React.FC = () => {
 
       {/* Task table */}
       <div className="overflow-x-auto flex-1 min-h-0">
-        <table className="min-w-full h-full divide-y divide-slate-700">
+        <table className="min-w-full divide-y divide-slate-700">
           <thead className="bg-slate-900">
             <tr>
 
@@ -329,7 +329,7 @@ const ListView: React.FC = () => {
           </thead>
           <tbody className="bg-slate-800 divide-y divide-slate-700">
             {paginatedTasks.map(task => (
-              <tr key={task.id} className="hover:bg-slate-700">
+              <tr key={task.id} className="hover:bg-slate-700 h-[60px]">
 
                 <WriteGuard>
                   <td className="px-3 py-2 whitespace-nowrap">
