@@ -11,7 +11,7 @@ interface PalettePickerModalProps {
 
 const palettes: { id: DashboardPalette; name: string; colors: string[] }[] = [
   { id: 1, name: 'Ocean', colors: ['#213555', '#3E5879', '#D8C4B6', '#F5EFE7'] },
-  { id: 2, name: 'Dusk', colors: ['#8294C4', '#ACB1D6', '#DBDFEA', '#FFEAD2'] },
+  { id: 2, name: 'Dusk', colors: ['#8294C4', '#ACB1D6', '#DBDFEA', '#F4F5FF'] },
 ];
 
 const PalettePickerModal: React.FC<PalettePickerModalProps> = ({
