@@ -56,13 +56,13 @@ const ArchivedProjectsModal: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="2xl">
+    <Modal isOpen={isOpen} onClose={handleClose} size="2xl" containerClassName="dash-surface border dash-border">
       {/* Header */}
-      <div className="-mx-6 -mt-6 px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-blue-50">Archived Projects</h2>
+      <div className="-mx-6 -mt-6 px-6 py-4 border-b dash-border flex items-center justify-between">
+        <h2 className="text-xl font-semibold dash-text">Archived Projects</h2>
         <button
           onClick={handleClose}
-          className="text-slate-400 hover:text-slate-300 transition-colors"
+          className="dash-text-muted transition-colors"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -78,10 +78,10 @@ const ArchivedProjectsModal: React.FC = () => {
             </div>
           ) : archivedProjects.length === 0 ? (
             <div className="text-center py-12">
-              <svg className="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 mx-auto dash-text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
               </svg>
-              <p className="text-slate-400">No archived projects</p>
+              <p className="dash-text-muted">No archived projects</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -91,12 +91,12 @@ const ArchivedProjectsModal: React.FC = () => {
                 return (
                   <div
                     key={project.id}
-                    className="p-4 border border-slate-700 rounded-lg hover:border-slate-600 transition-colors bg-slate-900"
+                    className="p-4 border dash-border rounded-lg transition-colors dash-bg"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-blue-50">{project.name}</h3>
+                          <h3 className="font-semibold dash-text">{project.name}</h3>
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             permissions.userRole === 'owner' ? 'bg-red-500 text-gray-950' :
                             permissions.userRole === 'editor' ? 'bg-blue-500 text-gray-950' :
@@ -106,15 +106,15 @@ const ArchivedProjectsModal: React.FC = () => {
                           </span>
                         </div>
                         {project.description && (
-                          <p className="text-sm text-slate-300 mb-2">{project.description}</p>
+                          <p className="text-sm dash-text-muted mb-2">{project.description}</p>
                         )}
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs dash-text-muted">
                           Archived: {new Date(project.updatedAt).toLocaleDateString()}
                         </p>
                       </div>
                       <button
                         onClick={() => handleRestore(project)}
-                        className="ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-blue-500 text-white hover:bg-blue-600"
+                        className="ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors dash-accent"
                       >
                         {permissions.isOwner ? 'Unarchive' : 'Unhide'}
                       </button>
@@ -127,10 +127,10 @@ const ArchivedProjectsModal: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="-mx-6 -mb-6 px-6 py-4 border-t border-slate-700 flex justify-end">
+      <div className="-mx-6 -mb-6 px-6 py-4 border-t dash-border flex justify-end">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-sm text-slate-300 hover:text-slate-200 transition-colors"
+          className="px-4 py-2 text-sm dash-text-muted transition-colors"
         >
           Close
         </button>

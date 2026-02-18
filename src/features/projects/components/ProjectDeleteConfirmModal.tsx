@@ -47,7 +47,7 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
   if (!project) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" disabled={isDeleting}>
+    <Modal isOpen={isOpen} onClose={onClose} size="md" disabled={isDeleting} containerClassName="dash-surface border dash-border">
       <div className="mb-4">
           <div className="flex items-center mb-4">
             <div className="flex-shrink-0">
@@ -68,7 +68,7 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
               </div>
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-blue-50">
+              <h3 className="text-lg font-semibold dash-text">
                 Delete Project
               </h3>
             </div>
@@ -81,9 +81,9 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
           )}
 
           <div className="mb-6">
-            <p className="text-slate-300 mb-2">
+            <p className="dash-text-muted mb-2">
               Are you sure you want to delete the project{' '}
-              <span className="font-semibold text-blue-50">"{project.name}"</span>?
+              <span className="font-semibold dash-text">"{project.name}"</span>?
             </p>
             <p className="text-sm text-red-400 font-medium">
               This action cannot be undone. All tasks, boards, and project data will be permanently deleted.
@@ -95,10 +95,8 @@ const ProjectDeleteConfirmModal: React.FC<ProjectDeleteConfirmModalProps> = ({
           <button
             onClick={onClose}
             disabled={isDeleting}
-            className={`px-4 py-2 text-slate-300 bg-slate-700 rounded-md transition-colors duration-200 ${
-              isDeleting
-                ? 'opacity-50 cursor-not-allowed'
-                : 'hover:bg-slate-600'
+            className={`px-4 py-2 border dash-border dash-btn2 rounded-md transition-colors duration-200 ${
+              isDeleting ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
             Cancel

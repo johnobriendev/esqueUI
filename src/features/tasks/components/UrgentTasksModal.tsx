@@ -85,15 +85,15 @@ const UrgentTasksModal: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="2xl">
+    <Modal isOpen={isOpen} onClose={handleClose} size="2xl" containerClassName="dash-surface border dash-border">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-blue-50">
+        <h2 className="text-xl font-semibold dash-text">
           Urgent Tasks
         </h2>
         <button
           onClick={handleClose}
-          className="text-slate-400 hover:text-slate-300 transition-colors"
+          className="dash-text-muted transition-colors"
           aria-label="Close modal"
         >
           <svg
@@ -131,9 +131,9 @@ const UrgentTasksModal: React.FC = () => {
 
           {/* Empty State */}
           {!isLoading && !error && urgentTasks.length === 0 && (
-            <div className="text-center py-12 text-slate-400">
+            <div className="text-center py-12 dash-text-muted">
               <svg
-                className="w-16 h-16 mx-auto mb-4 text-slate-500"
+                className="w-16 h-16 mx-auto mb-4 dash-text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -157,16 +157,16 @@ const UrgentTasksModal: React.FC = () => {
                 <div
                   key={task.id}
                   onClick={() => handleTaskClick(task)}
-                  className="border border-slate-700 rounded-lg p-4 hover:border-blue-500 hover:bg-slate-700/50 transition-all cursor-pointer group"
+                  className="border dash-border rounded-lg p-4 hover:bg-black/10 transition-all cursor-pointer group"
                 >
                   {/* Task Title */}
-                  <h3 className="font-medium text-blue-50 mb-2 group-hover:text-blue-300">
+                  <h3 className="font-medium dash-text mb-2">
                     {task.title}
                   </h3>
 
                   {/* Project and Status Badges */}
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500 text-slate-950">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium dash-accent">
                       {task.project.name}
                     </span>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}>
@@ -176,13 +176,13 @@ const UrgentTasksModal: React.FC = () => {
 
                   {/* Description Preview */}
                   {task.description && (
-                    <p className="text-sm text-slate-400 line-clamp-2">
+                    <p className="text-sm dash-text-muted line-clamp-2">
                       {task.description}
                     </p>
                   )}
 
                   {/* Last Updated */}
-                  <div className="mt-2 text-xs text-slate-500">
+                  <div className="mt-2 text-xs dash-text-muted">
                     Updated {new Date(task.updatedAt).toLocaleDateString()}
                   </div>
                 </div>
@@ -193,7 +193,7 @@ const UrgentTasksModal: React.FC = () => {
 
       {/* Footer with count */}
       {!isLoading && !error && urgentTasks.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400 text-center">
+        <div className="mt-4 pt-4 border-t dash-border text-sm dash-text-muted text-center">
           Showing {urgentTasks.length} urgent {urgentTasks.length === 1 ? 'task' : 'tasks'}
         </div>
       )}

@@ -5,6 +5,7 @@ interface ModalProps {
   onClose: () => void;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   disabled?: boolean;
+  containerClassName?: string;
   children: React.ReactNode;
 }
 
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   size = 'md',
   disabled = false,
+  containerClassName,
   children,
 }) => {
   if (!isOpen) return null;
@@ -37,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-slate-800 border border-slate-700 rounded-lg shadow-xl mx-4 w-full ${sizeClasses[size]} max-h-[85vh] overflow-y-auto p-6`}
+        className={`${containerClassName ?? 'bg-slate-800 border border-slate-700'} rounded-lg shadow-xl mx-4 w-full ${sizeClasses[size]} max-h-[85vh] overflow-y-auto p-6`}
       >
         {children}
       </div>

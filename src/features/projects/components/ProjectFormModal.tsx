@@ -35,15 +35,15 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <h2 className="text-xl font-semibold mb-6 text-blue-50">
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" containerClassName="dash-surface border dash-border">
+      <h2 className="text-xl font-semibold mb-6 dash-text">
         {isEditing ? 'Edit Project' : 'Create New Project'}
       </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-5">
             <div>
-              <label htmlFor="project-name" className="block text-sm font-medium text-slate-300 mb-1">
+              <label htmlFor="project-name" className="block text-sm font-medium dash-text-muted mb-1">
                 Project Name*
               </label>
               <input
@@ -51,20 +51,20 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                 type="text"
                 value={projectName}
                 onChange={(e) => onProjectNameChange(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-900 text-blue-50"
+                className="w-full px-4 py-3 border dash-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dash-bg dash-text"
                 placeholder="Enter project name"
                 autoFocus
               />
             </div>
             <div>
-              <label htmlFor="project-description" className="block text-sm font-medium text-slate-300 mb-1">
+              <label htmlFor="project-description" className="block text-sm font-medium dash-text-muted mb-1">
                 Description (optional)
               </label>
               <textarea
                 id="project-description"
                 value={projectDescription}
                 onChange={(e) => onProjectDescriptionChange(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-900 text-blue-50"
+                className="w-full px-4 py-3 border dash-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dash-bg dash-text"
                 placeholder="Enter project description"
                 rows={3}
               />
@@ -73,17 +73,17 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 border border-slate-600 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors"
+                className="px-5 py-2.5 border dash-border rounded-lg dash-btn2 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!projectName.trim()}
-                className={`px-5 py-2.5 rounded-lg text-white shadow-sm ${
+                className={`px-5 py-2.5 rounded-lg shadow-sm dash-accent ${
                   projectName.trim()
-                    ? 'bg-blue-500 hover:bg-blue-600 hover:shadow'
-                    : 'bg-blue-500/30 cursor-not-allowed'
+                    ? 'hover:shadow'
+                    : 'opacity-50 cursor-not-allowed'
                 }`}
               >
                 {isEditing ? 'Update Project' : 'Create Project'}
