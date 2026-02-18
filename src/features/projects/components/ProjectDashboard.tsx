@@ -57,6 +57,12 @@ const ProjectDashboard: React.FC = () => {
   const [projectToArchive, setProjectToArchive] = useState<Project | null>(null);
   const [archiveAction, setArchiveAction] = useState<'archive' | 'unarchive'>('archive');
   const [showPaletteModal, setShowPaletteModal] = useState(false);
+  const [sortBy, setSortBy] = useState<'lastActivityAt' | 'createdAt' | 'name'>('lastActivityAt');
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    return new Date(b[sortBy]).getTime() - new Date(a[sortBy]).getTime();
+  });
 
   // Fetch projects after auth is ready
   useEffect(() => {
@@ -349,9 +355,28 @@ const ProjectDashboard: React.FC = () => {
               </button>
             </div>
           ) : (
-            // Project grid - 4 columns for smaller cards
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-              {projects.map((project) => {
+            <>
+              {/* Sort controls */}
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xs dash-text-muted">Sort:</span>
+                {(['lastActivityAt', 'createdAt', 'name'] as const).map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => setSortBy(opt)}
+                    className={`text-xs px-3 py-1 rounded-full transition-colors ${
+                      sortBy === opt
+                        ? 'dash-accent'
+                        : 'dash-surface-alt dash-text-muted hover:dash-text'
+                    }`}
+                  >
+                    {opt === 'lastActivityAt' ? 'Last active' : opt === 'createdAt' ? 'Created' : 'Name'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Project grid - 4 columns for smaller cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+              {sortedProjects.map((project) => {
                 // Get permissions for each project
                 const permissions = getProjectPermissions(project);
 
@@ -378,12 +403,18 @@ const ProjectDashboard: React.FC = () => {
                           {permissions.userRole}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-xs dash-text-muted">
+                      <div className="flex flex-col gap-0.5 text-xs dash-text-muted">
                         <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1 dash-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="w-3.5 h-3.5 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Active {new Date(project.lastActivityAt).toLocaleDateString()}
+                        </span>
+                        <span className="flex items-center">
+                          <svg className="w-3.5 h-3.5 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          {new Date(project.createdAt).toLocaleDateString()}
+                          Created {new Date(project.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
@@ -473,7 +504,8 @@ const ProjectDashboard: React.FC = () => {
                   </div>
                 );
               })}
-            </div>
+              </div>
+            </>
           )}
         </div>
       </div>

@@ -7,6 +7,7 @@ export interface Project {
   description?: string;
   createdAt: string;
   updatedAt: string;
+  lastActivityAt: string;
   userId: string; // Owner of the project
   // Collaboration fields from backend
   userRole: UserRole; // Current user's role in this project
