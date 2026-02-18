@@ -27,6 +27,19 @@
   --dash-btn2-text: #8294C4;
 }
 
+[data-palette="3"] {
+  --dash-bg: #184e77;
+  --dash-surface: #1e6091;
+  --dash-surface-alt: #184e77;
+  --dash-border: #1a759f;
+  --dash-text: #d9ed92;
+  --dash-text-muted: #76c893;
+  --dash-accent: #52b69a;
+  --dash-accent-text: #184e77;
+  --dash-btn2: #168aad;
+  --dash-btn2-text: #d9ed92;
+}
+
 @layer utilities {
   .dash-bg { background-color: var(--dash-bg); }
   .dash-surface { background-color: var(--dash-surface); }
