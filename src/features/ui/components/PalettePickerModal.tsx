@@ -13,6 +13,8 @@ const palettes: { id: DashboardPalette; name: string; colors: string[] }[] = [
   { id: 1, name: 'Ocean', colors: ['#213555', '#3E5879', '#D8C4B6', '#F5EFE7'] },
   { id: 2, name: 'Dusk', colors: ['#8294C4', '#ACB1D6', '#DBDFEA', '#F4F5FF'] },
   { id: 3, name: 'Reef', colors: ['#184e77', '#1e6091', '#52b69a', '#d9ed92'] },
+  { id: 4, name: 'Sage', colors: ['#6b9080', '#a4c3b2', '#cce3de', '#f6fff8'] },
+  { id: 5, name: 'Stone', colors: ['#847577', '#a6a2a2', '#cfd2cd', '#fbfbf2'] },
 ];
 
 const PalettePickerModal: React.FC<PalettePickerModalProps> = ({
@@ -29,7 +31,7 @@ const PalettePickerModal: React.FC<PalettePickerModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <h2 className="text-lg font-semibold text-blue-50 mb-4">Choose Theme</h2>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {palettes.map(({ id, name, colors }) => (
           <button
             key={id}
