@@ -1,6 +1,6 @@
 //src/features/ui/store/uiSlice.ts
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
 import {
   ViewMode,
@@ -276,8 +276,6 @@ export default uiSlice.reducer;
 export const selectViewMode = (state: { ui: UiState }) => state.ui.viewMode;
 export const selectKanbanGroupBy = (state: { ui: UiState }) => state.ui.kanbanGroupBy;
 export const selectCurrentProjectId = (state: { ui: UiState }) => state.ui.currentProjectId;
-export const selectSortConfig = (state: { ui: UiState }) => state.ui.sortConfig;
-export const selectFilterConfig = (state: { ui: UiState }) => state.ui.filterConfig;
 export const selectIsTaskModalOpen = (state: { ui: UiState }) => state.ui.isTaskModalOpen;
 export const selectEditingTaskId = (state: { ui: UiState }) => state.ui.editingTaskId;
 export const selectIsTaskDetailOpen = (state: { ui: UiState }) => state.ui.isTaskDetailOpen;
@@ -291,5 +289,51 @@ export const selectIsTeamModalOpen = (state: { ui: UiState }) => state.ui.isTeam
 export const selectIsInvitationsPanelOpen = (state: { ui: UiState }) => state.ui.isInvitationsPanelOpen;
 export const selectIsUrgentTasksModalOpen = (state: { ui: UiState }) => state.ui.isUrgentTasksModalOpen;
 export const selectIsArchivedProjectsModalOpen = (state: { ui: UiState }) => state.ui.isArchivedProjectsModalOpen;
-export const selectBackgroundConfig = (state: { ui: UiState }) => state.ui.backgroundConfig;
 export const selectIsBackgroundPickerOpen = (state: { ui: UiState }) => state.ui.isBackgroundPickerOpen;
+
+// Memoized selectors for object-returning fields
+export const selectSortConfig = createSelector(
+  (state: { ui: UiState }) => state.ui.sortConfig,
+  (sortConfig) => sortConfig
+);
+
+export const selectFilterConfig = createSelector(
+  (state: { ui: UiState }) => state.ui.filterConfig,
+  (filterConfig) => filterConfig
+);
+
+export const selectBackgroundConfig = createSelector(
+  (state: { ui: UiState }) => state.ui.backgroundConfig,
+  (backgroundConfig) => backgroundConfig
+);
+
+// Derived selector: which modal is open and its payload
+type ActiveModal =
+  | { type: 'taskModal'; payload: string | null }
+  | { type: 'taskDetail'; payload: string }
+  | { type: 'deleteConfirm'; payload: { taskId: string | null; taskIds: string[] } }
+  | { type: 'bulkEdit'; payload: { editType: string | null; taskIds: string[] } }
+  | { type: 'teamModal' }
+  | { type: 'invitationsPanel' }
+  | { type: 'deleteComment'; payload: string }
+  | { type: 'urgentTasks' }
+  | { type: 'archivedProjects' }
+  | { type: 'backgroundPicker' }
+  | null;
+
+export const selectActiveModal = createSelector(
+  (state: { ui: UiState }) => state.ui,
+  (ui): ActiveModal => {
+    if (ui.isTaskModalOpen) return { type: 'taskModal', payload: ui.editingTaskId };
+    if (ui.isTaskDetailOpen) return { type: 'taskDetail', payload: ui.viewingTaskId! };
+    if (ui.isDeleteConfirmOpen) return { type: 'deleteConfirm', payload: { taskId: ui.deletingTaskId, taskIds: ui.deletingTaskIds } };
+    if (ui.isBulkEditOpen) return { type: 'bulkEdit', payload: { editType: ui.bulkEditType, taskIds: ui.selectedTaskIds } };
+    if (ui.isTeamModalOpen) return { type: 'teamModal' };
+    if (ui.isInvitationsPanelOpen) return { type: 'invitationsPanel' };
+    if (ui.isDeleteCommentModalOpen) return { type: 'deleteComment', payload: ui.deletingCommentId! };
+    if (ui.isUrgentTasksModalOpen) return { type: 'urgentTasks' };
+    if (ui.isArchivedProjectsModalOpen) return { type: 'archivedProjects' };
+    if (ui.isBackgroundPickerOpen) return { type: 'backgroundPicker' };
+    return null;
+  }
+);
