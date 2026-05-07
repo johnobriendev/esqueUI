@@ -15,6 +15,7 @@ import { useAppSelector, useAppDispatch } from './app/hooks';
 import AuthLayout from './features/auth/components/AuthLayout';
 import ProjectView from './features/projects/components/ProjectView';
 import WelcomePage from './features/views/WelcomePage/WelcomePage';
+import ConflictController from './features/conflicts/ConflictController';
 
 
 // Root layout that includes modals which are shared across routes
@@ -25,6 +26,7 @@ const RootLayout = () => {
       <TaskModal />
       <DeleteConfirmModal />
       <BulkEditModal />
+      <ConflictController />
     </>
   );
 };

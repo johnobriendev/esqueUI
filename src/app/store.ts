@@ -8,6 +8,7 @@ import projectsReducer from '../features/projects/store/projectsSlice';
 import commandsReducer from '../features/commands/store/commandSlice';
 import collaborationReducer from '../features/collaboration/store/collaborationSlice';
 import commentsReducer from '../features/comments/store/commentsSlice';
+import conflictsReducer from '../features/conflicts/conflictSlice';
 
 
 
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   commands: commandsReducer,
   collaboration: collaborationReducer,
   comments: commentsReducer,
+  conflicts: conflictsReducer,
 });
 
 

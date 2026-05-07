@@ -18,7 +18,7 @@ import {
   revertOptimisticReorder
 } from '../../tasks/store/tasksSlice'; import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { AppDispatch } from '../../../app/store';
-import { showConflictResolution } from '../../tasks/hooks/useConflictResolution';
+import { showConflict } from '../../conflicts/showConflict';
 
 
 // Data interfaces for command parameters
@@ -178,23 +178,18 @@ export const updateTaskCommand = (data: UpdateTaskData): UndoableCommand => {
           if (error.type === 'VERSION_CONFLICT') {
             console.log('⚠️ Version conflict detected, showing resolution modal');
             
-            const result = await showConflictResolution(error.conflict, updates);
+            const resolution = await showConflict(dispatch, error.conflict, updates);
 
-            if (result.resolution === 'keep_mine') {
+            if (resolution === 'keep_mine') {
               await dispatch(updateTaskAsync({
                 projectId: data.projectId,
                 taskId: data.taskId,
                 updates,
                 version: error.conflict.currentVersion
               })).unwrap();
-              
-              console.log('✅ Task updated (kept user changes)');
-            } else if (result.resolution === 'take_theirs') {
-              // Don't update, just refresh our local state with their version
-              console.log('✅ Conflict resolved (took their changes)');
-              // The task is already updated with their version in Redux
+            } else if (resolution === 'take_theirs') {
+              // task already at server version in Redux
             } else {
-              // User cancelled
               throw new Error('Update cancelled by user');
             }
           } else {
@@ -391,13 +386,9 @@ export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData): Undoabl
             if (error.type === 'VERSION_CONFLICT') {
               console.log('⚠️ Priority update conflict detected');
               
-              const result = await showConflictResolution(
-                error.conflict, 
-                { priority: data.priority }
-              );
-              
-              if (result.resolution === 'keep_mine') {
-                // Force update with current version
+              const resolution = await showConflict(dispatch, error.conflict, { priority: data.priority });
+
+              if (resolution === 'keep_mine') {
                 await dispatch(updateTaskPriorityAsync({
                   projectId: data.projectId,
                   taskId: data.taskId,
@@ -405,24 +396,13 @@ export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData): Undoabl
                   destinationIndex: data.destinationIndex,
                   version: error.conflict.currentVersion
                 })).unwrap();
-                
-                console.log('✅ Task priority updated (kept user changes)');
-              } else if (result.resolution === 'take_theirs') {
-                // Revert optimistic update and use their changes
+              } else if (resolution === 'take_theirs') {
                 if (hasOptimisticUpdate && previousTaskData) {
-                  dispatch(revertOptimisticUpdate({
-                    taskId: data.taskId,
-                    originalTask: previousTaskData
-                  }));
+                  dispatch(revertOptimisticUpdate({ taskId: data.taskId, originalTask: previousTaskData }));
                 }
-                console.log('✅ Priority conflict resolved (took their changes)');
               } else {
-                // User cancelled - revert optimistic update
                 if (hasOptimisticUpdate && previousTaskData) {
-                  dispatch(revertOptimisticUpdate({
-                    taskId: data.taskId,
-                    originalTask: previousTaskData
-                  }));
+                  dispatch(revertOptimisticUpdate({ taskId: data.taskId, originalTask: previousTaskData }));
                 }
                 throw new Error('Priority update cancelled by user');
               }
@@ -532,13 +512,9 @@ export const updateTaskStatusCommand = (data: UpdateTaskStatusData): UndoableCom
             if (error.type === 'VERSION_CONFLICT') {
               console.log('⚠️ Status update conflict detected');
 
-              const result = await showConflictResolution(
-                error.conflict,
-                { status: data.status }
-              );
+              const resolution = await showConflict(dispatch, error.conflict, { status: data.status });
 
-              if (result.resolution === 'keep_mine') {
-                // Force update with current version
+              if (resolution === 'keep_mine') {
                 await dispatch(updateTaskStatusAsync({
                   projectId: data.projectId,
                   taskId: data.taskId,
@@ -546,24 +522,13 @@ export const updateTaskStatusCommand = (data: UpdateTaskStatusData): UndoableCom
                   destinationIndex: data.destinationIndex,
                   version: error.conflict.currentVersion
                 })).unwrap();
-
-                console.log('✅ Task status updated (kept user changes)');
-              } else if (result.resolution === 'take_theirs') {
-                // Revert optimistic update and use their changes
+              } else if (resolution === 'take_theirs') {
                 if (hasOptimisticUpdate && previousTaskData) {
-                  dispatch(revertOptimisticUpdate({
-                    taskId: data.taskId,
-                    originalTask: previousTaskData
-                  }));
+                  dispatch(revertOptimisticUpdate({ taskId: data.taskId, originalTask: previousTaskData }));
                 }
-                console.log('✅ Status conflict resolved (took their changes)');
               } else {
-                // User cancelled - revert optimistic update
                 if (hasOptimisticUpdate && previousTaskData) {
-                  dispatch(revertOptimisticUpdate({
-                    taskId: data.taskId,
-                    originalTask: previousTaskData
-                  }));
+                  dispatch(revertOptimisticUpdate({ taskId: data.taskId, originalTask: previousTaskData }));
                 }
                 throw new Error('Status update cancelled by user');
               }
