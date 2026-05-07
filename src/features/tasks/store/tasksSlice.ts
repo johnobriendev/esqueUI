@@ -1,7 +1,7 @@
 // src/features/tasks/store/tasksSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { Task, TaskStatus, TaskPriority, UrgentTaskWithProject } from '../../../types';
-import taskService from '../services/taskService';
+import taskService, { TaskServiceError } from '../services/taskService';
 
 
 interface TasksState {
@@ -29,8 +29,8 @@ export const fetchTasks = createAsyncThunk(
   async (projectId: string, { rejectWithValue }) => {
     try {
       return await taskService.getTasks(projectId);
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch tasks');
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to fetch tasks');
     }
   }
 );
@@ -43,38 +43,23 @@ export const createTaskAsync = createAsyncThunk(
     description?: string;
     status?: TaskStatus;
     priority?: TaskPriority;
-    position?: number;
+    position: number;
     customFields?: Record<string, string | number | boolean>;
-    taskId?: string; // For recreating tasks with specific IDs during undo
-  }, { getState, rejectWithValue }) => {
+    taskId?: string;
+  }, { rejectWithValue }) => {
     try {
-      // Simple position calculation if not provided
-      const state = getState() as { tasks: { items: Task[] } };
-      const tasks = state.tasks.items;
-
-      const tasksWithSamePriority = tasks.filter(
-        t => t.priority === (task.priority || 'low') && t.projectId === task.projectId
-      );
-
-      const position = task.position ?? (tasksWithSamePriority.length
-        ? Math.max(...tasksWithSamePriority.map(t => t.position || 0)) + 1
-        : 0);
-
-      // Clean API call - no more _undoData complexity
-      const result = await taskService.createTask({
+      return await taskService.createTask({
         projectId: task.projectId,
         title: task.title,
         description: task.description,
         status: task.status || 'not started',
         priority: task.priority || 'low',
-        position,
+        position: task.position,
         customFields: task.customFields,
         ...(task.taskId && { id: task.taskId })
       });
-
-      return result;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to create task');
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to create task');
     }
   }
 );
@@ -95,42 +80,18 @@ export const updateTaskAsync = createAsyncThunk(
       };
       version?: number;
     },
-    { getState, rejectWithValue }
+    { rejectWithValue }
   ) => {
     try {
-      // Handle priority changes with position calculation
-      if (data.updates.priority) {
-        const state = getState() as { tasks: { items: Task[] } };
-        const tasks = state.tasks.items;
-        const currentTask = tasks.find(t => t.id === data.taskId);
-
-        if (currentTask && currentTask.priority !== data.updates.priority && data.updates.position === undefined) {
-          const tasksInNewPriority = tasks.filter(
-            t => t.priority === data.updates.priority && t.projectId === data.projectId
-          );
-
-          const newPosition = tasksInNewPriority.length
-            ? Math.max(...tasksInNewPriority.map(t => t.position || 0)) + 1
-            : 0;
-
-          data.updates.position = newPosition;
-        }
-      }
-
-      const result = await taskService.updateTask(data.projectId, data.taskId, {
+      return await taskService.updateTask(data.projectId, data.taskId, {
         ...data.updates,
         ...(data.version && { version: data.version })
       });
-      return result;
-    } catch (error: any) {
-      if (error.response?.status === 409 && error.response?.data?.error === 'VERSION_CONFLICT') {
-        return rejectWithValue({
-          type: 'VERSION_CONFLICT',
-          conflict: error.response.data.conflict,
-          message: error.response.data.message
-        });
+    } catch (error) {
+      if (error instanceof TaskServiceError && error.code === 'VERSION_CONFLICT') {
+        return rejectWithValue({ type: 'VERSION_CONFLICT', conflict: error.conflict, message: error.message });
       }
-      return rejectWithValue(error.response?.data?.message || 'Failed to update task');
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to update task');
     }
   }
 );
@@ -144,8 +105,8 @@ export const deleteTaskAsync = createAsyncThunk(
     try {
       await taskService.deleteTask(data.projectId, data.taskId);
       return { taskId: data.taskId };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to delete task');
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to delete task');
     }
   }
 );
@@ -162,8 +123,8 @@ export const deleteTasksAsync = createAsyncThunk(
     try {
       await taskService.deleteTasks(data.projectId, data.taskIds);
       return { taskIds: data.taskIds };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to delete tasks');
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to delete tasks');
     }
   }
 );
@@ -181,24 +142,18 @@ export const updateTaskPriorityAsync = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const result = await taskService.updateTaskPriority(
+      return await taskService.updateTaskPriority(
         data.projectId,
         data.taskId,
         data.priority,
         data.destinationIndex,
         data.version
       );
-
-      return result;
-    } catch (error: any) {
-      if (error.response?.status === 409 && error.response?.data?.error === 'VERSION_CONFLICT') {
-        return rejectWithValue({
-          type: 'VERSION_CONFLICT',
-          conflict: error.response.data.conflict,
-          message: error.response.data.message
-        });
+    } catch (error) {
+      if (error instanceof TaskServiceError && error.code === 'VERSION_CONFLICT') {
+        return rejectWithValue({ type: 'VERSION_CONFLICT', conflict: error.conflict, message: error.message });
       }
-      return rejectWithValue(error.response?.data?.message || 'Failed to update task priority');
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to update task priority');
     }
   }
 );
@@ -216,24 +171,18 @@ export const updateTaskStatusAsync = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const result = await taskService.updateTaskStatus(
+      return await taskService.updateTaskStatus(
         data.projectId,
         data.taskId,
         data.status,
         data.destinationIndex,
         data.version
       );
-
-      return result;
-    } catch (error: any) {
-      if (error.response?.status === 409 && error.response?.data?.error === 'VERSION_CONFLICT') {
-        return rejectWithValue({
-          type: 'VERSION_CONFLICT',
-          conflict: error.response.data.conflict,
-          message: error.response.data.message
-        });
+    } catch (error) {
+      if (error instanceof TaskServiceError && error.code === 'VERSION_CONFLICT') {
+        return rejectWithValue({ type: 'VERSION_CONFLICT', conflict: error.conflict, message: error.message });
       }
-      return rejectWithValue(error.response?.data?.message || 'Failed to update task status');
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to update task status');
     }
   }
 );
@@ -249,17 +198,10 @@ export const bulkUpdateTasksAsync = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await taskService.bulkUpdateTasks(data.projectId, {
-        taskIds: data.taskIds,
-        updates: data.updates
-      });
-
-      return {
-        taskIds: data.taskIds,
-        updates: data.updates
-      };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to bulk update tasks');
+      await taskService.bulkUpdateTasks(data.projectId, { taskIds: data.taskIds, updates: data.updates });
+      return { taskIds: data.taskIds, updates: data.updates };
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to bulk update tasks');
     }
   }
 );
@@ -275,18 +217,10 @@ export const reorderTasksAsync = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await taskService.reorderTasks(
-        data.projectId,
-        data.priority,
-        data.taskIds
-      );
-
-      return {
-        priority: data.priority,
-        taskIds: data.taskIds
-      };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to reorder tasks');
+      await taskService.reorderTasks(data.projectId, data.priority, data.taskIds);
+      return { priority: data.priority, taskIds: data.taskIds };
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to reorder tasks');
     }
   }
 );
@@ -302,18 +236,10 @@ export const reorderTasksByStatusAsync = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await taskService.reorderTasksByStatus(
-        data.projectId,
-        data.status,
-        data.taskIds
-      );
-
-      return {
-        status: data.status,
-        taskIds: data.taskIds
-      };
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to reorder tasks by status');
+      await taskService.reorderTasksByStatus(data.projectId, data.status, data.taskIds);
+      return { status: data.status, taskIds: data.taskIds };
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to reorder tasks by status');
     }
   }
 );
@@ -324,8 +250,8 @@ export const fetchUrgentTasks = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await taskService.getUrgentTasks();
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch urgent tasks');
+    } catch (error) {
+      return rejectWithValue(error instanceof TaskServiceError ? error.message : 'Failed to fetch urgent tasks');
     }
   }
 );

@@ -1,7 +1,34 @@
 //src/services/taskService.ts
 
+import { AxiosError } from 'axios';
 import api from '../../../shared/lib/api';
-import { Task, TaskStatus, TaskPriority, UrgentTaskWithProject } from '../../../types';
+import { Task, TaskStatus, TaskPriority, UrgentTaskWithProject, TaskConflict } from '../../../types';
+
+export class TaskServiceError extends Error {
+  constructor(
+    public readonly code: 'VERSION_CONFLICT' | 'NOT_FOUND' | 'FORBIDDEN' | 'SERVER_ERROR' | 'NETWORK_ERROR',
+    message: string,
+    public readonly conflict?: TaskConflict
+  ) {
+    super(message);
+    this.name = 'TaskServiceError';
+  }
+}
+
+function toTaskServiceError(error: unknown): TaskServiceError {
+  if (error instanceof AxiosError) {
+    const data = error.response?.data;
+    const status = error.response?.status;
+    if (status === 409 && data?.error === 'VERSION_CONFLICT') {
+      return new TaskServiceError('VERSION_CONFLICT', data.message, data.conflict);
+    }
+    if (status === 404) return new TaskServiceError('NOT_FOUND', data?.message || 'Not found');
+    if (status === 403) return new TaskServiceError('FORBIDDEN', data?.message || 'Forbidden');
+    if (!error.response) return new TaskServiceError('NETWORK_ERROR', 'Network error');
+    return new TaskServiceError('SERVER_ERROR', data?.message || 'Request failed');
+  }
+  return new TaskServiceError('SERVER_ERROR', 'Unknown error');
+}
 
 // Types for API requests
 interface CreateTaskRequest {
@@ -33,44 +60,43 @@ interface UpdateTaskPriorityRequest {
 
 // Task API service
 const taskService = {
-  // Get all tasks for a project
   getTasks: async (projectId: string): Promise<Task[]> => {
-    const response = await api.get(`/projects/${projectId}/tasks`);
-    return response.data;
+    try {
+      const response = await api.get(`/projects/${projectId}/tasks`);
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Get a single task by ID
   getTask: async (projectId: string, taskId: string): Promise<Task> => {
-    const response = await api.get(`/projects/${projectId}/tasks/${taskId}`);
-    return response.data;
+    try {
+      const response = await api.get(`/projects/${projectId}/tasks/${taskId}`);
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Create a new task
   createTask: async (data: CreateTaskRequest): Promise<Task> => {
-    // Transform data to match backend expectations
-    const payload = {
-      ...data,
-      // Convert empty string to undefined
-      description: data.description === "" ? undefined : data.description,
-      // Ensure customFields is included
-      customFields: data.customFields || {}
-    };
-
-    const response = await api.post(`/projects/${data.projectId}/tasks`, payload);
-    return response.data;
+    try {
+      const payload = {
+        ...data,
+        description: data.description === "" ? undefined : data.description,
+        customFields: data.customFields || {}
+      };
+      const response = await api.post(`/projects/${data.projectId}/tasks`, payload);
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Update an existing task
   updateTask: async (
     projectId: string,
     taskId: string,
     updates: UpdateTaskRequest
   ): Promise<Task> => {
-    const response = await api.patch(`/projects/${projectId}/tasks/${taskId}`, updates);
-    return response.data;
+    try {
+      const response = await api.patch(`/projects/${projectId}/tasks/${taskId}`, updates);
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // 🔧 ENHANCED: Update task priority with version support
   updateTaskPriority: async (
     projectId: string,
     taskId: string,
@@ -78,15 +104,16 @@ const taskService = {
     destinationIndex?: number,
     version?: number
   ): Promise<Task> => {
-    const response = await api.patch(`/projects/${projectId}/tasks/${taskId}/priority`, {
-      priority,
-      destinationIndex,
-      ...(version && { version })
-    });
-    return response.data;
+    try {
+      const response = await api.patch(`/projects/${projectId}/tasks/${taskId}/priority`, {
+        priority,
+        destinationIndex,
+        ...(version && { version })
+      });
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Update task status with version support
   updateTaskStatus: async (
     projectId: string,
     taskId: string,
@@ -94,74 +121,67 @@ const taskService = {
     destinationIndex?: number,
     version?: number
   ): Promise<Task> => {
-    const response = await api.patch(`/projects/${projectId}/tasks/${taskId}/status`, {
-      status,
-      destinationIndex,
-      ...(version && { version })
-    });
-    return response.data;
+    try {
+      const response = await api.patch(`/projects/${projectId}/tasks/${taskId}/status`, {
+        status,
+        destinationIndex,
+        ...(version && { version })
+      });
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Delete a task
   deleteTask: async (projectId: string, taskId: string): Promise<void> => {
-    await api.delete(`/projects/${projectId}/tasks/${taskId}`);
+    try {
+      await api.delete(`/projects/${projectId}/tasks/${taskId}`);
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Delete multiple tasks
   deleteTasks: async (projectId: string, taskIds: string[]): Promise<void> => {
-    await api.delete(`/projects/${projectId}/tasks`, { data: { taskIds } });
+    try {
+      await api.delete(`/projects/${projectId}/tasks`, { data: { taskIds } });
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Reorder tasks within a priority column
   reorderTasks: async (
     projectId: string,
-    priority: TaskPriority,
+    _priority: TaskPriority,
     taskIds: string[]
   ): Promise<void> => {
-    const tasks = taskIds.map((id, index) => ({
-      id,
-      position: index
-    }));
-
-    await api.put(`/projects/${projectId}/tasks/reorder`, {
-      tasks,
-      groupBy: 'priority' // Specify grouping type
-    });
+    try {
+      const tasks = taskIds.map((id, index) => ({ id, position: index }));
+      await api.put(`/projects/${projectId}/tasks/reorder`, { tasks, groupBy: 'priority' });
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Reorder tasks within a status column
   reorderTasksByStatus: async (
     projectId: string,
-    status: TaskStatus,
+    _status: TaskStatus,
     taskIds: string[]
   ): Promise<void> => {
-    const tasks = taskIds.map((id, index) => ({
-      id,
-      statusPosition: index
-    }));
-
-    await api.put(`/projects/${projectId}/tasks/reorder`, {
-      tasks,
-      groupBy: 'status' // Specify grouping type
-    });
+    try {
+      const tasks = taskIds.map((id, index) => ({ id, statusPosition: index }));
+      await api.put(`/projects/${projectId}/tasks/reorder`, { tasks, groupBy: 'status' });
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Bulk update multiple tasks
   bulkUpdateTasks: async (
     projectId: string,
     data: {
       taskIds: string[],
       updates: Partial<Pick<Task, 'status' | 'priority'>>
     }
-
   ): Promise<void> => {
-    await api.put(`/projects/${projectId}/tasks/bulk`, data);
+    try {
+      await api.put(`/projects/${projectId}/tasks/bulk`, data);
+    } catch (error) { throw toTaskServiceError(error); }
   },
 
-  // Get all urgent tasks across all user's projects
   getUrgentTasks: async (): Promise<UrgentTaskWithProject[]> => {
-    const response = await api.get('/tasks/urgent');
-    return response.data;
+    try {
+      const response = await api.get('/tasks/urgent');
+      return response.data;
+    } catch (error) { throw toTaskServiceError(error); }
   }
 };
 

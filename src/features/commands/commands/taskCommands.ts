@@ -96,21 +96,27 @@ export const createTaskCommand = (data: CreateTaskData): UndoableCommand => {
     description: `Create task: ${data.title}`,
 
     execute: async (dispatch: AppDispatch, getState) => {
-      ////console.log('🎯 Executing: Create task', data.title);
+      const state = getState();
+      const tasks: Task[] = state.tasks.items;
+      const priority = data.priority || 'low';
+      const tasksWithSamePriority = tasks.filter(
+        (t: Task) => t.priority === priority && t.projectId === data.projectId
+      );
+      const position = data.position ?? (tasksWithSamePriority.length
+        ? Math.max(...tasksWithSamePriority.map((t: Task) => t.position || 0)) + 1
+        : 0);
 
-      // Clean API call - no isUndoOperation flag needed anymore
       const result = await dispatch(createTaskAsync({
         projectId: data.projectId,
         title: data.title,
         description: data.description,
         status: data.status || 'not started',
-        priority: data.priority || 'low',
-        position: data.position,
+        priority,
+        position,
         customFields: data.customFields || {}
       })).unwrap();
 
       createdTaskId = result.id;
-      ////console.log('✅ Task created with ID:', createdTaskId);
     },
 
     undo: async (dispatch: AppDispatch, getState) => {
@@ -140,23 +146,29 @@ export const updateTaskCommand = (data: UpdateTaskData): UndoableCommand => {
     description: `Update task`,
 
     execute: async (dispatch: AppDispatch, getState) => {
-      console.log('🎯 Executing: Update task', data.taskId);
-
-      // Store current task data before updating
       const state = getState();
       const currentTask = state.tasks.items.find((t: Task) => t.id === data.taskId);
       if (currentTask) {
         previousTaskData = { ...currentTask };
       }
 
-      // 🆕 NEW: Attempt update with version information
+      const updates = { ...data.updates };
+      if (updates.priority && currentTask && currentTask.priority !== updates.priority && updates.position === undefined) {
+        const tasks: Task[] = state.tasks.items;
+        const tasksInNewPriority = tasks.filter(
+          (t: Task) => t.priority === updates.priority && t.projectId === data.projectId
+        );
+        updates.position = tasksInNewPriority.length
+          ? Math.max(...tasksInNewPriority.map((t: Task) => t.position || 0)) + 1
+          : 0;
+      }
+
       const attemptUpdate = async (retryWithVersion?: number): Promise<void> => {
         try {
           await dispatch(updateTaskAsync({
             projectId: data.projectId,
             taskId: data.taskId,
-            updates: data.updates,
-            // 🆕 NEW: Pass current version for conflict detection
+            updates,
             version: retryWithVersion || currentTask?.version
           })).unwrap();
 
@@ -166,15 +178,14 @@ export const updateTaskCommand = (data: UpdateTaskData): UndoableCommand => {
           if (error.type === 'VERSION_CONFLICT') {
             console.log('⚠️ Version conflict detected, showing resolution modal');
             
-            const result = await showConflictResolution(error.conflict, data.updates);
-            
+            const result = await showConflictResolution(error.conflict, updates);
+
             if (result.resolution === 'keep_mine') {
-              // Force update with current version (overwrite their changes)
               await dispatch(updateTaskAsync({
                 projectId: data.projectId,
                 taskId: data.taskId,
-                updates: data.updates,
-                version: error.conflict.currentVersion // Use their current version
+                updates,
+                version: error.conflict.currentVersion
               })).unwrap();
               
               console.log('✅ Task updated (kept user changes)');
