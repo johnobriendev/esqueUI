@@ -5,14 +5,14 @@ import { closeTaskModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { useNavigate } from 'react-router-dom';
-import { executeCommand } from '../../commands/store/commandSlice';
-import { createTaskCommand, updateTaskCommand } from '../../commands/commands/taskCommands';
+import { useTaskOperations } from '../../commands/useTaskOperations';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 import Modal from '../../../shared/components/ui/Modal';
 
 const TaskModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { createTask, updateTask } = useTaskOperations();
   const isOpen = useAppSelector(state => state.ui.isTaskModalOpen);
   const editingTaskId = useAppSelector(state => state.ui.editingTaskId);
   const tasks = useAppSelector(state => state.tasks.items as Task[]);
@@ -98,29 +98,16 @@ const TaskModal: React.FC = () => {
 
     try {
       if (isEditing && editingTask) {
-        // 🎯 UPDATED: Use updateTaskCommand instead of direct thunk
         console.log('🎯 Creating UPDATE command for task:', editingTask.id);
-
-        const command = updateTaskCommand({
+        await updateTask({
           projectId: editingTask.projectId,
           taskId: editingTask.id,
-          updates: {
-            title,
-            description,
-            status,
-            priority,
-            customFields
-          }
+          updates: { title, description, status, priority, customFields }
         });
-
-        await dispatch(executeCommand(command)).unwrap();
         console.log('✅ UPDATE command executed successfully');
-
       } else {
-        // 🎯 UPDATED: Use createTaskCommand instead of direct thunk
         console.log('🎯 Creating CREATE command for new task:', title);
-
-        const command = createTaskCommand({
+        await createTask({
           projectId: currentProject.id,
           title,
           description,
@@ -128,8 +115,6 @@ const TaskModal: React.FC = () => {
           priority,
           customFields
         });
-
-        await dispatch(executeCommand(command)).unwrap();
         console.log('✅ CREATE command executed successfully');
       }
 

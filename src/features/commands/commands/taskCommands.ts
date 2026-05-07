@@ -22,7 +22,7 @@ import { showConflict } from '../../conflicts/showConflict';
 
 
 // Data interfaces for command parameters
-interface CreateTaskData {
+export interface CreateTaskData {
   projectId: string;
   title: string;
   description?: string;
@@ -32,7 +32,7 @@ interface CreateTaskData {
   customFields?: Record<string, string | number | boolean>;
 }
 
-interface UpdateTaskData {
+export interface UpdateTaskData {
   projectId: string;
   taskId: string;
   updates: {
@@ -45,43 +45,43 @@ interface UpdateTaskData {
   };
 }
 
-interface DeleteTaskData {
+export interface DeleteTaskData {
   projectId: string;
   taskId: string;
 }
 
-interface BulkDeleteTasksData {
+export interface BulkDeleteTasksData {
   projectId: string;
   taskIds: string[];
 }
 
-interface UpdateTaskPriorityData {
+export interface UpdateTaskPriorityData {
   projectId: string;
   taskId: string;
   priority: TaskPriority;
   destinationIndex?: number;
 }
 
-interface UpdateTaskStatusData {
+export interface UpdateTaskStatusData {
   projectId: string;
   taskId: string;
   status: TaskStatus;
   destinationIndex?: number;
 }
 
-interface ReorderTasksData {
+export interface ReorderTasksData {
   projectId: string;
   priority: TaskPriority;
   taskIds: string[];
 }
 
-interface ReorderTasksByStatusData {
+export interface ReorderTasksByStatusData {
   projectId: string;
   status: TaskStatus;
   taskIds: string[];
 }
 
-interface BulkUpdateTasksData {
+export interface BulkUpdateTasksData {
   projectId: string;
   taskIds: string[];
   updates: Partial<Pick<Task, 'status' | 'priority'>>;

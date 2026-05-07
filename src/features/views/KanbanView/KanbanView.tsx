@@ -6,13 +6,13 @@ import { openTaskModal, openTaskDetail, openDeleteConfirm, selectKanbanGroupBy }
 import { selectTasksByPriority, selectTasksByStatus } from '../../tasks/store/tasksSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { TaskPriority, TaskStatus, Task } from '../../../types';
-import { executeCommand } from '../../commands/store/commandSlice';
-import { createTaskCommand, updateTaskPriorityCommand, updateTaskStatusCommand, reorderTasksCommand, reorderTasksByStatusCommand } from '../../commands/commands/taskCommands';
+import { useTaskOperations } from '../../commands/useTaskOperations';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const KanbanView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { createTask, updateTaskPriority, updateTaskStatus, reorderTasks, reorderTasksByStatus } = useTaskOperations();
 
   const kanbanGroupBy = useAppSelector(selectKanbanGroupBy);
   const tasksByPriority = useAppSelector(selectTasksByPriority);
@@ -108,17 +108,15 @@ const KanbanView: React.FC = () => {
         const destinationPriority = destination.droppableId as TaskPriority;
 
         if (sourcePriority !== destinationPriority) {
-          // Moving between columns - use updateTaskPriorityCommand
+          // Moving between columns - use updateTaskPriority
           console.log('🔄 Moving between priority columns');
 
-          const command = updateTaskPriorityCommand({
+          await updateTaskPriority({
             projectId: currentProject.id,
             taskId: taskId,
             priority: destinationPriority,
             destinationIndex: destination.index
           });
-
-          await dispatch(executeCommand(command)).unwrap();
           console.log('✅ Priority update command executed successfully');
 
         } else {
@@ -131,13 +129,11 @@ const KanbanView: React.FC = () => {
           reorderedTasks.splice(destination.index, 0, movedTask);
           const newOrder = reorderedTasks.map(task => task.id);
 
-          const command = reorderTasksCommand({
+          await reorderTasks({
             projectId: currentProject.id,
             priority: sourcePriority,
             taskIds: newOrder
           });
-
-          await dispatch(executeCommand(command)).unwrap();
           console.log('✅ Reorder command executed successfully');
         }
       } else {
@@ -146,17 +142,15 @@ const KanbanView: React.FC = () => {
         const destinationStatus = destination.droppableId as TaskStatus;
 
         if (sourceStatus !== destinationStatus) {
-          // Moving between columns - use updateTaskStatusCommand
+          // Moving between columns - use updateTaskStatus
           console.log('🔄 Moving between status columns');
 
-          const command = updateTaskStatusCommand({
+          await updateTaskStatus({
             projectId: currentProject.id,
             taskId: taskId,
             status: destinationStatus,
             destinationIndex: destination.index
           });
-
-          await dispatch(executeCommand(command)).unwrap();
           console.log('✅ Status update command executed successfully');
 
         } else {
@@ -169,13 +163,11 @@ const KanbanView: React.FC = () => {
           reorderedTasks.splice(destination.index, 0, movedTask);
           const newOrder = reorderedTasks.map(task => task.id);
 
-          const command = reorderTasksByStatusCommand({
+          await reorderTasksByStatus({
             projectId: currentProject.id,
             status: sourceStatus,
             taskIds: newOrder
           });
-
-          await dispatch(executeCommand(command)).unwrap();
           console.log('✅ Reorder command executed successfully');
         }
       }
@@ -221,7 +213,7 @@ const KanbanView: React.FC = () => {
         status = columnId as TaskStatus;
       }
 
-      const command = createTaskCommand({
+      await createTask({
         projectId: currentProject.id,
         title,
         description: '',
@@ -229,8 +221,6 @@ const KanbanView: React.FC = () => {
         priority,
         customFields: {}
       });
-
-      await dispatch(executeCommand(command)).unwrap();
       console.log('✅ Kanban quick-add command executed successfully');
 
       // Reset the input on success

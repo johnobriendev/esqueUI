@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { closeBulkEdit } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
-import { executeCommand } from '../../../features/commands/store/commandSlice';
-import { bulkUpdateTasksCommand } from '../../commands/commands/taskCommands';
+import { useTaskOperations } from '../../commands/useTaskOperations';
 import { TaskStatus, TaskPriority } from '../../../types';
 import Modal from '../../../shared/components/ui/Modal';
 
 const BulkEditModal: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { bulkUpdateTasks } = useTaskOperations();
   const isOpen = useAppSelector(state => state.ui.isBulkEditOpen);
   const editType = useAppSelector(state => state.ui.bulkEditType);
   const selectedTaskIds = useAppSelector(state => state.ui.selectedTaskIds);
@@ -42,20 +42,9 @@ const BulkEditModal: React.FC = () => {
     setError(null);
 
     try {
-      // 🎯 UPDATED: Use bulkUpdateTasksCommand instead of direct thunk
-      const updates = editType === 'status'
-        ? { status }
-        : { priority };
-
+      const updates = editType === 'status' ? { status } : { priority };
       console.log('🎯 Creating BULK UPDATE command for', selectedTaskIds.length, 'tasks');
-
-      const command = bulkUpdateTasksCommand({
-        projectId: currentProject.id,
-        taskIds: selectedTaskIds,
-        updates
-      });
-
-      await dispatch(executeCommand(command)).unwrap();
+      await bulkUpdateTasks({ projectId: currentProject.id, taskIds: selectedTaskIds, updates });
       console.log('✅ Bulk update command executed successfully');
 
       // Close modal on success

@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { closeDeleteConfirm } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
-import { executeCommand } from '../../commands/store/commandSlice';
-import { deleteTaskCommand, bulkDeleteTasksCommand } from '../../commands/commands/taskCommands';
+import { useTaskOperations } from '../../commands/useTaskOperations';
 import Modal from '../../../shared/components/ui/Modal';
 
 
 const DeleteConfirmModal: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { deleteTask, bulkDeleteTasks } = useTaskOperations();
   const isOpen = useAppSelector(state => state.ui.isDeleteConfirmOpen);
   const deletingTaskId = useAppSelector(state => state.ui.deletingTaskId);
   const deletingTaskIds = useAppSelector(state => state.ui.deletingTaskIds);
@@ -36,28 +36,11 @@ const DeleteConfirmModal: React.FC = () => {
 
     try {
       if (isMultiDelete) {
-        // 🎯 UPDATED: Use bulkDeleteTasksCommand instead of direct thunk
         console.log('🎯 Creating BULK DELETE command for', deletingTaskIds.length, 'tasks');
-
-        const command = bulkDeleteTasksCommand({
-          projectId: currentProject.id,
-          taskIds: deletingTaskIds
-        });
-
-        await dispatch(executeCommand(command)).unwrap();
+        await bulkDeleteTasks({ projectId: currentProject.id, taskIds: deletingTaskIds });
         console.log('✅ Bulk delete command executed successfully');
-
       } else if (deletingTaskId) {
-        // 🎯 UPDATED: Use deleteTaskCommand instead of direct thunk
-        //console.log('🎯 Creating DELETE command for task:', deletingTaskId);
-
-        const command = deleteTaskCommand({
-          projectId: currentProject.id,
-          taskId: deletingTaskId
-        });
-
-        await dispatch(executeCommand(command)).unwrap();
-        //console.log('✅ Delete command executed successfully');
+        await deleteTask({ projectId: currentProject.id, taskId: deletingTaskId });
       }
 
       // Close modal on success
