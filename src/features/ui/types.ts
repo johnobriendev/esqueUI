@@ -19,7 +19,6 @@ export interface UiState {
   kanbanGroupBy: KanbanGroupBy;
   sortConfig: SortConfig;
   filterConfig: FilterConfig;
-  currentProjectId: string | null;
   activeModal: ActiveModal;
 
   activeConflicts: string[];

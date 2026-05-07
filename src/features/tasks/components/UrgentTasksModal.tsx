@@ -9,7 +9,7 @@ import {
   selectUrgentTasksError,
   fetchTasks
 } from '../store/tasksSlice';
-import { closeModal, openModal, setCurrentProjectId } from '../../ui/store/uiSlice';
+import { closeModal, openModal } from '../../ui/store/uiSlice';
 import { setCurrentProject } from '../../projects/store/projectsSlice';
 import { UrgentTaskWithProject } from '../../../types';
 import Modal from '../../../shared/components/ui/Modal';
@@ -49,8 +49,6 @@ const UrgentTasksModal: React.FC = () => {
       isArchived: false,
       isUserArchived:false,
     }));
-    dispatch(setCurrentProjectId(task.projectId));
-
     // Fetch tasks first, then navigate and open detail view
     await dispatch(fetchTasks(task.projectId));
 

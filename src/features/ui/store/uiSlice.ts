@@ -27,7 +27,6 @@ const initialState: UiState = {
     priority: 'all',
     searchTerm: '',
   },
-  currentProjectId: null,
   activeModal: null,
   activeConflicts: [],
   conflictBannerVisible: false,
@@ -52,10 +51,6 @@ export const uiSlice = createSlice({
       } else {
         state.sortConfig = { ...state.sortConfig, ...action.payload };
       }
-    },
-
-    setCurrentProjectId: (state, action: PayloadAction<string | null>) => {
-      state.currentProjectId = action.payload;
     },
 
     setFilterStatus: (state, action: PayloadAction<TaskStatus | 'all'>) => {
@@ -105,7 +100,6 @@ export const uiSlice = createSlice({
 export const {
   setViewMode,
   setKanbanGroupBy,
-  setCurrentProjectId,
   setSortConfig,
   setFilterStatus,
   setFilterPriority,
@@ -121,7 +115,6 @@ export default uiSlice.reducer;
 // Selectors
 export const selectViewMode = (state: { ui: UiState }) => state.ui.viewMode;
 export const selectKanbanGroupBy = (state: { ui: UiState }) => state.ui.kanbanGroupBy;
-export const selectCurrentProjectId = (state: { ui: UiState }) => state.ui.currentProjectId;
 export const selectActiveModal = (state: { ui: UiState }) => state.ui.activeModal;
 
 export const selectSortConfig = createSelector(

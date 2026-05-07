@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { fetchProject, selectCurrentProject, setCurrentProject, selectAllProjects } from '../store/projectsSlice';
 import { fetchTasks } from '../../tasks/store/tasksSlice';
-import { closeModal, setCurrentProjectId, selectBackgroundConfig, setBackgroundConfig } from '../../ui/store/uiSlice';
+import { closeModal, selectBackgroundConfig, setBackgroundConfig } from '../../ui/store/uiSlice';
 import { clearHistory } from '../../commands/store/commandSlice';
 import Header from '../../../shared/components/layout/Header';
 import ListView from '../../views/ListView/ListView';
@@ -114,11 +114,7 @@ const ProjectView: React.FC = () => {
           dispatch(clearHistory());
 
 
-          // Set the current project in the projects state
           dispatch(setCurrentProject(project));
-
-
-          dispatch(setCurrentProjectId(projectId));
 
           // Always fetch fresh tasks (tasks change more frequently than projects)
           await dispatch(fetchTasks(projectId)).unwrap();

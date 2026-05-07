@@ -15,7 +15,7 @@ import {
   hideProject,
   leaveProject,
 } from '../store/projectsSlice';
-import { setCurrentProjectId, openModal } from '../../ui/store/uiSlice';
+import { openModal } from '../../ui/store/uiSlice';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { Project } from '../../../types';
@@ -169,9 +169,6 @@ const ProjectDashboard: React.FC = () => {
     try {
       await dispatch(deleteProject(project.id)).unwrap();
 
-      // Clear the current project ID from UI state if it was the deleted project
-      dispatch(setCurrentProjectId(null));
-
       // Close modal
       setShowDeleteModal(false);
       setProjectToDelete(null);
@@ -189,9 +186,7 @@ const ProjectDashboard: React.FC = () => {
   };
 
   const handleSelectProject = (project: Project) => {
-
     dispatch(setCurrentProject(project));
-    dispatch(setCurrentProjectId(project.id));
     navigate(`/projects/${project.id}`);
   };
 

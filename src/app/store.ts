@@ -16,7 +16,6 @@ const uiPersistConfig: PersistConfig<any> = {
   key: 'ui',
   storage,
   whitelist: [
-    'currentProjectId',    // Just the ID, not the full project data
     'viewMode',           // kanban vs list view preference
     'theme',              // if you have theme preferences
     'sidebarCollapsed',   // UI state preferences

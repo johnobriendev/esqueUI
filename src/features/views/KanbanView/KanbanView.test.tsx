@@ -59,7 +59,6 @@ describe('KanbanView', () => {
       kanbanGroupBy: 'priority',
       sortConfig: { field: 'updatedAt', direction: 'desc' },
       filterConfig: { status: 'all', priority: 'all', searchTerm: '' },
-      currentProjectId: 'project-1',
       activeModal: null,
       activeConflicts: [],
       conflictBannerVisible: false,

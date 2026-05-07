@@ -3,7 +3,6 @@ import { describe, it, expect } from 'vitest';
 import uiReducer, {
   setViewMode,
   setKanbanGroupBy,
-  setCurrentProjectId,
   setSortConfig,
   setFilterStatus,
   setFilterPriority,
@@ -26,7 +25,6 @@ describe('uiSlice', () => {
       priority: 'all',
       searchTerm: '',
     },
-    currentProjectId: null,
     activeModal: null,
     activeConflicts: [],
     conflictBannerVisible: false,
@@ -68,19 +66,6 @@ describe('uiSlice', () => {
       const state = { ...initialState, kanbanGroupBy: 'status' as const };
       const actual = uiReducer(state, setKanbanGroupBy('priority'));
       expect(actual.kanbanGroupBy).toBe('priority');
-    });
-  });
-
-  describe('setCurrentProjectId', () => {
-    it('should set current project ID', () => {
-      const actual = uiReducer(initialState, setCurrentProjectId('project-123'));
-      expect(actual.currentProjectId).toBe('project-123');
-    });
-
-    it('should allow setting to null', () => {
-      const state = { ...initialState, currentProjectId: 'project-123' };
-      const actual = uiReducer(state, setCurrentProjectId(null));
-      expect(actual.currentProjectId).toBeNull();
     });
   });
 
