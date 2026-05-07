@@ -123,11 +123,11 @@ export const handlers = [
   }),
 
   // Collaboration endpoints
-  http.get(`${API_URL}/projects/:projectId/members`, () => {
+  http.get(`${API_URL}/team/projects/:projectId/collaborators`, () => {
     return HttpResponse.json([]);
   }),
 
-  http.post(`${API_URL}/projects/:projectId/invitations`, async ({ request }) => {
+  http.post(`${API_URL}/team/projects/:projectId/invite`, async ({ request }) => {
     const body = await request.json() as any;
     const newInvitation: Invitation = {
       id: 'mock-invitation-id',
@@ -151,7 +151,32 @@ export const handlers = [
     return HttpResponse.json(newInvitation, { status: 201 });
   }),
 
-  http.get(`${API_URL}/invitations`, () => {
+  http.get(`${API_URL}/team/users/invitations`, () => {
     return HttpResponse.json([]);
+  }),
+
+  http.put(`${API_URL}/team/projects/:projectId/collaborators/:userId/role`, async ({ request, params }) => {
+    const body = await request.json() as any;
+    const member: ProjectMember = {
+      id: 'mock-member-id',
+      userId: params.userId as string,
+      projectId: params.projectId as string,
+      role: body.role,
+      email: 'member@example.com',
+      joinedAt: new Date().toISOString(),
+    };
+    return HttpResponse.json(member);
+  }),
+
+  http.delete(`${API_URL}/team/projects/:projectId/collaborators/:userId`, () => {
+    return HttpResponse.json({ success: true });
+  }),
+
+  http.post(`${API_URL}/team/invitations/:invitationToken/accept`, () => {
+    return HttpResponse.json({ success: true });
+  }),
+
+  http.delete(`${API_URL}/team/invitations/:invitationId`, () => {
+    return HttpResponse.json({ success: true });
   }),
 ];

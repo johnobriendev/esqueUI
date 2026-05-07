@@ -1,8 +1,8 @@
-//src/features/collaboration/store/collaborationSlice.ts 
+//src/features/collaboration/store/collaborationSlice.ts
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ProjectMember, CollaborationState, Invitation, UserRole } from '../../../types';
-import api from '../../../shared/lib/api';
+import collaborationService from '../services/collaborationService';
 
 // Super simple initial state - just team members
 const initialState: CollaborationState = {
@@ -28,8 +28,7 @@ export const fetchProjectMembers = createAsyncThunk(
   'collaboration/fetchProjectMembers',
   async (projectId: string, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/team/projects/${projectId}/collaborators`);
-      return response.data;
+      return await collaborationService.getProjectMembers(projectId);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch team members');
     }
@@ -40,14 +39,12 @@ export const fetchPendingInvitations = createAsyncThunk(
   'collaboration/fetchPendingInvitations',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/team/users/invitations');
-      return response.data;
+      return await collaborationService.getPendingInvitations();
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch invitations');
     }
   }
 );
-
 
 export const inviteUser = createAsyncThunk(
   'collaboration/inviteUser',
@@ -56,18 +53,13 @@ export const inviteUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await api.post(`/team/projects/${data.projectId}/invite`, {
-        email: data.email,
-        role: data.role
-      });
-      return data; // Return the invite data
+      await collaborationService.inviteUser(data.projectId, data.email, data.role);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to send invitation');
     }
   }
 );
 
-// Update member role
 export const updateMemberRole = createAsyncThunk(
   'collaboration/updateMemberRole',
   async (
@@ -75,17 +67,13 @@ export const updateMemberRole = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.put(`/team/projects/${data.projectId}/collaborators/${data.userId}/role`, {
-        role: data.role
-      });
-      return response.data;
+      return await collaborationService.updateMemberRole(data.projectId, data.userId, data.role);
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update member role');
     }
   }
 );
 
-// Remove team member
 export const removeMember = createAsyncThunk(
   'collaboration/removeMember',
   async (
@@ -93,34 +81,31 @@ export const removeMember = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await api.delete(`/team/projects/${data.projectId}/collaborators/${data.userId}`);
-      return data.userId; // Return the removed user ID
+      await collaborationService.removeMember(data.projectId, data.userId);
+      return data.userId;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to remove team member');
     }
   }
 );
 
-
-
 export const acceptInvitation = createAsyncThunk(
   'collaboration/acceptInvitation',
   async (invitationToken: string, { rejectWithValue }) => {
     try {
-      const response = await api.post(`/team/invitations/${invitationToken}/accept`);
-      return { invitationToken, project: response.data };
+      const project = await collaborationService.acceptInvitation(invitationToken);
+      return { invitationToken, project };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to accept invitation');
     }
   }
 );
 
-// Decline invitation
 export const declineInvitation = createAsyncThunk(
   'collaboration/declineInvitation',
   async (invitationId: string, { rejectWithValue }) => {
     try {
-      await api.delete(`/team/invitations/${invitationId}`);
+      await collaborationService.declineInvitation(invitationId);
       return invitationId;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to decline invitation');
