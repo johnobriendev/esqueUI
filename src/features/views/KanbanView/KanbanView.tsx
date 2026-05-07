@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { openTaskModal, openTaskDetail, openDeleteConfirm, selectKanbanGroupBy } from '../../ui/store/uiSlice';
+import { openModal, selectKanbanGroupBy } from '../../ui/store/uiSlice';
 import { selectTasksByPriority, selectTasksByStatus } from '../../tasks/store/tasksSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { TaskPriority, TaskStatus, Task } from '../../../types';
@@ -286,12 +286,12 @@ const KanbanView: React.FC = () => {
 
   // Handle edit task
   const handleEditTask = (taskId: string) => {
-    dispatch(openTaskModal(taskId));
+    dispatch(openModal({ type: 'taskModal', taskId }));
   };
 
   // Handle delete task
   const handleDeleteTask = (taskId: string) => {
-    dispatch(openDeleteConfirm(taskId));
+    dispatch(openModal({ type: 'deleteConfirm', taskIds: [taskId] }));
   };
 
   // Show a message if no project is selected
@@ -369,7 +369,7 @@ const KanbanView: React.FC = () => {
                                       <div className="flex justify-between items-start mb-2">
                                         <h4
                                           className="font-medium text-blue-50 cursor-pointer hover:text-blue-400 line-clamp-2 flex-1 text-sm"
-                                          onClick={() => dispatch(openTaskDetail(task.id))}
+                                          onClick={() => dispatch(openModal({ type: 'taskDetail', taskId: task.id }))}
                                         >
                                           {task.title}
                                         </h4>

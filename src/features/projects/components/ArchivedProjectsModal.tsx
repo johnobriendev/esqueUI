@@ -8,7 +8,7 @@ import {
   selectArchivedProjects,
   selectArchivedLoading,
 } from '../store/projectsSlice';
-import { selectIsArchivedProjectsModalOpen, closeArchivedProjectsModal } from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 import { Project } from '../../../types';
 import ProjectArchiveConfirmModal from './ProjectArchiveConfirmModal';
@@ -16,7 +16,7 @@ import Modal from '../../../shared/components/ui/Modal';
 
 const ArchivedProjectsModal: React.FC = () => {
   const dispatch = useAppDispatch();
-  const isOpen = useAppSelector(selectIsArchivedProjectsModalOpen);
+  const isOpen = useAppSelector(state => state.ui.activeModal?.type === 'archivedProjects');
   const archivedProjects = useAppSelector(selectArchivedProjects);
   const isLoading = useAppSelector(selectArchivedLoading);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -30,7 +30,7 @@ const ArchivedProjectsModal: React.FC = () => {
   }, [isOpen, dispatch]);
 
   const handleClose = () => {
-    dispatch(closeArchivedProjectsModal());
+    dispatch(closeModal());
   };
 
   const handleRestore = (project: Project) => {

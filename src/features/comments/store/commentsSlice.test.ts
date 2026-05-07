@@ -9,6 +9,8 @@ import commentsReducer, {
   revertOptimisticCreate,
   revertOptimisticUpdate,
   revertOptimisticDelete,
+  openDeleteCommentModal,
+  closeDeleteCommentModal,
   fetchComments,
   createCommentAsync,
   updateCommentAsync,
@@ -55,6 +57,7 @@ describe('commentsSlice', () => {
         items: [],
         isLoading: false,
         error: null,
+        deletingCommentId: null,
       });
     });
   });
@@ -536,6 +539,19 @@ describe('commentsSlice', () => {
 
       const state = store.getState().comments;
       expect(state.error).toBe(errorMessage);
+    });
+  });
+
+  describe('delete comment modal', () => {
+    it('openDeleteCommentModal sets deletingCommentId', () => {
+      store.dispatch(openDeleteCommentModal('comment-123'));
+      expect(store.getState().comments.deletingCommentId).toBe('comment-123');
+    });
+
+    it('closeDeleteCommentModal clears deletingCommentId', () => {
+      store.dispatch(openDeleteCommentModal('comment-123'));
+      store.dispatch(closeDeleteCommentModal());
+      expect(store.getState().comments.deletingCommentId).toBeNull();
     });
   });
 });

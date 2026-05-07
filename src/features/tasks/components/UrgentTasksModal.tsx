@@ -9,12 +9,7 @@ import {
   selectUrgentTasksError,
   fetchTasks
 } from '../store/tasksSlice';
-import {
-  closeUrgentTasksModal,
-  selectIsUrgentTasksModalOpen,
-  openTaskDetail,
-  setCurrentProjectId
-} from '../../ui/store/uiSlice';
+import { closeModal, openModal, setCurrentProjectId } from '../../ui/store/uiSlice';
 import { setCurrentProject } from '../../projects/store/projectsSlice';
 import { UrgentTaskWithProject } from '../../../types';
 import Modal from '../../../shared/components/ui/Modal';
@@ -23,7 +18,7 @@ const UrgentTasksModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isOpen = useAppSelector(selectIsUrgentTasksModalOpen);
+  const isOpen = useAppSelector(state => state.ui.activeModal?.type === 'urgentTasks');
   const allUrgentTasks = useAppSelector(selectUrgentTasks);
   const urgentTasks = allUrgentTasks.filter((t: UrgentTaskWithProject) => t.status !== 'completed');
   const isLoading = useAppSelector(selectUrgentTasksLoading);
@@ -38,7 +33,7 @@ const UrgentTasksModal: React.FC = () => {
 
   const handleTaskClick = async (task: UrgentTaskWithProject) => {
     // Close the urgent tasks modal
-    dispatch(closeUrgentTasksModal());
+    dispatch(closeModal());
 
     // Set the current project
     dispatch(setCurrentProject({
@@ -61,14 +56,14 @@ const UrgentTasksModal: React.FC = () => {
 
     // Open the task detail view before navigating
     // This way it will already be open when we land on the project page
-    dispatch(openTaskDetail(task.id));
+    dispatch(openModal({ type: 'taskDetail', taskId: task.id }));
 
     // Navigate to the project (navigation happens last)
     navigate(`/projects/${task.projectId}`);
   };
 
   const handleClose = () => {
-    dispatch(closeUrgentTasksModal());
+    dispatch(closeModal());
   };
 
   const getStatusColor = (status: string) => {

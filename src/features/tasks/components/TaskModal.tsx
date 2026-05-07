@@ -1,7 +1,7 @@
 //src/components/modals/TaskModal.tsx
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { closeTaskModal } from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +13,9 @@ const TaskModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { createTask, updateTask } = useTaskOperations();
-  const isOpen = useAppSelector(state => state.ui.isTaskModalOpen);
-  const editingTaskId = useAppSelector(state => state.ui.editingTaskId);
+  const activeModal = useAppSelector(state => state.ui.activeModal);
+  const isOpen = activeModal?.type === 'taskModal';
+  const editingTaskId = activeModal?.type === 'taskModal' ? activeModal.taskId : null;
   const tasks = useAppSelector(state => state.tasks.items as Task[]);
   const currentProject = useAppSelector(selectCurrentProject);
   const permissions = getProjectPermissions(currentProject);
@@ -44,7 +45,7 @@ const TaskModal: React.FC = () => {
       setError('You don\'t have permission to create or edit tasks in this project.');
       // Auto-close modal after showing error
       setTimeout(() => {
-        dispatch(closeTaskModal());
+        dispatch(closeModal());
       }, 3000);
     }
   }, [isOpen, permissions.canWrite, dispatch]);
@@ -75,7 +76,7 @@ const TaskModal: React.FC = () => {
 
   // Close the modal
   const handleClose = () => {
-    dispatch(closeTaskModal());
+    dispatch(closeModal());
   };
 
   // Submit the form
@@ -88,7 +89,7 @@ const TaskModal: React.FC = () => {
     if (!currentProject?.id) {
       setError('No project selected. Please select a project first.');
       // Redirect to dashboard if no project is selected
-      dispatch(closeTaskModal());
+      dispatch(closeModal());
       navigate('/');
       return;
     }

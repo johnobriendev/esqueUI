@@ -1,7 +1,7 @@
 // src/views/ListView.tsx
 import React, { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { openTaskModal, setSortConfig, openTaskDetail, openDeleteConfirm, openBulkEdit, selectIsDeleteConfirmOpen } from '../../ui/store/uiSlice';
+import { openModal, setSortConfig } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { selectSortedFilteredTasks } from '../../tasks/store/tasksSlice';
 import { Task, SortField, SortDirection, TaskStatus, TaskPriority } from '../../../types';
@@ -13,7 +13,6 @@ const ListView: React.FC = () => {
   const tasks = useAppSelector(selectSortedFilteredTasks);
   const filterConfig = useAppSelector(state => state.ui.filterConfig);
   const sortConfig = useAppSelector(state => state.ui.sortConfig);
-  const isDeleteConfirmOpen = useAppSelector(selectIsDeleteConfirmOpen);
   const currentProject = useAppSelector(selectCurrentProject);
   const permissions = getProjectPermissions(currentProject);
 
@@ -42,13 +41,6 @@ const ListView: React.FC = () => {
 
     setSelectedTaskIds(updatedSelections);
   }, [tasks]);
-
-  // Clear selected tasks when delete confirm modal closes
-  useEffect(() => {
-    if (!isDeleteConfirmOpen) {
-      // setSelectedTaskIds(new Set());
-    }
-  }, [isDeleteConfirmOpen]);
 
   // Clear permission errors after 5 seconds
   useEffect(() => {
@@ -103,7 +95,7 @@ const ListView: React.FC = () => {
       setPermissionError('You don\'t have permission to edit tasks in this project.');
       return;
     }
-    dispatch(openTaskModal(task.id));
+    dispatch(openModal({ type: 'taskModal', taskId: task.id }));
   };
 
   // Handle delete task with permission check
@@ -113,7 +105,7 @@ const ListView: React.FC = () => {
       setPermissionError('You don\'t have permission to delete tasks in this project.');
       return;
     }
-    dispatch(openDeleteConfirm(id));
+    dispatch(openModal({ type: 'deleteConfirm', taskIds: [id] }));
   };
 
   // Handle bulk delete with permission check
@@ -124,7 +116,7 @@ const ListView: React.FC = () => {
       return;
     }
     if (selectedTaskIds.size === 0) return;
-    dispatch(openDeleteConfirm(Array.from(selectedTaskIds)));
+    dispatch(openModal({ type: 'deleteConfirm', taskIds: Array.from(selectedTaskIds) }));
   };
 
   // Handle bulk edit with permission check
@@ -134,10 +126,7 @@ const ListView: React.FC = () => {
       return;
     }
     if (selectedTaskIds.size === 0) return;
-    dispatch(openBulkEdit({
-      type,
-      taskIds: Array.from(selectedTaskIds)
-    }));
+    dispatch(openModal({ type: 'bulkEdit', editType: type, taskIds: Array.from(selectedTaskIds) }));
   };
 
   // Toggle task selection (only for users with write permissions)
@@ -344,7 +333,7 @@ const ListView: React.FC = () => {
                 <td className="px-6 py-2">
                   <div
                     className="text-sm font-medium text-blue-50 cursor-pointer hover:text-blue-400"
-                    onClick={() => dispatch(openTaskDetail(task.id))}
+                    onClick={() => dispatch(openModal({ type: 'taskDetail', taskId: task.id }))}
                   >
                     {task.title}
                   </div>

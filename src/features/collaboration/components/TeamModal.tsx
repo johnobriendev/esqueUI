@@ -18,10 +18,7 @@ import {
   selectRemoveError,
   clearTeamManagementErrors,
 } from '../store/collaborationSlice';
-import {
-  closeTeamModal,
-  selectIsTeamModalOpen
-} from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 import { UserRole, ProjectMember } from '../../../types';
@@ -30,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 const TeamModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const isOpen = useAppSelector(selectIsTeamModalOpen);
+  const isOpen = useAppSelector(state => state.ui.activeModal?.type === 'teamModal');
   const currentProject = useAppSelector(selectCurrentProject);
   const members = useAppSelector(selectProjectMembers);
   const isLoading = useAppSelector(selectIsLoadingMembers);
@@ -83,7 +80,7 @@ const TeamModal: React.FC = () => {
   }, [successMessage]);
 
   const handleClose = () => {
-    dispatch(closeTeamModal());
+    dispatch(closeModal());
   };
 
   const handleInvite = async (e: React.FormEvent) => {

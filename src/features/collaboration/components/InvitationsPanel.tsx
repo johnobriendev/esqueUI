@@ -15,7 +15,7 @@ import {
   selectDeclineError,
   clearInvitationsError
 } from '../store/collaborationSlice';
-import { closeInvitationsPanel } from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 
 interface InvitationsPanelProps {
   isOpen: boolean;
@@ -51,7 +51,7 @@ const InvitationsPanel: React.FC<InvitationsPanelProps> = ({ isOpen }) => {
   }, [isOpen, dispatch]);
 
   const handleClose = () => {
-    dispatch(closeInvitationsPanel());
+    dispatch(closeModal());
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {

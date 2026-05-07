@@ -10,7 +10,6 @@ import TaskModal from './features/tasks/components/TaskModal';
 import BulkEditModal from './features/tasks/components/BulkEditModal';
 import DeleteConfirmModal from './features/tasks/components/DeleteConfirmModal';
 import TaskDetailView from './features/tasks/components/TaskDetailView';
-import { closeTaskDetail } from './features/ui/store/uiSlice';
 import { useAppSelector, useAppDispatch } from './app/hooks';
 import AuthLayout from './features/auth/components/AuthLayout';
 import ProjectView from './features/projects/components/ProjectView';

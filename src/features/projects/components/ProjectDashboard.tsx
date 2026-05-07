@@ -15,7 +15,7 @@ import {
   hideProject,
   leaveProject,
 } from '../store/projectsSlice';
-import { setCurrentProjectId, openUrgentTasksModal } from '../../ui/store/uiSlice';
+import { setCurrentProjectId, openModal } from '../../ui/store/uiSlice';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { Project } from '../../../types';
@@ -306,7 +306,7 @@ const ProjectDashboard: React.FC = () => {
         <DashboardHeader
           dashboardActions={{
             onCreateProject: handleOpenCreateForm,
-            onOpenUrgentTasks: () => dispatch(openUrgentTasksModal()),
+            onOpenUrgentTasks: () => dispatch(openModal({ type: 'urgentTasks' })),
             onOpenPalette: () => setShowPaletteModal(true),
           }}
           archivedCount={archivedCount}

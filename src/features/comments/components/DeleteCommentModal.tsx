@@ -1,7 +1,7 @@
 // src/features/comments/components/DeleteCommentModal.tsx
 import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { closeDeleteCommentModal } from '../../ui/store/uiSlice';
+import { closeDeleteCommentModal, selectDeletingCommentId } from '../store/commentsSlice';
 import Modal from '../../../shared/components/ui/Modal';
 
 interface DeleteCommentModalProps {
@@ -10,8 +10,8 @@ interface DeleteCommentModalProps {
 
 const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({ onConfirmDelete }) => {
   const dispatch = useAppDispatch();
-  const isOpen = useAppSelector((state) => state.ui.isDeleteCommentModalOpen);
-  const deletingCommentId = useAppSelector((state) => state.ui.deletingCommentId);
+  const deletingCommentId = useAppSelector(selectDeletingCommentId);
+  const isOpen = deletingCommentId !== null;
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);

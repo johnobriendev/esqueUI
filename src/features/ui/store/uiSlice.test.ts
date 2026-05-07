@@ -8,22 +8,8 @@ import uiReducer, {
   setFilterStatus,
   setFilterPriority,
   setSearchTerm,
-  openTaskModal,
-  closeTaskModal,
-  openTaskDetail,
-  closeTaskDetail,
-  openDeleteConfirm,
-  closeDeleteConfirm,
-  openBulkEdit,
-  closeBulkEdit,
-  openTeamModal,
-  closeTeamModal,
-  openInvitationsPanel,
-  closeInvitationsPanel,
-  openDeleteCommentModal,
-  closeDeleteCommentModal,
-  openUrgentTasksModal,
-  closeUrgentTasksModal,
+  openModal,
+  closeModal,
 } from './uiSlice';
 import { UiState } from '../../../types';
 
@@ -40,26 +26,17 @@ describe('uiSlice', () => {
       priority: 'all',
       searchTerm: '',
     },
-    isTaskModalOpen: false,
-    editingTaskId: null,
-    isTaskDetailOpen: false,
-    viewingTaskId: null,
-    isDeleteConfirmOpen: false,
-    deletingTaskId: null,
-    deletingTaskIds: [],
-    isBulkEditOpen: false,
-    bulkEditType: null,
-    selectedTaskIds: [],
     currentProjectId: null,
-    isTeamModalOpen: false,
-    isInviteModalOpen: false,
-    isInvitationsPanelOpen: false,
+    activeModal: null,
     activeConflicts: [],
     conflictBannerVisible: false,
-    isDeleteCommentModalOpen: false,
-    deletingCommentId: null,
-    isUrgentTasksModalOpen: false,
-    isArchivedProjectsModalOpen: false,
+    backgroundConfig: {
+      type: 'random',
+      value: '',
+      cachedImageUrl: null,
+      photographerName: '',
+      photographerUrl: '',
+    },
   };
 
   describe('initial state', () => {
@@ -185,198 +162,74 @@ describe('uiSlice', () => {
     });
   });
 
-  describe('task modal actions', () => {
-    describe('openTaskModal', () => {
-      it('should open modal for new task', () => {
-        const actual = uiReducer(initialState, openTaskModal(null));
-        expect(actual.isTaskModalOpen).toBe(true);
-        expect(actual.editingTaskId).toBeNull();
-      });
-
-      it('should open modal for editing task', () => {
-        const actual = uiReducer(initialState, openTaskModal('task-123'));
-        expect(actual.isTaskModalOpen).toBe(true);
-        expect(actual.editingTaskId).toBe('task-123');
-      });
+  describe('openModal', () => {
+    it('should open taskModal for new task', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'taskModal', taskId: null }));
+      expect(actual.activeModal).toEqual({ type: 'taskModal', taskId: null });
     });
 
-    describe('closeTaskModal', () => {
-      it('should close modal and clear editing task', () => {
-        const state = {
-          ...initialState,
-          isTaskModalOpen: true,
-          editingTaskId: 'task-123',
-        };
-        const actual = uiReducer(state, closeTaskModal());
-        expect(actual.isTaskModalOpen).toBe(false);
-        expect(actual.editingTaskId).toBeNull();
-      });
-    });
-  });
-
-  describe('task detail actions', () => {
-    describe('openTaskDetail', () => {
-      it('should open detail view', () => {
-        const actual = uiReducer(initialState, openTaskDetail('task-123'));
-        expect(actual.isTaskDetailOpen).toBe(true);
-        expect(actual.viewingTaskId).toBe('task-123');
-      });
-
-      it('should close task modal when opening detail', () => {
-        const state = {
-          ...initialState,
-          isTaskModalOpen: true,
-          editingTaskId: 'task-123',
-        };
-        const actual = uiReducer(state, openTaskDetail('task-456'));
-        expect(actual.isTaskModalOpen).toBe(false);
-        expect(actual.editingTaskId).toBeNull();
-        expect(actual.isTaskDetailOpen).toBe(true);
-        expect(actual.viewingTaskId).toBe('task-456');
-      });
+    it('should open taskModal for editing', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'taskModal', taskId: 'task-123' }));
+      expect(actual.activeModal).toEqual({ type: 'taskModal', taskId: 'task-123' });
     });
 
-    describe('closeTaskDetail', () => {
-      it('should close detail view and clear viewing task', () => {
-        const state = {
-          ...initialState,
-          isTaskDetailOpen: true,
-          viewingTaskId: 'task-123',
-        };
-        const actual = uiReducer(state, closeTaskDetail());
-        expect(actual.isTaskDetailOpen).toBe(false);
-        expect(actual.viewingTaskId).toBeNull();
-      });
+    it('should open taskDetail', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'taskDetail', taskId: 'task-123' }));
+      expect(actual.activeModal).toEqual({ type: 'taskDetail', taskId: 'task-123' });
+    });
+
+    it('should open taskDetail replacing taskModal', () => {
+      const state = { ...initialState, activeModal: { type: 'taskModal' as const, taskId: 'task-123' } };
+      const actual = uiReducer(state, openModal({ type: 'taskDetail', taskId: 'task-456' }));
+      expect(actual.activeModal).toEqual({ type: 'taskDetail', taskId: 'task-456' });
+    });
+
+    it('should open deleteConfirm for single task', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'deleteConfirm', taskIds: ['task-123'] }));
+      expect(actual.activeModal).toEqual({ type: 'deleteConfirm', taskIds: ['task-123'] });
+    });
+
+    it('should open deleteConfirm for multiple tasks', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'deleteConfirm', taskIds: ['task-1', 'task-2'] }));
+      expect(actual.activeModal).toEqual({ type: 'deleteConfirm', taskIds: ['task-1', 'task-2'] });
+    });
+
+    it('should open bulkEdit', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'bulkEdit', editType: 'status', taskIds: ['task-1', 'task-2'] }));
+      expect(actual.activeModal).toEqual({ type: 'bulkEdit', editType: 'status', taskIds: ['task-1', 'task-2'] });
+    });
+
+    it('should open teamModal', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'teamModal' }));
+      expect(actual.activeModal).toEqual({ type: 'teamModal' });
+    });
+
+    it('should open invitationsPanel', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'invitationsPanel' }));
+      expect(actual.activeModal).toEqual({ type: 'invitationsPanel' });
+    });
+
+    it('should open urgentTasks', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'urgentTasks' }));
+      expect(actual.activeModal).toEqual({ type: 'urgentTasks' });
+    });
+
+    it('should open archivedProjects', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'archivedProjects' }));
+      expect(actual.activeModal).toEqual({ type: 'archivedProjects' });
+    });
+
+    it('should open backgroundPicker', () => {
+      const actual = uiReducer(initialState, openModal({ type: 'backgroundPicker' }));
+      expect(actual.activeModal).toEqual({ type: 'backgroundPicker' });
     });
   });
 
-  describe('delete confirmation actions', () => {
-    describe('openDeleteConfirm', () => {
-      it('should open for single task', () => {
-        const actual = uiReducer(initialState, openDeleteConfirm('task-123'));
-        expect(actual.isDeleteConfirmOpen).toBe(true);
-        expect(actual.deletingTaskId).toBe('task-123');
-        expect(actual.deletingTaskIds).toEqual([]);
-      });
-
-      it('should open for multiple tasks', () => {
-        const actual = uiReducer(initialState, openDeleteConfirm(['task-1', 'task-2']));
-        expect(actual.isDeleteConfirmOpen).toBe(true);
-        expect(actual.deletingTaskId).toBeNull();
-        expect(actual.deletingTaskIds).toEqual(['task-1', 'task-2']);
-      });
-    });
-
-    describe('closeDeleteConfirm', () => {
-      it('should close and clear deleting state', () => {
-        const state = {
-          ...initialState,
-          isDeleteConfirmOpen: true,
-          deletingTaskId: 'task-123',
-          deletingTaskIds: ['task-1', 'task-2'],
-        };
-        const actual = uiReducer(state, closeDeleteConfirm());
-        expect(actual.isDeleteConfirmOpen).toBe(false);
-        expect(actual.deletingTaskId).toBeNull();
-        expect(actual.deletingTaskIds).toEqual([]);
-      });
-    });
-  });
-
-  describe('bulk edit actions', () => {
-    describe('openBulkEdit', () => {
-      it('should open for status editing', () => {
-        const actual = uiReducer(
-          initialState,
-          openBulkEdit({ type: 'status', taskIds: ['task-1', 'task-2'] })
-        );
-        expect(actual.isBulkEditOpen).toBe(true);
-        expect(actual.bulkEditType).toBe('status');
-        expect(actual.selectedTaskIds).toEqual(['task-1', 'task-2']);
-      });
-
-      it('should open for priority editing', () => {
-        const actual = uiReducer(
-          initialState,
-          openBulkEdit({ type: 'priority', taskIds: ['task-1'] })
-        );
-        expect(actual.isBulkEditOpen).toBe(true);
-        expect(actual.bulkEditType).toBe('priority');
-        expect(actual.selectedTaskIds).toEqual(['task-1']);
-      });
-    });
-
-    describe('closeBulkEdit', () => {
-      it('should close and clear bulk edit type', () => {
-        const state = {
-          ...initialState,
-          isBulkEditOpen: true,
-          bulkEditType: 'status' as const,
-          selectedTaskIds: ['task-1', 'task-2'],
-        };
-        const actual = uiReducer(state, closeBulkEdit());
-        expect(actual.isBulkEditOpen).toBe(false);
-        expect(actual.bulkEditType).toBeNull();
-        // selectedTaskIds are preserved
-        expect(actual.selectedTaskIds).toEqual(['task-1', 'task-2']);
-      });
-    });
-  });
-
-  describe('team modal actions', () => {
-    describe('openTeamModal', () => {
-      it('should open team modal', () => {
-        const actual = uiReducer(initialState, openTeamModal());
-        expect(actual.isTeamModalOpen).toBe(true);
-      });
-    });
-
-    describe('closeTeamModal', () => {
-      it('should close team modal', () => {
-        const state = { ...initialState, isTeamModalOpen: true };
-        const actual = uiReducer(state, closeTeamModal());
-        expect(actual.isTeamModalOpen).toBe(false);
-      });
-    });
-  });
-
-  describe('invitations panel actions', () => {
-    describe('openInvitationsPanel', () => {
-      it('should open invitations panel', () => {
-        const actual = uiReducer(initialState, openInvitationsPanel());
-        expect(actual.isInvitationsPanelOpen).toBe(true);
-      });
-    });
-
-    describe('closeInvitationsPanel', () => {
-      it('should close invitations panel', () => {
-        const state = { ...initialState, isInvitationsPanelOpen: true };
-        const actual = uiReducer(state, closeInvitationsPanel());
-        expect(actual.isInvitationsPanelOpen).toBe(false);
-      });
-    });
-  });
-
-  describe('comment deletion modal actions', () => {
-    describe('openDeleteCommentModal', () => {
-      it('should open with comment ID', () => {
-        const actual = uiReducer(initialState, openDeleteCommentModal('comment-123'));
-        expect(actual.isDeleteCommentModalOpen).toBe(true);
-        expect(actual.deletingCommentId).toBe('comment-123');
-      });
-    });
-
-    describe('closeDeleteCommentModal', () => {
-      it('should close and clear deleting comment ID', () => {
-        const state = {
-          ...initialState,
-          isDeleteCommentModalOpen: true,
-          deletingCommentId: 'comment-123',
-        };
-        const actual = uiReducer(state, closeDeleteCommentModal());
-        expect(actual.isDeleteCommentModalOpen).toBe(false);
-        expect(actual.deletingCommentId).toBeNull();
-      });
+  describe('closeModal', () => {
+    it('should set activeModal to null', () => {
+      const state = { ...initialState, activeModal: { type: 'teamModal' as const } };
+      const actual = uiReducer(state, closeModal());
+      expect(actual.activeModal).toBeNull();
     });
   });
 });

@@ -18,7 +18,7 @@ import {
   revertOptimisticUpdate,
   revertOptimisticDelete
 } from '../store/commentsSlice';
-import { openDeleteCommentModal } from '../../ui/store/uiSlice';
+import { openDeleteCommentModal } from '../store/commentsSlice';
 import CommentItem from './CommentItem';
 import CommentForm from './CommentForm';
 import LoadingSpinner from '../../../shared/components/ui/LoadingSpinner';

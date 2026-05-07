@@ -30,7 +30,7 @@ describe('ListView', () => {
     ui: {
       sortConfig: { field: 'updatedAt', direction: 'desc' },
       filterConfig: { status: 'all', priority: 'all', searchTerm: '' },
-      isDeleteConfirmOpen: false,
+      activeModal: null,
     },
     collaboration: {},
     comments: {},

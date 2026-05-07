@@ -1,7 +1,7 @@
 // src/features/tasks/components/BulkEditModal.tsx
 import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { closeBulkEdit } from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { useTaskOperations } from '../../commands/useTaskOperations';
 import { TaskStatus, TaskPriority } from '../../../types';
@@ -10,9 +10,10 @@ import Modal from '../../../shared/components/ui/Modal';
 const BulkEditModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { bulkUpdateTasks } = useTaskOperations();
-  const isOpen = useAppSelector(state => state.ui.isBulkEditOpen);
-  const editType = useAppSelector(state => state.ui.bulkEditType);
-  const selectedTaskIds = useAppSelector(state => state.ui.selectedTaskIds);
+  const activeModal = useAppSelector(state => state.ui.activeModal);
+  const isOpen = activeModal?.type === 'bulkEdit';
+  const editType = activeModal?.type === 'bulkEdit' ? activeModal.editType : null;
+  const selectedTaskIds = activeModal?.type === 'bulkEdit' ? activeModal.taskIds : [];
   const currentProject = useAppSelector(selectCurrentProject);
 
   const [status, setStatus] = useState<TaskStatus>('not started');
@@ -21,7 +22,7 @@ const BulkEditModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleClose = () => {
-    dispatch(closeBulkEdit());
+    dispatch(closeModal());
   };
 
   // Submit the bulk edit

@@ -11,13 +11,10 @@ import {
   FilterConfig,
   TaskStatus,
   TaskPriority,
-  UiState
+  UiState,
+  ActiveModal
 } from '../../../types';
 
-
-
-
-// Initial state when the application loads
 const initialState: UiState = {
   viewMode: 'list',
   kanbanGroupBy: 'priority',
@@ -30,57 +27,30 @@ const initialState: UiState = {
     priority: 'all',
     searchTerm: '',
   },
-  isTaskModalOpen: false,
-  editingTaskId: null,
-  isTaskDetailOpen: false,
-  viewingTaskId: null,
-  isDeleteConfirmOpen: false,
-  deletingTaskId: null,
-  deletingTaskIds: [],
-  isBulkEditOpen: false,
-  bulkEditType: null,
-  selectedTaskIds: [],
   currentProjectId: null,
-  isTeamModalOpen: false,
-  isInviteModalOpen: false,
-  isInvitationsPanelOpen: false,
+  activeModal: null,
   activeConflicts: [],
   conflictBannerVisible: false,
-  isDeleteCommentModalOpen: false,
-  deletingCommentId: null,
-  isUrgentTasksModalOpen: false,
-  isArchivedProjectsModalOpen: false,
   backgroundConfig: { type: 'random', value: '', cachedImageUrl: null, photographerName: '', photographerUrl: '' },
-  isBackgroundPickerOpen: false,
 };
 
-// Create the slice with reducers
 export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    // Toggle between list and kanban views
     setViewMode: (state, action: PayloadAction<ViewMode>) => {
       state.viewMode = action.payload;
-
     },
 
-    // Set kanban grouping mode (by priority or status)
     setKanbanGroupBy: (state, action: PayloadAction<KanbanGroupBy>) => {
       state.kanbanGroupBy = action.payload;
     },
 
-    // Update the sort configuration
     setSortConfig: (state, action: PayloadAction<Partial<SortConfig>>) => {
-      // If same field is clicked, toggle direction
       if (action.payload.field === state.sortConfig.field && !action.payload.direction) {
         state.sortConfig.direction = state.sortConfig.direction === 'asc' ? 'desc' : 'asc';
       } else {
-        // Otherwise, update with new config
-        state.sortConfig = {
-          ...state.sortConfig,
-          ...action.payload
-        };
+        state.sortConfig = { ...state.sortConfig, ...action.payload };
       }
     },
 
@@ -88,135 +58,32 @@ export const uiSlice = createSlice({
       state.currentProjectId = action.payload;
     },
 
-    // Update status filter
     setFilterStatus: (state, action: PayloadAction<TaskStatus | 'all'>) => {
       state.filterConfig.status = action.payload;
     },
 
-    // Update priority filter
     setFilterPriority: (state, action: PayloadAction<TaskPriority | 'all'>) => {
       state.filterConfig.priority = action.payload;
     },
 
-    // Update search term
     setSearchTerm: (state, action: PayloadAction<string>) => {
       state.filterConfig.searchTerm = action.payload;
     },
 
-    // Open task creation/edit modal
-    openTaskModal: (state, action: PayloadAction<string | null>) => {
-      state.isTaskModalOpen = true;
-      state.editingTaskId = action.payload; // null for new task, task ID for editing
+    openModal: (state, action: PayloadAction<Exclude<ActiveModal, null>>) => {
+      state.activeModal = action.payload;
     },
 
-    // Close task modal
-    closeTaskModal: (state) => {
-      state.isTaskModalOpen = false;
-      state.editingTaskId = null;
+    closeModal: (state) => {
+      state.activeModal = null;
     },
 
-    // Open task detail view
-    openTaskDetail: (state, action: PayloadAction<string>) => {
-      state.isTaskDetailOpen = true;
-      state.viewingTaskId = action.payload;
-      // Close modal if open
-      state.isTaskModalOpen = false;
-      state.editingTaskId = null;
-    },
-
-    // Close task detail view
-    closeTaskDetail: (state) => {
-      state.isTaskDetailOpen = false;
-      state.viewingTaskId = null;
-    },
-
-    openDeleteConfirm: (state, action: PayloadAction<string | string[]>) => {
-      state.isDeleteConfirmOpen = true;
-
-      if (Array.isArray(action.payload)) {
-        state.deletingTaskId = null;
-        state.deletingTaskIds = action.payload;
-      } else {
-        state.deletingTaskId = action.payload;
-        state.deletingTaskIds = [];
-      }
-    },
-
-    // Close delete confirmation modal
-    closeDeleteConfirm: (state) => {
-      state.isDeleteConfirmOpen = false;
-      state.deletingTaskId = null;
-      state.deletingTaskIds = [];
-    },
-
-    // Open bulk edit modal
-    openBulkEdit: (state, action: PayloadAction<{
-      type: 'status' | 'priority',
-      taskIds: string[]
-    }>) => {
-      state.isBulkEditOpen = true;
-      state.bulkEditType = action.payload.type;
-      state.selectedTaskIds = action.payload.taskIds;
-    },
-
-    // Close bulk edit modal
-    closeBulkEdit: (state) => {
-      state.isBulkEditOpen = false;
-      state.bulkEditType = null;
-      // Don't clear selectedTaskIds to maintain selection after edit
-    },
-
-    openTeamModal: (state) => {
-      state.isTeamModalOpen = true;
-    },
-    closeTeamModal: (state) => {
-      state.isTeamModalOpen = false;
-    },
-    openInvitationsPanel: (state) => {
-      state.isInvitationsPanelOpen = true;
-    },
-    closeInvitationsPanel: (state) => {
-      state.isInvitationsPanelOpen = false;
-    },
-
-    // Comment deletion modal
-    openDeleteCommentModal: (state, action: PayloadAction<string>) => {
-      state.isDeleteCommentModalOpen = true;
-      state.deletingCommentId = action.payload;
-    },
-    closeDeleteCommentModal: (state) => {
-      state.isDeleteCommentModalOpen = false;
-      state.deletingCommentId = null;
-    },
-
-    // Urgent tasks modal
-    openUrgentTasksModal: (state) => {
-      state.isUrgentTasksModalOpen = true;
-    },
-    closeUrgentTasksModal: (state) => {
-      state.isUrgentTasksModalOpen = false;
-    },
-
-    // Archived projects modal
-    openArchivedProjectsModal: (state) => {
-      state.isArchivedProjectsModalOpen = true;
-    },
-    closeArchivedProjectsModal: (state) => {
-      state.isArchivedProjectsModalOpen = false;
-    },
-
-    // Background customization
     setBackgroundConfig: (state, action: PayloadAction<UiState['backgroundConfig']>) => {
       state.backgroundConfig = action.payload;
     },
+
     setCachedImageUrl: (state, action: PayloadAction<string | null>) => {
       state.backgroundConfig.cachedImageUrl = action.payload;
-    },
-    openBackgroundPicker: (state) => {
-      state.isBackgroundPickerOpen = true;
-    },
-    closeBackgroundPicker: (state) => {
-      state.isBackgroundPickerOpen = false;
     },
   },
   extraReducers: (builder) => {
@@ -226,7 +93,6 @@ export const uiSlice = createSlice({
         const isImage = incoming.backgroundConfig.type === 'image';
         state.backgroundConfig = {
           ...incoming.backgroundConfig,
-          // fresh photo each session for random; keep URL + attribution for user-picked image
           cachedImageUrl: isImage ? incoming.backgroundConfig.cachedImageUrl : null,
           photographerName: isImage ? incoming.backgroundConfig.photographerName : '',
           photographerUrl: isImage ? incoming.backgroundConfig.photographerUrl : '',
@@ -236,7 +102,6 @@ export const uiSlice = createSlice({
   },
 });
 
-// Export the actions
 export const {
   setViewMode,
   setKanbanGroupBy,
@@ -245,53 +110,20 @@ export const {
   setFilterStatus,
   setFilterPriority,
   setSearchTerm,
-  openTaskModal,
-  closeTaskModal,
-  openTaskDetail,
-  closeTaskDetail,
-  openDeleteConfirm,
-  closeDeleteConfirm,
-  openBulkEdit,
-  closeBulkEdit,
-  openTeamModal,
-  closeTeamModal,
-  openInvitationsPanel,
-  closeInvitationsPanel,
-  openDeleteCommentModal,
-  closeDeleteCommentModal,
-  openUrgentTasksModal,
-  closeUrgentTasksModal,
-  openArchivedProjectsModal,
-  closeArchivedProjectsModal,
+  openModal,
+  closeModal,
   setBackgroundConfig,
   setCachedImageUrl,
-  openBackgroundPicker,
-  closeBackgroundPicker,
 } = uiSlice.actions;
 
-// Export the reducer
 export default uiSlice.reducer;
 
 // Selectors
 export const selectViewMode = (state: { ui: UiState }) => state.ui.viewMode;
 export const selectKanbanGroupBy = (state: { ui: UiState }) => state.ui.kanbanGroupBy;
 export const selectCurrentProjectId = (state: { ui: UiState }) => state.ui.currentProjectId;
-export const selectIsTaskModalOpen = (state: { ui: UiState }) => state.ui.isTaskModalOpen;
-export const selectEditingTaskId = (state: { ui: UiState }) => state.ui.editingTaskId;
-export const selectIsTaskDetailOpen = (state: { ui: UiState }) => state.ui.isTaskDetailOpen;
-export const selectViewingTaskId = (state: { ui: UiState }) => state.ui.viewingTaskId;
-export const selectIsDeleteConfirmOpen = (state: { ui: UiState }) => state.ui.isDeleteConfirmOpen;
-export const selectDeletingTaskId = (state: { ui: UiState }) => state.ui.deletingTaskId;
-export const selectIsBulkEditOpen = (state: { ui: UiState }) => state.ui.isBulkEditOpen;
-export const selectBulkEditType = (state: { ui: UiState }) => state.ui.bulkEditType;
-export const selectSelectedTaskIds = (state: { ui: UiState }) => state.ui.selectedTaskIds;
-export const selectIsTeamModalOpen = (state: { ui: UiState }) => state.ui.isTeamModalOpen;
-export const selectIsInvitationsPanelOpen = (state: { ui: UiState }) => state.ui.isInvitationsPanelOpen;
-export const selectIsUrgentTasksModalOpen = (state: { ui: UiState }) => state.ui.isUrgentTasksModalOpen;
-export const selectIsArchivedProjectsModalOpen = (state: { ui: UiState }) => state.ui.isArchivedProjectsModalOpen;
-export const selectIsBackgroundPickerOpen = (state: { ui: UiState }) => state.ui.isBackgroundPickerOpen;
+export const selectActiveModal = (state: { ui: UiState }) => state.ui.activeModal;
 
-// Memoized selectors for object-returning fields
 export const selectSortConfig = createSelector(
   (state: { ui: UiState }) => state.ui.sortConfig,
   (sortConfig) => sortConfig
@@ -305,35 +137,4 @@ export const selectFilterConfig = createSelector(
 export const selectBackgroundConfig = createSelector(
   (state: { ui: UiState }) => state.ui.backgroundConfig,
   (backgroundConfig) => backgroundConfig
-);
-
-// Derived selector: which modal is open and its payload
-type ActiveModal =
-  | { type: 'taskModal'; payload: string | null }
-  | { type: 'taskDetail'; payload: string }
-  | { type: 'deleteConfirm'; payload: { taskId: string | null; taskIds: string[] } }
-  | { type: 'bulkEdit'; payload: { editType: string | null; taskIds: string[] } }
-  | { type: 'teamModal' }
-  | { type: 'invitationsPanel' }
-  | { type: 'deleteComment'; payload: string }
-  | { type: 'urgentTasks' }
-  | { type: 'archivedProjects' }
-  | { type: 'backgroundPicker' }
-  | null;
-
-export const selectActiveModal = createSelector(
-  (state: { ui: UiState }) => state.ui,
-  (ui): ActiveModal => {
-    if (ui.isTaskModalOpen) return { type: 'taskModal', payload: ui.editingTaskId };
-    if (ui.isTaskDetailOpen) return { type: 'taskDetail', payload: ui.viewingTaskId! };
-    if (ui.isDeleteConfirmOpen) return { type: 'deleteConfirm', payload: { taskId: ui.deletingTaskId, taskIds: ui.deletingTaskIds } };
-    if (ui.isBulkEditOpen) return { type: 'bulkEdit', payload: { editType: ui.bulkEditType, taskIds: ui.selectedTaskIds } };
-    if (ui.isTeamModalOpen) return { type: 'teamModal' };
-    if (ui.isInvitationsPanelOpen) return { type: 'invitationsPanel' };
-    if (ui.isDeleteCommentModalOpen) return { type: 'deleteComment', payload: ui.deletingCommentId! };
-    if (ui.isUrgentTasksModalOpen) return { type: 'urgentTasks' };
-    if (ui.isArchivedProjectsModalOpen) return { type: 'archivedProjects' };
-    if (ui.isBackgroundPickerOpen) return { type: 'backgroundPicker' };
-    return null;
-  }
 );

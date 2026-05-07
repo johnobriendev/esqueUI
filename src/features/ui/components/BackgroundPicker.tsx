@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import {
   selectBackgroundConfig,
-  selectIsBackgroundPickerOpen,
   setBackgroundConfig,
-  closeBackgroundPicker,
+  closeModal,
 } from '../store/uiSlice';
 import { PRESET_COLORS, DEFAULT_COLOR } from '../constants/backgrounds';
 import { fetchNaturePhotos, triggerDownload, UnsplashPhoto } from '../services/unsplashService';
@@ -12,7 +11,7 @@ import Modal from '../../../shared/components/ui/Modal';
 
 const BackgroundPicker: React.FC = () => {
   const dispatch = useAppDispatch();
-  const isOpen = useAppSelector(selectIsBackgroundPickerOpen);
+  const isOpen = useAppSelector(state => state.ui.activeModal?.type === 'backgroundPicker');
   const config = useAppSelector(selectBackgroundConfig);
 
   const [photos, setPhotos] = useState<UnsplashPhoto[]>([]);
@@ -49,7 +48,7 @@ const BackgroundPicker: React.FC = () => {
     config.type === 'image' && config.cachedImageUrl === url;
 
   return (
-    <Modal isOpen={isOpen} onClose={() => dispatch(closeBackgroundPicker())} size="lg">
+    <Modal isOpen={isOpen} onClose={() => dispatch(closeModal())} size="lg">
       <h2 className="text-lg font-semibold text-blue-50 mb-4">Background</h2>
 
       <div className="flex items-center justify-between mb-2">

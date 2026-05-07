@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { fetchProject, selectCurrentProject, setCurrentProject, selectAllProjects } from '../store/projectsSlice';
 import { fetchTasks } from '../../tasks/store/tasksSlice';
-import { closeTaskDetail, setCurrentProjectId, selectBackgroundConfig, setBackgroundConfig } from '../../ui/store/uiSlice';
+import { closeModal, setCurrentProjectId, selectBackgroundConfig, setBackgroundConfig } from '../../ui/store/uiSlice';
 import { clearHistory } from '../../commands/store/commandSlice';
 import Header from '../../../shared/components/layout/Header';
 import ListView from '../../views/ListView/ListView';
@@ -26,8 +26,9 @@ const ProjectView: React.FC = () => {
   const currentProject = useAppSelector(selectCurrentProject);
   const allProjects = useAppSelector(selectAllProjects);
   const viewMode = useAppSelector(state => state.ui.viewMode);
-  const isTaskDetailOpen = useAppSelector(state => state.ui.isTaskDetailOpen);
-  const viewingTaskId = useAppSelector(state => state.ui.viewingTaskId);
+  const activeModal = useAppSelector(state => state.ui.activeModal);
+  const isTaskDetailOpen = activeModal?.type === 'taskDetail';
+  const viewingTaskId = activeModal?.type === 'taskDetail' ? activeModal.taskId : null;
   const tasks = useAppSelector(state => state.tasks.items);
   const backgroundConfig = useAppSelector(selectBackgroundConfig);
 
@@ -196,7 +197,7 @@ const ProjectView: React.FC = () => {
       {isTaskDetailOpen && taskBeingViewed && (
         <TaskDetailView
           task={taskBeingViewed}
-          onClose={() => dispatch(closeTaskDetail())}
+          onClose={() => dispatch(closeModal())}
         />
       )}
 

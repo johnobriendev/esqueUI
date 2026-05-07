@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import {
   setViewMode,
   setKanbanGroupBy,
-  openTaskModal,
   setSearchTerm,
   setFilterStatus,
   setFilterPriority
@@ -13,7 +12,7 @@ import {
 import { ViewMode, KanbanGroupBy, TaskStatus, TaskPriority } from '../../../types';
 import HistoryControls from '../../../features/ui/components/HistoryControls';
 import { useAuth0 } from '@auth0/auth0-react';
-import { openTeamModal, openBackgroundPicker } from '../../../features/ui/store/uiSlice';
+import { openModal } from '../../../features/ui/store/uiSlice';
 import { WriteGuard, InviteGuard } from '../PermissionGuard';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { getProjectPermissions } from '../../lib/permissions';
@@ -68,7 +67,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   }, [isMobileMenuOpen, isUserMenuOpen]);
 
   const handleOpenTeam = () => {
-    dispatch(openTeamModal());
+    dispatch(openModal({ type: 'teamModal' }));
   };
 
   const handleViewModeChange = (mode: ViewMode) => {
@@ -80,7 +79,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   };
 
   const handleCreateTask = () => {
-    dispatch(openTaskModal(null));
+    dispatch(openModal({ type: 'taskModal', taskId: null }));
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -346,7 +345,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                       {showBackButton && (
                         <button
                           onClick={() => {
-                            dispatch(openBackgroundPicker());
+                            dispatch(openModal({ type: 'backgroundPicker' }));
                             setIsUserMenuOpen(false);
                           }}
                           className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 transition-colors"

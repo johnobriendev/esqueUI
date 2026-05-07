@@ -7,12 +7,14 @@ interface CommentsState {
   items: Comment[];
   isLoading: boolean;
   error: string | null;
+  deletingCommentId: string | null;
 }
 
 const initialState: CommentsState = {
   items: [],
   isLoading: false,
-  error: null
+  error: null,
+  deletingCommentId: null,
 };
 
 // Async thunks for API operations
@@ -132,11 +134,18 @@ export const commentsSlice = createSlice({
 
     revertOptimisticDelete: (state, action: PayloadAction<{ comment: Comment }>) => {
       state.items.push(action.payload.comment);
-      // Re-sort by createdAt to maintain order
       state.items.sort(
         (a: Comment, b: Comment) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
-    }
+    },
+
+    openDeleteCommentModal: (state, action: PayloadAction<string>) => {
+      state.deletingCommentId = action.payload;
+    },
+
+    closeDeleteCommentModal: (state) => {
+      state.deletingCommentId = null;
+    },
   },
 
   extraReducers: (builder) => {
@@ -209,7 +218,9 @@ export const {
   optimisticDeleteComment,
   revertOptimisticCreate,
   revertOptimisticUpdate,
-  revertOptimisticDelete
+  revertOptimisticDelete,
+  openDeleteCommentModal,
+  closeDeleteCommentModal,
 } = commentsSlice.actions;
 
 export default commentsSlice.reducer;
@@ -219,6 +230,8 @@ const selectCommentsState = (state: any) => state.comments;
 export const selectComments = (state: any) => state.comments.items;
 export const selectCommentsLoading = (state: any) => state.comments.isLoading;
 export const selectCommentsError = (state: any) => state.comments.error;
+
+export const selectDeletingCommentId = (state: any) => state.comments.deletingCommentId;
 
 // Memoized selector for task comments
 export const selectTaskComments = createSelector(

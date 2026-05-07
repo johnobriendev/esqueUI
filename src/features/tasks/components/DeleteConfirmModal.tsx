@@ -1,7 +1,7 @@
 // src/components/modals/DeleteConfirmModal.tsx
 import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { closeDeleteConfirm } from '../../ui/store/uiSlice';
+import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { useTaskOperations } from '../../commands/useTaskOperations';
 import Modal from '../../../shared/components/ui/Modal';
@@ -10,18 +10,18 @@ import Modal from '../../../shared/components/ui/Modal';
 const DeleteConfirmModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { deleteTask, bulkDeleteTasks } = useTaskOperations();
-  const isOpen = useAppSelector(state => state.ui.isDeleteConfirmOpen);
-  const deletingTaskId = useAppSelector(state => state.ui.deletingTaskId);
-  const deletingTaskIds = useAppSelector(state => state.ui.deletingTaskIds);
+  const activeModal = useAppSelector(state => state.ui.activeModal);
+  const isOpen = activeModal?.type === 'deleteConfirm';
+  const taskIds = activeModal?.type === 'deleteConfirm' ? activeModal.taskIds : [];
   const currentProject = useAppSelector(selectCurrentProject);
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isMultiDelete = deletingTaskIds.length > 0;
+  const isMultiDelete = taskIds.length > 1;
 
   const handleClose = () => {
-    dispatch(closeDeleteConfirm());
+    dispatch(closeModal());
   };
 
   // Confirm deletion
@@ -36,11 +36,11 @@ const DeleteConfirmModal: React.FC = () => {
 
     try {
       if (isMultiDelete) {
-        console.log('🎯 Creating BULK DELETE command for', deletingTaskIds.length, 'tasks');
-        await bulkDeleteTasks({ projectId: currentProject.id, taskIds: deletingTaskIds });
+        console.log('🎯 Creating BULK DELETE command for', taskIds.length, 'tasks');
+        await bulkDeleteTasks({ projectId: currentProject.id, taskIds });
         console.log('✅ Bulk delete command executed successfully');
-      } else if (deletingTaskId) {
-        await deleteTask({ projectId: currentProject.id, taskId: deletingTaskId });
+      } else {
+        await deleteTask({ projectId: currentProject.id, taskId: taskIds[0] });
       }
 
       // Close modal on success
@@ -65,7 +65,7 @@ const DeleteConfirmModal: React.FC = () => {
 
       <p className="mb-6 text-slate-300">
         {isMultiDelete
-          ? `Are you sure you want to delete ${deletingTaskIds.length} ${deletingTaskIds.length === 1 ? 'task' : 'tasks'}?`
+          ? `Are you sure you want to delete ${taskIds.length} ${taskIds.length === 1 ? 'task' : 'tasks'}?`
           : 'Are you sure you want to delete this task?'
         }
       </p>

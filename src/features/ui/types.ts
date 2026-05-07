@@ -2,44 +2,29 @@
 import { ViewMode, KanbanGroupBy, SortConfig } from '../../shared/types/common';
 import { FilterConfig } from '../tasks/types';
 
-// UI state structure with collaboration modals
+export type ActiveModal =
+  | { type: 'taskModal'; taskId: string | null }
+  | { type: 'taskDetail'; taskId: string }
+  | { type: 'deleteConfirm'; taskIds: string[] }
+  | { type: 'bulkEdit'; editType: 'status' | 'priority'; taskIds: string[] }
+  | { type: 'teamModal' }
+  | { type: 'invitationsPanel' }
+  | { type: 'urgentTasks' }
+  | { type: 'archivedProjects' }
+  | { type: 'backgroundPicker' }
+  | null;
+
 export interface UiState {
   viewMode: ViewMode;
   kanbanGroupBy: KanbanGroupBy;
   sortConfig: SortConfig;
   filterConfig: FilterConfig;
-  isTaskModalOpen: boolean;
-  editingTaskId: string | null;
-  isTaskDetailOpen: boolean;
-  viewingTaskId: string | null;
-  isDeleteConfirmOpen: boolean;
-  deletingTaskId: string | null;
-  deletingTaskIds: string[];
-  isBulkEditOpen: boolean;
-  bulkEditType: 'status' | 'priority' | null;
-  selectedTaskIds: string[];
   currentProjectId: string | null;
+  activeModal: ActiveModal;
 
-  // Collaboration UI state
-  isTeamModalOpen: boolean;
-  isInviteModalOpen: boolean;
-  isInvitationsPanelOpen: boolean;
-
-  // Conflict resolution UI
-  activeConflicts: string[]; // Task IDs with active conflicts
+  activeConflicts: string[];
   conflictBannerVisible: boolean;
 
-  // Comments UI state
-  isDeleteCommentModalOpen: boolean;
-  deletingCommentId: string | null;
-
-  // Urgent tasks modal
-  isUrgentTasksModalOpen: boolean;
-
-  // Archived projects modal
-  isArchivedProjectsModalOpen: boolean;
-
-  // Background customization
   backgroundConfig: {
     type: 'random' | 'image' | 'color';
     value: string;
@@ -47,5 +32,4 @@ export interface UiState {
     photographerName: string;
     photographerUrl: string;
   };
-  isBackgroundPickerOpen: boolean;
 }

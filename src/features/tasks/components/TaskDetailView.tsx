@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { openDeleteConfirm, openTaskModal } from '../../ui/store/uiSlice';
+import { openModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
@@ -25,13 +25,13 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({ task, onClose }) => {
 
   // Handle edit task
   const handleEdit = () => {
-    dispatch(openTaskModal(task.id));
+    dispatch(openModal({ type: 'taskModal', taskId: task.id }));
     onClose(); // Close the detail view
   };
 
   // Handle delete task
   const handleDelete = () => {
-    dispatch(openDeleteConfirm(task.id));
+    dispatch(openModal({ type: 'deleteConfirm', taskIds: [task.id] }));
     onClose(); // Close the detail view when opening delete confirmation
   };
 

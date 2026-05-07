@@ -8,14 +8,10 @@ import {
   selectPendingInvitations,
   fetchPendingInvitations
 } from '../../../features/collaboration/store/collaborationSlice';
-import {
-  openInvitationsPanel,
-  selectIsInvitationsPanelOpen,
-} from '../../../features/ui/store/uiSlice';
+import { openModal } from '../../../features/ui/store/uiSlice';
 import InvitationsPanel from '../../../features/collaboration/components/InvitationsPanel';
 import { useAppAuth } from '../../../features/auth/components/AuthProvider';
 import ProfileDropdown from './ProfileDropdown';
-import { openArchivedProjectsModal } from '../../../features/ui/store/uiSlice';
 
 interface DashboardActions {
   onCreateProject: () => void;
@@ -32,7 +28,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions, arc
   const { user, logout, isAuthenticated } = useAuth0();
   const dispatch = useAppDispatch();
   const pendingInvitations = useAppSelector(selectPendingInvitations);
-  const isInvitationsPanelOpen = useAppSelector(selectIsInvitationsPanelOpen);
+  const isInvitationsPanelOpen = useAppSelector(state => state.ui.activeModal?.type === 'invitationsPanel');
   const { isAppReady } = useAppAuth();
 
   useEffect(() => {
@@ -48,7 +44,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions, arc
   };
 
   const handleOpenInvitations = () => {
-    dispatch(openInvitationsPanel());
+    dispatch(openModal({ type: 'invitationsPanel' }));
   };
 
   return (
@@ -104,7 +100,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions, arc
                   <ProfileDropdown
                     user={user}
                     archivedCount={archivedCount}
-                    onOpenArchived={() => dispatch(openArchivedProjectsModal())}
+                    onOpenArchived={() => dispatch(openModal({ type: 'archivedProjects' }))}
                     onOpenPalette={dashboardActions?.onOpenPalette}
                     onLogout={handleLogout}
                   />
@@ -153,7 +149,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ dashboardActions, arc
                   <ProfileDropdown
                     user={user}
                     archivedCount={archivedCount}
-                    onOpenArchived={() => dispatch(openArchivedProjectsModal())}
+                    onOpenArchived={() => dispatch(openModal({ type: 'archivedProjects' }))}
                     onOpenPalette={dashboardActions?.onOpenPalette}
                     onLogout={handleLogout}
                   />
