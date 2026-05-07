@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import ConflictResolutionModal from '../tasks/components/ConflictResolutionModal';
 import { selectPendingConflict, clearConflict } from './conflictSlice';
-import { settle } from './conflictRegistry';
+import { settleConflict } from './conflictService';
 
 const ConflictController: React.FC = () => {
   const dispatch = useAppDispatch();
   const pending = useAppSelector(selectPendingConflict);
+
+  useEffect(() => {
+    if (!pending) return;
+    const { id } = pending;
+    return () => {
+      settleConflict(id, 'cancel');
+      dispatch(clearConflict());
+    };
+  }, [pending?.id, dispatch]);
 
   if (!pending) return null;
 
@@ -15,12 +24,12 @@ const ConflictController: React.FC = () => {
   const handleResolve = (resolution: 'keep_mine' | 'take_theirs' | 'merge') => {
     const mapped = resolution === 'merge' ? 'cancel' : resolution;
     dispatch(clearConflict());
-    settle(id, mapped);
+    settleConflict(id, mapped);
   };
 
   const handleCancel = () => {
     dispatch(clearConflict());
-    settle(id, 'cancel');
+    settleConflict(id, 'cancel');
   };
 
   return (
