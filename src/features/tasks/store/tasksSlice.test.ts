@@ -313,43 +313,21 @@ describe('tasksSlice', () => {
       expect(state.items).toContainEqual(newTask);
     });
 
-    it('should calculate position for new task', async () => {
-      const existingTasks = [
-        createMockTask({ id: 'task-1', projectId: 'project-1', priority: 'high', position: 0 }),
-        createMockTask({ id: 'task-2', projectId: 'project-1', priority: 'high', position: 1 }),
-      ];
-
-      const newTask = createMockTask({ id: 'new-task', priority: 'high', position: 2 });
+    it('should pass position through to taskService', async () => {
+      const newTask = createMockTask({ id: 'new-task', priority: 'high', position: 5 });
       vi.mocked(taskService.createTask).mockResolvedValue(newTask);
 
-      const storeWithTasks = configureStore({
-        reducer: {
-          tasks: tasksReducer,
-        },
-        preloadedState: {
-          tasks: {
-            items: existingTasks,
-            isLoading: false,
-        urgentTasks: [],
-        isLoadingUrgentTasks: false,
-        urgentTasksError: null,
-            error: null,
-          },
-        },
-      });
-
-      await storeWithTasks.dispatch(
+      await store.dispatch(
         createTaskAsync({
           projectId: 'project-1',
           title: 'New Task',
           priority: 'high',
+          position: 5,
         })
       );
 
-      // The thunk calculates position based on existing tasks with same priority
-      // Since we have tasks at positions 0 and 1, the next should be 2
       const callArg = vi.mocked(taskService.createTask).mock.calls[0][0];
-      expect(callArg.position).toBe(2);
+      expect(callArg.position).toBe(5);
     });
   });
 

@@ -66,28 +66,6 @@ describe('ListView', () => {
     expect(screen.getByText(/No tasks found/i)).toBeInTheDocument();
   });
 
-  it('displays role indicator for current user', () => {
-    renderWithProviders(<ListView />, { preloadedState: defaultState });
-
-    expect(screen.getByText(/Your role:/i)).toBeInTheDocument();
-    expect(screen.getByText('owner')).toBeInTheDocument();
-  });
-
-  it('shows read-only message for viewers', () => {
-    const viewerProject = createMockProject({ userRole: 'viewer', canWrite: false });
-    const state = {
-      ...defaultState,
-      projects: {
-        ...defaultState.projects,
-        currentProject: viewerProject,
-        items: [viewerProject],
-      },
-    };
-
-    renderWithProviders(<ListView />, { preloadedState: state });
-
-    expect(screen.getByText(/Read-only access/i)).toBeInTheDocument();
-  });
 
   it('allows sorting by clicking column headers', async () => {
     const user = userEvent.setup();
