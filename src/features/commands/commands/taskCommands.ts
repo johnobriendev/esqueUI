@@ -16,9 +16,11 @@ import {
   optimisticReorderTasksByStatus,
   revertOptimisticUpdate,
   revertOptimisticReorder
-} from '../../tasks/store/tasksSlice'; import { Task, TaskStatus, TaskPriority, TaskConflict } from '../../../types';
+} from '../../tasks/store/tasksSlice';
+import { Task, TaskStatus, TaskPriority, TaskConflict } from '../../../types';
 import { AppDispatch } from '../../../app/store';
 import { resolveConflict as defaultConflictResolver, Resolution } from '../../conflicts/conflictService';
+import { withOptimisticUpdate } from '../../tasks/store/optimisticUpdates';
 
 export type ConflictResolver = (
   dispatch: AppDispatch,
@@ -463,35 +465,21 @@ export const reorderTasksCommand = (data: ReorderTasksData): UndoableCommand & {
       cmd.capturedPreviousOrder = currentTasks.map((t: Task) => t.id);
       cmd.capturedOriginalTasks = currentTasks.map((t: Task) => ({ ...t }));
 
-      dispatch(optimisticReorderTasks({ priority: data.priority, taskIds: data.taskIds }));
-
-      try {
-        await dispatch(reorderTasksAsync({
-          projectId: data.projectId,
-          priority: data.priority,
-          taskIds: data.taskIds
-        })).unwrap();
-      } catch (error) {
-        dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }));
-        throw error;
-      }
+      await withOptimisticUpdate(
+        () => dispatch(optimisticReorderTasks({ priority: data.priority, taskIds: data.taskIds })),
+        () => dispatch(reorderTasksAsync({ projectId: data.projectId, priority: data.priority, taskIds: data.taskIds })).unwrap(),
+        () => dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }))
+      );
     },
 
     undo: async (dispatch: AppDispatch) => {
       if (cmd.capturedPreviousOrder.length === 0) throw new Error('Cannot undo: No previous order stored');
 
-      dispatch(optimisticReorderTasks({ priority: data.priority, taskIds: cmd.capturedPreviousOrder }));
-
-      try {
-        await dispatch(reorderTasksAsync({
-          projectId: data.projectId,
-          priority: data.priority,
-          taskIds: cmd.capturedPreviousOrder
-        })).unwrap();
-      } catch (error) {
-        dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }));
-        throw error;
-      }
+      await withOptimisticUpdate(
+        () => dispatch(optimisticReorderTasks({ priority: data.priority, taskIds: cmd.capturedPreviousOrder })),
+        () => dispatch(reorderTasksAsync({ projectId: data.projectId, priority: data.priority, taskIds: cmd.capturedPreviousOrder })).unwrap(),
+        () => dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }))
+      );
     }
   };
   return cmd;
@@ -513,35 +501,21 @@ export const reorderTasksByStatusCommand = (data: ReorderTasksByStatusData): Und
       cmd.capturedPreviousOrder = currentTasks.map((t: Task) => t.id);
       cmd.capturedOriginalTasks = currentTasks.map((t: Task) => ({ ...t }));
 
-      dispatch(optimisticReorderTasksByStatus({ status: data.status, taskIds: data.taskIds }));
-
-      try {
-        await dispatch(reorderTasksByStatusAsync({
-          projectId: data.projectId,
-          status: data.status,
-          taskIds: data.taskIds
-        })).unwrap();
-      } catch (error) {
-        dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }));
-        throw error;
-      }
+      await withOptimisticUpdate(
+        () => dispatch(optimisticReorderTasksByStatus({ status: data.status, taskIds: data.taskIds })),
+        () => dispatch(reorderTasksByStatusAsync({ projectId: data.projectId, status: data.status, taskIds: data.taskIds })).unwrap(),
+        () => dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }))
+      );
     },
 
     undo: async (dispatch: AppDispatch) => {
       if (cmd.capturedPreviousOrder.length === 0) throw new Error('Cannot undo: No previous order stored');
 
-      dispatch(optimisticReorderTasksByStatus({ status: data.status, taskIds: cmd.capturedPreviousOrder }));
-
-      try {
-        await dispatch(reorderTasksByStatusAsync({
-          projectId: data.projectId,
-          status: data.status,
-          taskIds: cmd.capturedPreviousOrder
-        })).unwrap();
-      } catch (error) {
-        dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }));
-        throw error;
-      }
+      await withOptimisticUpdate(
+        () => dispatch(optimisticReorderTasksByStatus({ status: data.status, taskIds: cmd.capturedPreviousOrder })),
+        () => dispatch(reorderTasksByStatusAsync({ projectId: data.projectId, status: data.status, taskIds: cmd.capturedPreviousOrder })).unwrap(),
+        () => dispatch(revertOptimisticReorder({ originalTasks: cmd.capturedOriginalTasks }))
+      );
     }
   };
   return cmd;

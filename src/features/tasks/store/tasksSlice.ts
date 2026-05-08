@@ -2,6 +2,14 @@
 import { createSlice, createAsyncThunk, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { Task, TaskStatus, TaskPriority, UrgentTaskWithProject } from '../../../types';
 import taskService, { TaskServiceError } from '../services/taskService';
+import {
+  applyPriorityChange,
+  applyStatusChange,
+  applyReorder,
+  applyReorderByStatus,
+  revertSingleTask,
+  revertMultipleTasks
+} from './optimisticUpdates';
 
 
 interface TasksState {
@@ -264,25 +272,13 @@ export const tasksSlice = createSlice({
       state.items = [];
     },
 
-    // 🎯 NEW: Optimistic update actions for smooth drag & drop UX
     optimisticUpdateTaskPriority: (state, action: PayloadAction<{
       taskId: string;
       priority: TaskPriority;
       destinationIndex?: number;
     }>) => {
       const { taskId, priority, destinationIndex } = action.payload;
-      const taskIndex = state.items.findIndex(t => t.id === taskId);
-
-      if (taskIndex !== -1) {
-        // Update the task's priority immediately
-        state.items[taskIndex] = {
-          ...state.items[taskIndex],
-          priority,
-          // Calculate position based on destination index if provided
-          position: destinationIndex ?? state.items[taskIndex].position,
-          updatedAt: new Date().toISOString()
-        };
-      }
+      applyPriorityChange(state.items as Task[], taskId, priority, destinationIndex);
     },
 
     optimisticUpdateTaskStatus: (state, action: PayloadAction<{
@@ -291,83 +287,34 @@ export const tasksSlice = createSlice({
       destinationIndex?: number;
     }>) => {
       const { taskId, status, destinationIndex } = action.payload;
-      const taskIndex = state.items.findIndex(t => t.id === taskId);
-
-      if (taskIndex !== -1) {
-        // Update the task's status immediately
-        state.items[taskIndex] = {
-          ...state.items[taskIndex],
-          status,
-          // Calculate position based on destination index if provided
-          position: destinationIndex ?? state.items[taskIndex].position,
-          updatedAt: new Date().toISOString()
-        };
-      }
+      applyStatusChange(state.items as Task[], taskId, status, destinationIndex);
     },
 
     optimisticReorderTasks: (state, action: PayloadAction<{
       priority: TaskPriority;
       taskIds: string[];
     }>) => {
-      const { priority, taskIds } = action.payload;
-
-      // Update positions for all tasks in the reordered list
-      taskIds.forEach((taskId, index) => {
-        const taskIndex = state.items.findIndex(t => t.id === taskId);
-        if (taskIndex !== -1) {
-          state.items[taskIndex] = {
-            ...state.items[taskIndex],
-            position: index,
-            updatedAt: new Date().toISOString()
-          };
-        }
-      });
+      applyReorder(state.items as Task[], action.payload.taskIds);
     },
 
     optimisticReorderTasksByStatus: (state, action: PayloadAction<{
       status: TaskStatus;
       taskIds: string[];
     }>) => {
-      const { status, taskIds } = action.payload;
-
-      // Update statusPositions for all tasks in the reordered list
-      taskIds.forEach((taskId, index) => {
-        const taskIndex = state.items.findIndex(t => t.id === taskId);
-        if (taskIndex !== -1) {
-          state.items[taskIndex] = {
-            ...state.items[taskIndex],
-            statusPosition: index,
-            updatedAt: new Date().toISOString()
-          };
-        }
-      });
+      applyReorderByStatus(state.items as Task[], action.payload.taskIds);
     },
 
-    // Revert optimistic updates (in case of failure)
     revertOptimisticUpdate: (state, action: PayloadAction<{
       taskId: string;
       originalTask: Task;
     }>) => {
-      const { taskId, originalTask } = action.payload;
-      const taskIndex = state.items.findIndex(t => t.id === taskId);
-
-      if (taskIndex !== -1) {
-        state.items[taskIndex] = originalTask;
-      }
+      revertSingleTask(state.items as Task[], action.payload.taskId, action.payload.originalTask);
     },
 
     revertOptimisticReorder: (state, action: PayloadAction<{
       originalTasks: Task[];
     }>) => {
-      const { originalTasks } = action.payload;
-
-      // Restore original tasks
-      originalTasks.forEach(originalTask => {
-        const taskIndex = state.items.findIndex(t => t.id === originalTask.id);
-        if (taskIndex !== -1) {
-          state.items[taskIndex] = originalTask;
-        }
-      });
+      revertMultipleTasks(state.items as Task[], action.payload.originalTasks);
     }
   },
 
