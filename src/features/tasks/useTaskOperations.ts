@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { executeCommand } from '../commands/store/commandSlice';
 import {
@@ -12,6 +13,7 @@ import {
   reorderTasksByStatusCommand,
 } from '../commands/commands/taskCommands';
 import type { ConflictResolver } from '../commands/commands/taskCommands';
+import { createModalConflictResolver } from '../conflicts';
 import type { Task, TaskPriority, TaskStatus } from '../../types';
 
 export type { ConflictResolver };
@@ -62,7 +64,8 @@ export type ReorderData =
 
 export function useTaskOperations(deps: { resolveConflict?: ConflictResolver } = {}) {
   const dispatch = useAppDispatch();
-  const { resolveConflict } = deps;
+  const defaultResolver = useMemo(() => createModalConflictResolver(dispatch), [dispatch]);
+  const resolveConflict = deps.resolveConflict ?? defaultResolver;
 
   const run = async (cmd: Parameters<typeof executeCommand>[0]): Promise<OpResult> => {
     try {

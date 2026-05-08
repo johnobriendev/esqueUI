@@ -17,7 +17,6 @@ export const settleConflict = (id: string, resolution: Resolution): void => {
 
 export const resolveConflict = (
   dispatch: AppDispatch,
-  _getState: () => unknown,
   conflict: TaskConflict,
   userChanges: Partial<Task>
 ): Promise<Resolution> => {

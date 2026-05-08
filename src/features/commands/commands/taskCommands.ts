@@ -19,7 +19,7 @@ import {
 } from '../../tasks/store/tasksSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { AppDispatch } from '../../../app/store';
-import { modalConflictResolver, ConflictResolver, Resolution } from '../../conflicts';
+import { ConflictResolver, Resolution } from '../../conflicts';
 import { withOptimisticUpdate } from '../../tasks/store/optimisticUpdates';
 
 export type { ConflictResolver, Resolution };
@@ -137,7 +137,7 @@ export const createTaskCommand = (data: CreateTaskData): UndoableCommand & { cap
 
 // UPDATE TASK COMMAND
 export const updateTaskCommand = (data: UpdateTaskData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null } => {
-  const { resolveConflict = modalConflictResolver } = deps;
+  const { resolveConflict } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK',
@@ -166,7 +166,8 @@ export const updateTaskCommand = (data: UpdateTaskData, deps: CommandDeps = {}):
           })).unwrap();
         } catch (error: any) {
           if (error.type === 'VERSION_CONFLICT') {
-            const resolution = await resolveConflict(dispatch, getState, error.conflict, updates);
+            if (!resolveConflict) throw error;
+            const resolution = await resolveConflict(error.conflict, updates);
             if (resolution === 'keep_mine') {
               await dispatch(updateTaskAsync({
                 projectId: data.projectId,
@@ -282,7 +283,7 @@ export const bulkDeleteTasksCommand = (data: BulkDeleteTasksData): UndoableComma
 
 
 export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null; capturedHasOptimisticUpdate: boolean } => {
-  const { resolveConflict = modalConflictResolver } = deps;
+  const { resolveConflict } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK_PRIORITY',
@@ -312,7 +313,8 @@ export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData, deps: Co
         })).unwrap();
       } catch (error: any) {
         if (error.type === 'VERSION_CONFLICT') {
-          const resolution = await resolveConflict(dispatch, getState, error.conflict, { priority: data.priority });
+          if (!resolveConflict) throw error;
+          const resolution = await resolveConflict(error.conflict, { priority: data.priority });
           if (resolution === 'keep_mine') {
             await dispatch(updateTaskPriorityAsync({
               projectId: data.projectId,
@@ -364,7 +366,7 @@ export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData, deps: Co
 
 // UPDATE TASK STATUS COMMAND
 export const updateTaskStatusCommand = (data: UpdateTaskStatusData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null; capturedHasOptimisticUpdate: boolean } => {
-  const { resolveConflict = modalConflictResolver } = deps;
+  const { resolveConflict } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK_STATUS',
@@ -394,7 +396,8 @@ export const updateTaskStatusCommand = (data: UpdateTaskStatusData, deps: Comman
         })).unwrap();
       } catch (error: any) {
         if (error.type === 'VERSION_CONFLICT') {
-          const resolution = await resolveConflict(dispatch, getState, error.conflict, { status: data.status });
+          if (!resolveConflict) throw error;
+          const resolution = await resolveConflict(error.conflict, { status: data.status });
           if (resolution === 'keep_mine') {
             await dispatch(updateTaskStatusAsync({
               projectId: data.projectId,
