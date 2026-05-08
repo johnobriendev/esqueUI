@@ -1,9 +1,7 @@
 //src/components/common/PermissionGuard.tsx
 
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { selectCurrentProject } from '../../features/projects/store/projectsSlice';
-import { canPerformAction } from '../lib/permissions';
+import { useProjectPermissions } from '../lib/useProjectPermissions';
 
 interface PermissionGuardProps {
   children: React.ReactNode;
@@ -12,17 +10,24 @@ interface PermissionGuardProps {
   showFallback?: boolean;
 }
 
-// Component that conditionally renders children based on user permissions
- 
 const PermissionGuard: React.FC<PermissionGuardProps> = ({
   children,
   action,
   fallback = null,
   showFallback = false,
 }) => {
-  const currentProject = useAppSelector(selectCurrentProject);
-  
-  const hasPermission = canPerformAction(action, currentProject);
+  const perms = useProjectPermissions();
+
+  const hasPermission = (() => {
+    switch (action) {
+      case 'read': return perms.canRead;
+      case 'write': return perms.can.edit;
+      case 'invite': return perms.can.invite;
+      case 'manage_team': return perms.canManageTeam;
+      case 'delete_project': return perms.canDeleteProject;
+      default: return false;
+    }
+  })();
 
   if (hasPermission) {
     return <>{children}</>;

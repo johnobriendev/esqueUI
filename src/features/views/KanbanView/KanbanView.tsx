@@ -8,7 +8,6 @@ import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { TaskPriority, TaskStatus, Task } from '../../../types';
 import { useTaskOperations } from '../../tasks/useTaskOperations';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
-import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const KanbanView: React.FC = () => {
   const dispatch = useAppDispatch();

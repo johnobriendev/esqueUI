@@ -6,7 +6,7 @@ import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { selectSortedFilteredTasks } from '../../tasks/store/tasksSlice';
 import { Task, SortField, SortDirection, TaskStatus, TaskPriority } from '../../../types';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
-import { getProjectPermissions } from '../../../shared/lib/permissions';
+import { useProjectPermissions } from '../../../shared/lib/useProjectPermissions';
 
 const ListView: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +14,7 @@ const ListView: React.FC = () => {
   const filterConfig = useAppSelector(state => state.ui.filterConfig);
   const sortConfig = useAppSelector(state => state.ui.sortConfig);
   const currentProject = useAppSelector(selectCurrentProject);
-  const permissions = getProjectPermissions(currentProject);
+  const permissions = useProjectPermissions();
 
   // State for selected tasks (for bulk actions)
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
@@ -91,7 +91,7 @@ const ListView: React.FC = () => {
   // Handle edit task with permission check
   const handleEditTask = (task: Task) => {
     // 🆕 NEW: Check permissions before allowing edit
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to edit tasks in this project.');
       return;
     }
@@ -101,7 +101,7 @@ const ListView: React.FC = () => {
   // Handle delete task with permission check
   const handleDeleteTask = (id: string) => {
     // 🆕 NEW: Check permissions before allowing delete
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to delete tasks in this project.');
       return;
     }
@@ -111,7 +111,7 @@ const ListView: React.FC = () => {
   // Handle bulk delete with permission check
   const handleBulkDelete = () => {
     // 🆕 NEW: Check permissions before allowing bulk delete
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to delete tasks in this project.');
       return;
     }
@@ -121,7 +121,7 @@ const ListView: React.FC = () => {
 
   // Handle bulk edit with permission check
   const handleBulkEdit = (type: 'status' | 'priority') => {
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to edit tasks in this project.');
       return;
     }
@@ -132,7 +132,7 @@ const ListView: React.FC = () => {
   // Toggle task selection (only for users with write permissions)
   const toggleTaskSelection = (id: string) => {
     // 🆕 NEW: Check permissions before allowing selection
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to select tasks for bulk operations.');
       return;
     }
@@ -148,7 +148,7 @@ const ListView: React.FC = () => {
   // Toggle all selection (only for users with write permissions)
   const toggleSelectAll = () => {
     // 🆕 NEW: Check permissions before allowing select all
-    if (!permissions.canWrite) {
+    if (!permissions.can.edit) {
       setPermissionError('You don\'t have permission to select tasks for bulk operations.');
       return;
     }
@@ -397,8 +397,8 @@ const ListView: React.FC = () => {
             {paginatedTasks.length === 0 && (
               <tr>
                 {/* 🔄 MODIFIED: Adjust colspan based on user permissions */}
-                <td colSpan={permissions.canWrite ? 6 : 4} className="px-6 py-10 text-center text-slate-400">
-                  No tasks found. {permissions.canWrite ? 'Create a new task to get started.' : 'No tasks to display.'}
+                <td colSpan={permissions.can.edit ? 6 : 4} className="px-6 py-10 text-center text-slate-400">
+                  No tasks found. {permissions.can.edit ? 'Create a new task to get started.' : 'No tasks to display.'}
                 </td>
               </tr>
             )}

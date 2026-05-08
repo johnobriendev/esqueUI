@@ -4,7 +4,7 @@ import { openModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
-import { getProjectPermissions } from '../../../shared/lib/permissions';
+import { useProjectPermissions } from '../../../shared/lib/useProjectPermissions';
 import CommentsSection from '../../comments/components/CommentsSection';
 
 interface TaskDetailViewProps {
@@ -16,7 +16,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({ task, onClose }) => {
   const dispatch = useAppDispatch();
   const currentProject = useAppSelector(selectCurrentProject);
 
-  const permissions = getProjectPermissions(currentProject);
+  const permissions = useProjectPermissions();
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -113,7 +113,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({ task, onClose }) => {
         )}
 
 
-        {!permissions.canWrite && (
+        {!permissions.can.edit && (
           <div className="bg-blue-900/50 px-6 py-2 border-b border-blue-700">
             <p className="text-blue-200 text-sm">
               You have read-only access to this task.
