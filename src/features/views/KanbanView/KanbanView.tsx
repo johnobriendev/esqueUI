@@ -6,13 +6,13 @@ import { openModal, selectKanbanGroupBy } from '../../ui/store/uiSlice';
 import { selectTasksByPriority, selectTasksByStatus } from '../../tasks/store/tasksSlice';
 import { selectCurrentProject } from '../../projects/store/projectsSlice';
 import { TaskPriority, TaskStatus, Task } from '../../../types';
-import { useTaskOperations } from '../../commands/useTaskOperations';
+import { useTaskOperations } from '../../tasks/useTaskOperations';
 import { WriteGuard } from '../../../shared/components/PermissionGuard';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 
 const KanbanView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { createTask, updateTaskPriority, updateTaskStatus, reorderTasks, reorderTasksByStatus } = useTaskOperations();
+  const ops = useTaskOperations();
 
   const kanbanGroupBy = useAppSelector(selectKanbanGroupBy);
   const tasksByPriority = useAppSelector(selectTasksByPriority);
@@ -101,79 +101,37 @@ const KanbanView: React.FC = () => {
       destinationIndex: destination.index
     });
 
-    try {
-      if (kanbanGroupBy === 'priority') {
-        // Priority-based grouping
-        const sourcePriority = source.droppableId as TaskPriority;
-        const destinationPriority = destination.droppableId as TaskPriority;
+    let opResult;
+    if (kanbanGroupBy === 'priority') {
+      const sourcePriority = source.droppableId as TaskPriority;
+      const destinationPriority = destination.droppableId as TaskPriority;
 
-        if (sourcePriority !== destinationPriority) {
-          // Moving between columns - use updateTaskPriority
-          console.log('🔄 Moving between priority columns');
-
-          await updateTaskPriority({
-            projectId: currentProject.id,
-            taskId: taskId,
-            priority: destinationPriority,
-            destinationIndex: destination.index
-          });
-          console.log('✅ Priority update command executed successfully');
-
-        } else {
-          // Reordering within the same priority column
-          console.log('🔄 Reordering within priority column');
-
-          const columnTasks = tasksByPriority[sourcePriority];
-          const reorderedTasks = Array.from(columnTasks);
-          const [movedTask] = reorderedTasks.splice(source.index, 1);
-          reorderedTasks.splice(destination.index, 0, movedTask);
-          const newOrder = reorderedTasks.map(task => task.id);
-
-          await reorderTasks({
-            projectId: currentProject.id,
-            priority: sourcePriority,
-            taskIds: newOrder
-          });
-          console.log('✅ Reorder command executed successfully');
-        }
+      if (sourcePriority !== destinationPriority) {
+        opResult = await ops.update({ projectId: currentProject.id, taskId, priority: destinationPriority, destinationIndex: destination.index });
       } else {
-        // Status-based grouping
-        const sourceStatus = source.droppableId as TaskStatus;
-        const destinationStatus = destination.droppableId as TaskStatus;
-
-        if (sourceStatus !== destinationStatus) {
-          // Moving between columns - use updateTaskStatus
-          console.log('🔄 Moving between status columns');
-
-          await updateTaskStatus({
-            projectId: currentProject.id,
-            taskId: taskId,
-            status: destinationStatus,
-            destinationIndex: destination.index
-          });
-          console.log('✅ Status update command executed successfully');
-
-        } else {
-          // Reordering within the same status column
-          console.log('🔄 Reordering within status column');
-
-          const columnTasks = tasksByStatus[sourceStatus];
-          const reorderedTasks = Array.from(columnTasks);
-          const [movedTask] = reorderedTasks.splice(source.index, 1);
-          reorderedTasks.splice(destination.index, 0, movedTask);
-          const newOrder = reorderedTasks.map(task => task.id);
-
-          await reorderTasksByStatus({
-            projectId: currentProject.id,
-            status: sourceStatus,
-            taskIds: newOrder
-          });
-          console.log('✅ Reorder command executed successfully');
-        }
+        const columnTasks = tasksByPriority[sourcePriority];
+        const reorderedTasks = Array.from(columnTasks);
+        const [movedTask] = reorderedTasks.splice(source.index, 1);
+        reorderedTasks.splice(destination.index, 0, movedTask);
+        opResult = await ops.reorder({ by: 'priority', projectId: currentProject.id, priority: sourcePriority, taskIds: reorderedTasks.map(t => t.id) });
       }
+    } else {
+      const sourceStatus = source.droppableId as TaskStatus;
+      const destinationStatus = destination.droppableId as TaskStatus;
 
-    } catch (error) {
-      console.error('❌ Drag & drop command failed:', error);
+      if (sourceStatus !== destinationStatus) {
+        opResult = await ops.update({ projectId: currentProject.id, taskId, status: destinationStatus, destinationIndex: destination.index });
+      } else {
+        const columnTasks = tasksByStatus[sourceStatus];
+        const reorderedTasks = Array.from(columnTasks);
+        const [movedTask] = reorderedTasks.splice(source.index, 1);
+        reorderedTasks.splice(destination.index, 0, movedTask);
+        opResult = await ops.reorder({ by: 'status', projectId: currentProject.id, status: sourceStatus, taskIds: reorderedTasks.map(t => t.id) });
+      }
+    }
+
+    if (!opResult.ok) {
+      console.error('❌ Drag & drop command failed:', opResult.error);
     }
   };
 
@@ -200,38 +158,18 @@ const KanbanView: React.FC = () => {
       return;
     }
 
-    try {
-      console.log('🎯 Creating CREATE command for Kanban quick-add:', title);
+    const priority: TaskPriority = kanbanGroupBy === 'priority' ? columnId as TaskPriority : 'low';
+    const status: TaskStatus = kanbanGroupBy === 'status' ? columnId as TaskStatus : 'not started';
 
-      // Determine priority and status based on grouping mode
-      let priority: TaskPriority = 'low';
-      let status: TaskStatus = 'not started';
+    const result = await ops.create({ projectId: currentProject.id, title, description: '', status, priority, customFields: {} });
 
-      if (kanbanGroupBy === 'priority') {
-        priority = columnId as TaskPriority;
-      } else {
-        status = columnId as TaskStatus;
-      }
-
-      await createTask({
-        projectId: currentProject.id,
-        title,
-        description: '',
-        status,
-        priority,
-        customFields: {}
-      });
-      console.log('✅ Kanban quick-add command executed successfully');
-
-      // Reset the input on success
-      setNewTaskInputs(prev => ({
-        ...prev,
-        [columnId]: ''
-      }));
-      setActiveInputColumn(null);
-    } catch (error) {
-      console.error('❌ Kanban quick-add command failed:', error);
+    if (!result.ok) {
+      console.error('❌ Kanban quick-add command failed:', result.error);
+      return;
     }
+
+    setNewTaskInputs(prev => ({ ...prev, [columnId]: '' }));
+    setActiveInputColumn(null);
   };
 
   // Handle canceling task creation

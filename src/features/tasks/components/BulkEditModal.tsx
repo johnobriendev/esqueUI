@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
-import { useTaskOperations } from '../../commands/useTaskOperations';
+import { useTaskOperations } from '../useTaskOperations';
 import { TaskStatus, TaskPriority } from '../../../types';
 import Modal from '../../../shared/components/ui/Modal';
 
 const BulkEditModal: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { bulkUpdateTasks } = useTaskOperations();
+  const ops = useTaskOperations();
   const activeModal = useAppSelector(state => state.ui.activeModal);
   const isOpen = activeModal?.type === 'bulkEdit';
   const editType = activeModal?.type === 'bulkEdit' ? activeModal.editType : null;
@@ -42,19 +42,15 @@ const BulkEditModal: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
 
-    try {
-      const updates = editType === 'status' ? { status } : { priority };
-      console.log('🎯 Creating BULK UPDATE command for', selectedTaskIds.length, 'tasks');
-      await bulkUpdateTasks({ projectId: currentProject.id, taskIds: selectedTaskIds, updates });
-      console.log('✅ Bulk update command executed successfully');
+    const updates = editType === 'status' ? { status } : { priority };
+    const result = await ops.bulkUpdate({ projectId: currentProject.id, taskIds: selectedTaskIds, updates });
 
-      // Close modal on success
-      handleClose();
-    } catch (err) {
-      console.error('❌ Bulk update command failed:', err);
+    setIsSubmitting(false);
+
+    if (!result.ok) {
       setError('Failed to update tasks. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      handleClose();
     }
   };
 

@@ -5,14 +5,14 @@ import { closeModal } from '../../ui/store/uiSlice';
 import { selectCurrentProject } from '../../../features/projects/store/projectsSlice';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { useNavigate } from 'react-router-dom';
-import { useTaskOperations } from '../../commands/useTaskOperations';
+import { useTaskOperations } from '../useTaskOperations';
 import { getProjectPermissions } from '../../../shared/lib/permissions';
 import Modal from '../../../shared/components/ui/Modal';
 
 const TaskModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { createTask, updateTask } = useTaskOperations();
+  const ops = useTaskOperations();
   const activeModal = useAppSelector(state => state.ui.activeModal);
   const isOpen = activeModal?.type === 'taskModal';
   const editingTaskId = activeModal?.type === 'taskModal' ? activeModal.taskId : null;
@@ -97,35 +97,16 @@ const TaskModal: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
 
-    try {
-      if (isEditing && editingTask) {
-        console.log('🎯 Creating UPDATE command for task:', editingTask.id);
-        await updateTask({
-          projectId: editingTask.projectId,
-          taskId: editingTask.id,
-          updates: { title, description, status, priority, customFields }
-        });
-        console.log('✅ UPDATE command executed successfully');
-      } else {
-        console.log('🎯 Creating CREATE command for new task:', title);
-        await createTask({
-          projectId: currentProject.id,
-          title,
-          description,
-          status,
-          priority,
-          customFields
-        });
-        console.log('✅ CREATE command executed successfully');
-      }
+    const result = isEditing && editingTask
+      ? await ops.update({ projectId: editingTask.projectId, taskId: editingTask.id, title, description, status, priority, customFields })
+      : await ops.create({ projectId: currentProject.id, title, description, status, priority, customFields });
 
-      // Close the modal on success
-      handleClose();
-    } catch (err) {
+    setIsSubmitting(false);
+
+    if (!result.ok) {
       setError('Failed to save task. Please try again.');
-      console.error('❌ Command execution failed:', err);
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      handleClose();
     }
   };
 
