@@ -17,17 +17,12 @@ import {
   revertOptimisticUpdate,
   revertOptimisticReorder
 } from '../../tasks/store/tasksSlice';
-import { Task, TaskStatus, TaskPriority, TaskConflict } from '../../../types';
+import { Task, TaskStatus, TaskPriority } from '../../../types';
 import { AppDispatch } from '../../../app/store';
-import { resolveConflict as defaultConflictResolver, Resolution } from '../../conflicts/conflictService';
+import { modalConflictResolver, ConflictResolver, Resolution } from '../../conflicts';
 import { withOptimisticUpdate } from '../../tasks/store/optimisticUpdates';
 
-export type ConflictResolver = (
-  dispatch: AppDispatch,
-  getState: () => unknown,
-  conflict: TaskConflict,
-  userChanges: Partial<Task>
-) => Promise<Resolution>;
+export type { ConflictResolver, Resolution };
 
 export interface CommandDeps {
   resolveConflict?: ConflictResolver;
@@ -142,7 +137,7 @@ export const createTaskCommand = (data: CreateTaskData): UndoableCommand & { cap
 
 // UPDATE TASK COMMAND
 export const updateTaskCommand = (data: UpdateTaskData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null } => {
-  const { resolveConflict = defaultConflictResolver } = deps;
+  const { resolveConflict = modalConflictResolver } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK',
@@ -287,7 +282,7 @@ export const bulkDeleteTasksCommand = (data: BulkDeleteTasksData): UndoableComma
 
 
 export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null; capturedHasOptimisticUpdate: boolean } => {
-  const { resolveConflict = defaultConflictResolver } = deps;
+  const { resolveConflict = modalConflictResolver } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK_PRIORITY',
@@ -369,7 +364,7 @@ export const updateTaskPriorityCommand = (data: UpdateTaskPriorityData, deps: Co
 
 // UPDATE TASK STATUS COMMAND
 export const updateTaskStatusCommand = (data: UpdateTaskStatusData, deps: CommandDeps = {}): UndoableCommand & { capturedPreviousTask: Task | null; capturedHasOptimisticUpdate: boolean } => {
-  const { resolveConflict = defaultConflictResolver } = deps;
+  const { resolveConflict = modalConflictResolver } = deps;
 
   const cmd = {
     type: 'UPDATE_TASK_STATUS',

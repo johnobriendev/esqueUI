@@ -7,6 +7,7 @@ import {
   updateTaskPriorityCommand,
   updateTaskStatusCommand,
 } from './taskCommands';
+import { createFixedResolver } from '../../conflicts';
 import type { Task } from '../../../types';
 
 const makeTask = (overrides: Partial<Task> = {}): Task => ({
@@ -298,5 +299,49 @@ describe('updateTaskStatusCommand', () => {
     expect(resolveConflict).toHaveBeenCalledOnce();
     // dispatch: optimistic + failed attempt + retry
     expect(dispatch).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('conflict resolution via createFixedResolver', () => {
+  const task = makeTask({ id: 'task-1', version: 1 });
+  const conflictError = {
+    type: 'VERSION_CONFLICT',
+    conflict: { taskId: 'task-1', expectedVersion: 1, currentVersion: 2, lastUpdatedBy: 'other@test.com', lastUpdatedAt: '2024-01-02T00:00:00Z', currentTask: task }
+  };
+
+  it('keep_mine: retries update with currentVersion', async () => {
+    const dispatch = vi.fn()
+      .mockReturnValueOnce({ unwrap: () => Promise.reject(conflictError) })
+      .mockReturnValue({ unwrap: () => Promise.resolve() });
+
+    const cmd = updateTaskCommand(
+      { projectId: 'proj-1', taskId: 'task-1', updates: { title: 'New' } },
+      { resolveConflict: createFixedResolver('keep_mine') }
+    );
+    await cmd.execute(dispatch, makeGetState([task]));
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  it('take_theirs: accepts server state, no retry', async () => {
+    const dispatch = vi.fn().mockReturnValue({ unwrap: () => Promise.reject(conflictError) });
+
+    const cmd = updateTaskCommand(
+      { projectId: 'proj-1', taskId: 'task-1', updates: { title: 'New' } },
+      { resolveConflict: createFixedResolver('take_theirs') }
+    );
+    await cmd.execute(dispatch, makeGetState([task]));
+
+    expect(dispatch).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancel: rejects with user-cancelled error', async () => {
+    const dispatch = vi.fn().mockReturnValue({ unwrap: () => Promise.reject(conflictError) });
+
+    const cmd = updateTaskCommand(
+      { projectId: 'proj-1', taskId: 'task-1', updates: { title: 'New' } },
+      { resolveConflict: createFixedResolver('cancel') }
+    );
+    await expect(cmd.execute(dispatch, makeGetState([task]))).rejects.toThrow('Update cancelled by user');
   });
 });
